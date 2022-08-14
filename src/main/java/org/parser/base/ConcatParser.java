@@ -40,9 +40,4 @@ public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> 
         }
         return Utils.convertToOptional(atSuccess.apply(ASTrees));
     }
-
-    @SafeVarargs
-    public static <TYPE, ANNOTATION> ConcatParser<TYPE, ANNOTATION> BasicConcatParser(TYPE type, Parser<TYPE, ANNOTATION> ... parsers) {
-        return new ConcatParser<>(trees -> new AST<>(type, null, trees), parsers); // falsch
-    }
 }

@@ -3,6 +3,7 @@ package org.parser.tree;
 import org.parser.Consumable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +66,14 @@ public class AST<TYPE, ANNOTATION> {
 
     public List<AST<TYPE, ANNOTATION>> getChildren() {
         return children;
+    }
+
+    public AST<TYPE, ANNOTATION> getChild(int i) {
+        return children.get(i);
+    }
+
+    public int numChildren(){
+        return children.size();
     }
 
     public List<ANNOTATION> getAnnotations() {

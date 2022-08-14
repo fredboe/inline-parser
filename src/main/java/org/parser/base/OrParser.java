@@ -29,14 +29,4 @@ public class OrParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
         }
         return Optional.empty();
     }
-
-    @SafeVarargs
-    public static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> BasicOrParser(TYPE type, Parser<TYPE, ANNOTATION> ... parsers ) {
-        return new OrParser<>(ast -> {
-          AST<TYPE, ANNOTATION> result = new AST<>(type);
-          result.addChild(ast);
-          if (ast.shouldIgnore()) result.ignore();
-          return result;
-        } , parsers);
-    }
 }

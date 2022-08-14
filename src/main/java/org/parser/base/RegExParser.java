@@ -23,18 +23,4 @@ public class RegExParser<TYPE, ANNOTATIONS> implements Parser<TYPE, ANNOTATIONS>
         Optional<Consumable.Match> match = consumable.lookingAt(pattern);
         return match.map(atSuccess);
     }
-
-
-    // name schlecht gewählt
-    public static <TYPE, ANNOTATIONS> RegExParser<TYPE, ANNOTATIONS> HideParser(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATIONS>(type).ignore());
-    }
-
-    public static <TYPE, ANNOTATIONS>RegExParser<TYPE, ANNOTATIONS> KeywordParser(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<>(type, null));
-    }
-
-    public static <TYPE, ANNOTATIONS>RegExParser<TYPE, ANNOTATIONS> MatchParser(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<>(type, match));
-    }
 }
