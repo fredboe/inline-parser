@@ -4,7 +4,6 @@ import org.parser.Consumable;
 import org.parser.Utils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,5 +137,30 @@ public class AST<TYPE, ANNOTATION> {
      */
     public List<ANNOTATION> getAnnotations() {
         return annotations;
+    }
+
+    /**
+     *
+     * @return Gibt den AST als String zurück
+     */
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        toStringRec(builder, "");
+        return builder.toString();
+    }
+
+    /**
+     * Wandelt den AST in einen String um, indem der Builder rekursiv von den Kindern erweitert wird.
+     * @param builder StringBuilder
+     * @param prefix String-Prefix, der vor dem aktuellen Knoten eingefügt werden soll
+     */
+    public void toStringRec(StringBuilder builder, String prefix) {
+        builder.append(getType());
+        builder.append("\n");
+        for (var child : children) {
+            builder.append(prefix);
+            builder.append("└──");
+            child.toStringRec(builder, prefix + "│   ");
+        }
     }
 }
