@@ -1,8 +1,6 @@
-package org.parser;
+package org.parser.base;
 
-import org.parser.base.ConcatParser;
-import org.parser.base.OrParser;
-import org.parser.base.RegExParser;
+import org.parser.Consumable;
 import org.parser.tree.AST;
 
 import java.util.Optional;
@@ -10,7 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * Regeln:
- * - Ein Parser sollte nur die consumable konsumieren, wenn der Parser erfolgreich ist.
+ * - Ein Parser sollte das Consumable nur konsumieren, wenn der Parser erfolgreich ist.
  * - Wird ein Verbindungsparser (ASTs als Input) implementiert, sollten die ASTs ignoriert werden,
  *   bei denen das ignore-Bit gesetzt ist
  * - Ein Parsing-Fehler soll mittels Optional übergeben werden (empty)
@@ -30,19 +28,14 @@ public interface Parser<TYPE, ANNOTATION> {
      * Ist kein Parser erfolgreich, wird Optional.emtpy() zurückgegeben.Die Erfolgsmethode erzeugt einen neuen AST
      * mit dem Typen type und fügt den übergebenen AST als Kind zu.
      * @param type Typ
-     * @param parsers Parser, die ver-odert werden
+     * @param parsers Parser, die verodert werden
      * @return Einen grundlegenden Or-Parser
      * @param <TYPE> Typ
      * @param <ANNOTATION> ANNOTATION-Class beim Abstract Syntax Tree
      */
     @SafeVarargs
     static <TYPE, ANNOTATION> Parser<TYPE, ANNOTATION> or(TYPE type, Parser<TYPE, ANNOTATION> ... parsers) {
-        return new OrParser<>(ast -> {
-            AST<TYPE, ANNOTATION> result = new AST<>(type);
-            result.addChild(ast);
-            if (ast.shouldIgnore()) result.ignore();
-            return result;
-        } , parsers);
+        return new OrParser<>(ast -> new AST<TYPE, ANNOTATION>(type).addChild(ast), parsers);
     }
 
     /**
@@ -70,7 +63,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param <ANNOTATIONS> ANNOTATION-Class beim Abstract Syntax Tree
      */
     static <TYPE, ANNOTATIONS> Parser<TYPE, ANNOTATIONS> hide(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATIONS>(type).ignore());
+        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATIONS>(type).setIgnore(true));
     }
 
     /**

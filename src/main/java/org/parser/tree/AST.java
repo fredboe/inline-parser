@@ -74,20 +74,11 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Setzt das Ignore-Bit auf true
+     * Setzt das Ignore-Bit
      * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
      */
-    public AST<TYPE, ANNOTATION> ignore() {
-        this.ignore = true;
-        return this;
-    }
-
-    /**
-     * Setzt das Ignore-Bit auf false
-     * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
-     */
-    public AST<TYPE, ANNOTATION> unignore() {
-        this.ignore = false;
+    public AST<TYPE, ANNOTATION> setIgnore(boolean ignore) {
+        this.ignore = ignore;
         return this;
     }
 

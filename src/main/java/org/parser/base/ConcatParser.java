@@ -1,7 +1,6 @@
 package org.parser.base;
 
 import org.parser.Consumable;
-import org.parser.Parser;
 import org.parser.Utils;
 import org.parser.tree.AST;
 
@@ -11,12 +10,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-// empty list means every sub-parser has been an ignore-parser
 /**
- * Should generate a copy of the consumable if the parser fails
+ * Concatenation-Parser
+ * Regeln:
+ * - Die atSuccess Funktion muss auf jeden Fall auch den Fall beachten, wenn die übergebene Liste leer ist.
  */
 public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
+    /**
+     * Menge von Parsern, die hintereinander gefügt werden sollen (Reihenfolge ist wichtig)
+     */
     private final List<Parser<TYPE, ANNOTATION>> parsers;
+    /**
+     * Diese Funktion wird aufgerufen, wenn alle Parser in der Parser-Liste einen erfolgreichen AST
+     * geliefert haben. Die Liste der gelieferten ASTs (ohne die ignored-ASTs) wird dann an diese Methode
+     * weitergegeben. Diese Methode soll letztendlich dann den resultierenden AST liefern.
+     */
     private final Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess;
 
     @SafeVarargs
@@ -26,9 +34,15 @@ public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> 
         this.parsers = Arrays.asList(parsers);
     }
 
+    /**
+     * Wendet alle Parser nacheinander auf das Consumable Objekt an. Die Methode liefert nur einen erfolgreichen
+     * AST, wenn alle Parser erfolgreich waren. Für den resultierenden AST wird dann atSuccess aufgerufen.
+     * @param consumable Consumable
+     * @return Ein AST mit Optional gewrappt (empty, falls einer der Parser einen Fehler liefert)
+     */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
-        Consumable copy = new Consumable(consumable);
+        Consumable copy = new Consumable(consumable); // beim Fehlschlag soll nichts konsumiert werden
         List<AST<TYPE, ANNOTATION>> ASTrees = new ArrayList<>(parsers.size());
         for (Parser<TYPE, ANNOTATION> parser : parsers) {
             Optional<AST<TYPE, ANNOTATION>> tree = parser.applyTo(consumable);
