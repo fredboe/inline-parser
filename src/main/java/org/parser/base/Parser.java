@@ -3,6 +3,7 @@ package org.parser.base;
 import org.parser.Consumable;
 import org.parser.tree.AST;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -35,7 +36,7 @@ public interface Parser<TYPE, ANNOTATION> {
      */
     @SafeVarargs
     static <TYPE, ANNOTATION> Parser<TYPE, ANNOTATION> or(TYPE type, Parser<TYPE, ANNOTATION> ... parsers) {
-        return new OrParser<>(ast -> new AST<TYPE, ANNOTATION>(type).addChild(ast), parsers);
+        return new OrParser<>(ast -> new AST<TYPE, ANNOTATION>(type).addChild(ast), Arrays.asList(parsers));
     }
 
     /**
@@ -50,7 +51,7 @@ public interface Parser<TYPE, ANNOTATION> {
      */
     @SafeVarargs
     static <TYPE, ANNOTATION> Parser<TYPE, ANNOTATION> concat(TYPE type, Parser<TYPE, ANNOTATION> ... parsers) {
-        return new ConcatParser<>(trees -> new AST<>(type, null, trees), parsers);
+        return new ConcatParser<>(trees -> new AST<>(type, null, trees), Arrays.asList(parsers));
     }
 
     /**

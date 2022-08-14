@@ -5,7 +5,6 @@ import org.parser.Utils;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -27,11 +26,10 @@ public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> 
      */
     private final Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess;
 
-    @SafeVarargs
     public ConcatParser(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess,
-                        Parser<TYPE, ANNOTATION> ... parsers) {
+                        List<Parser<TYPE, ANNOTATION>> parsers) {
         this.atSuccess = atSuccess;
-        this.parsers = Arrays.asList(parsers);
+        this.parsers = parsers;
     }
 
     /**

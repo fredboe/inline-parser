@@ -4,7 +4,6 @@ import org.parser.Consumable;
 import org.parser.Utils;
 import org.parser.tree.AST;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -23,11 +22,10 @@ public class OrParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      */
     private final Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess;
 
-    @SafeVarargs
     public OrParser(Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess,
-                    Parser<TYPE, ANNOTATION> ... parsers) {
+                    List<Parser<TYPE, ANNOTATION>> parsers) {
         this.atSuccess = atSuccess;
-        this.parsers = Arrays.asList(parsers);
+        this.parsers = parsers;
     }
 
     /**
@@ -40,9 +38,9 @@ public class OrParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
         for (Parser<TYPE, ANNOTATION> parser : parsers) {
-            Optional<AST<TYPE, ANNOTATION>> op_ast = parser.applyTo(consumable);
-            if (op_ast.isPresent()) {
-                var ast = op_ast.get();
+            Optional<AST<TYPE, ANNOTATION>> optionalAST = parser.applyTo(consumable);
+            if (optionalAST.isPresent()) {
+                AST<TYPE, ANNOTATION> ast = optionalAST.get();
                 return Utils.convertToOptional(
                         atSuccess.apply(ast).setIgnore(ast.shouldIgnore())
                 );
