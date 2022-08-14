@@ -1,7 +1,6 @@
 package org.parser.base;
 
 import org.parser.Consumable;
-import org.parser.Utils;
 import org.parser.tree.AST;
 
 import java.util.List;
@@ -37,15 +36,11 @@ public class OrParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
-        for (Parser<TYPE, ANNOTATION> parser : parsers) {
-            Optional<AST<TYPE, ANNOTATION>> optionalAST = parser.applyTo(consumable);
-            if (optionalAST.isPresent()) {
-                AST<TYPE, ANNOTATION> ast = optionalAST.get();
-                return Utils.convertToOptional(
-                        atSuccess.apply(ast).setIgnore(ast.shouldIgnore())
-                );
-            }
-        }
-        return Optional.empty();
+        Optional<AST<TYPE, ANNOTATION>> optionalAST = parsers.stream()
+                .map(parser -> parser.applyTo(consumable))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
+        return optionalAST.map(ast -> atSuccess.apply(ast).setIgnore(ast.shouldIgnore()));
     }
 }
