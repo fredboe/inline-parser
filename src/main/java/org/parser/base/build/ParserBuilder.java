@@ -48,6 +48,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         return new ParserPool<>(referencedParsers);
     }
 
+    public Optional<Parser<TYPE, ANNOTATION>> getParser(String name) {
+        return referencedParsers.containsKey(name) ? Optional.of(referencedParsers.get(name)) : Optional.empty();
+    }
+
     /**
      * Löscht alle in diesem ParserBuilder enthaltenen Daten
      */

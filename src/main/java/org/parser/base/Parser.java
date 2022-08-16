@@ -3,7 +3,9 @@ package org.parser.base;
 import org.parser.Consumable;
 import org.parser.tree.AST;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Regeln:
@@ -29,5 +31,83 @@ public interface Parser<TYPE, ANNOTATION> {
      */
     default Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
         return applyTo(new Consumable(sequence));
+    }
+
+    static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> or(List<Parser<TYPE, ANNOTATION>> parsers) {
+        return new OrParser<>(ast -> ast , parsers);
+    }
+
+    static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> orWithNode(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
+        return new OrParser<>(ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast), parsers);
+    }
+
+    static <TYPE, ANNOTATION> Parser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
+        return new ConcatParser<>(trees -> new AST<>(type, null, trees), parsers);
+    }
+
+    /**
+     * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
+     * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
+     * @param type Typ
+     * @param pattern Pattern
+     * @return Ein grundlegender Hide-Parser
+     */
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(TYPE type, Pattern pattern) {
+        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATION>(type).setIgnore(true));
+    }
+
+    /**
+     * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
+     * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
+     * @param type Typ
+     * @param regex Regular-Expression
+     * @return Ein grundlegender Hide-Parser
+     */
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(TYPE type, String regex) {
+        return hide(type, Pattern.compile(regex));
+    }
+
+    /**
+     * Ein grundlegender Keyword-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
+     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type, bei dem das Match-Objekt auf null gesetzt ist.
+     * @param type Typ
+     * @param pattern Pattern
+     * @return Ein grundlegender Keyword-Parser
+     */
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
+        return new RegExParser<>(pattern, match -> new AST<>(type, null));
+    }
+
+    /**
+     * Ein grundlegender Keyword-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
+     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type, bei dem das Match-Objekt auf null gesetzt ist.
+     * @param type Typ
+     * @param regex Regular-Expression
+     * @return Ein grundlegender Keyword-Parser
+     */
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
+        return keyword(type, Pattern.compile(regex));
+    }
+
+    /**
+     * Ein grundlegender Match-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
+     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type und dem gematchten Match.
+     * @param type Typ
+     * @param pattern Pattern
+     * @return Ein grundlegender Match-Parser
+     */
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
+        return new RegExParser<>(pattern, match -> new AST<>(type, match));
+    }
+
+    /**
+     * Ein grundlegender Match-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
+     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type und dem gematchten Match.
+     * @param type Typ
+     * @param regex Regular-Expression
+     * @return Ein grundlegender Match-Parser
+     */
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, String regex) {
+        return match(type, Pattern.compile(regex));
     }
 }
