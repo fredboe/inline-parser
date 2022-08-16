@@ -1,9 +1,9 @@
 package org.parser.tree;
 
 import org.parser.Consumable;
-import org.parser.Utils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,7 +102,7 @@ public class AST<TYPE, ANNOTATION> {
      * @return Gibt das Match als Optional gewrappt zurück (empty falls Match null ist)
      */
     public Optional<Consumable.Match> getMatch() {
-        return Utils.convertToOptional(match);
+        return Optional.ofNullable(match);
     }
 
     /**
@@ -145,7 +145,7 @@ public class AST<TYPE, ANNOTATION> {
      */
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        toStringRec(builder, "");
+        toStringRec(builder, "", "");
         return builder.toString();
     }
 
@@ -154,13 +154,21 @@ public class AST<TYPE, ANNOTATION> {
      * @param builder StringBuilder
      * @param prefix String-Prefix, der vor dem aktuellen Knoten eingefügt werden soll
      */
-    public void toStringRec(StringBuilder builder, String prefix) {
+    public void toStringRec(StringBuilder builder, String prefix, String childrenPrefix) {
+        builder.append(prefix);
         builder.append(getType());
-        builder.append("\n");
-        for (var child : children) {
-            builder.append(prefix);
-            builder.append("└──");
-            child.toStringRec(builder, prefix + "│   ");
+        if (match != null) {
+            builder.append(" ");
+            builder.append(match.matched());
+        }
+        builder.append('\n');
+        for (Iterator<AST<TYPE, ANNOTATION>> it = children.iterator(); it.hasNext();) {
+            var next = it.next();
+            if (it.hasNext()) {
+                next.toStringRec(builder, childrenPrefix + "├── ", childrenPrefix + "│   ");
+            } else {
+                next.toStringRec(builder, childrenPrefix + "└── ", childrenPrefix + "    ");
+            }
         }
     }
 }
