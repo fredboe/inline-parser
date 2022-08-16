@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+// operator parser
 /**
  * Regeln:
  * - Ein Parser sollte das Consumable nur konsumieren, wenn der Parser erfolgreich ist.
@@ -41,30 +42,28 @@ public interface Parser<TYPE, ANNOTATION> {
         return new OrParser<>(ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast), parsers);
     }
 
-    static <TYPE, ANNOTATION> Parser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
+    static <TYPE, ANNOTATION> ConcatParser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
         return new ConcatParser<>(trees -> new AST<>(type, null, trees), parsers);
     }
 
     /**
      * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
      * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
-     * @param type Typ
      * @param pattern Pattern
      * @return Ein grundlegender Hide-Parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATION>(type).setIgnore(true));
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(Pattern pattern) {
+        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATION>(null).setIgnore(true));
     }
 
     /**
      * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
      * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
-     * @param type Typ
      * @param regex Regular-Expression
      * @return Ein grundlegender Hide-Parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(TYPE type, String regex) {
-        return hide(type, Pattern.compile(regex));
+    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(String regex) {
+        return hide(Pattern.compile(regex));
     }
 
     /**

@@ -11,7 +11,7 @@ import java.util.function.Function;
 /**
  * Or-Parser
  */
-public class OrParser<TYPE, ANNOTATION> implements WithSubparsersParser<TYPE, ANNOTATION> {
+public class OrParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION> {
     /**
      * Menge an Parsern, die verodert werden sollen.
      */
@@ -50,12 +50,8 @@ public class OrParser<TYPE, ANNOTATION> implements WithSubparsersParser<TYPE, AN
         return optionalAST.map(ast -> atSuccess.apply(ast).setIgnore(ast.shouldIgnore()));
     }
 
-    /**
-     * Setzt die Subparser-Liste auf die übergebene Liste
-     * @param parsers Subparser-Liste
-     */
     @Override
-    public void setSubparsers(List<Parser<TYPE, ANNOTATION>> parsers) {
-        this.parsers = parsers;
+    public void addSubparser(Parser<TYPE, ANNOTATION> subparser) {
+        parsers.add(subparser);
     }
 }

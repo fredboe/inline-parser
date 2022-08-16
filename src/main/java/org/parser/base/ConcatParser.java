@@ -13,7 +13,7 @@ import java.util.function.Function;
  * Regeln:
  * - Die atSuccess Funktion muss auf jeden Fall auch den Fall beachten, wenn die übergebene Liste leer ist.
  */
-public class ConcatParser<TYPE, ANNOTATION> implements WithSubparsersParser<TYPE, ANNOTATION> {
+public class ConcatParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION> {
     /**
      * Menge von Parsern, die hintereinander gefügt werden sollen (Reihenfolge ist wichtig)
      */
@@ -57,12 +57,8 @@ public class ConcatParser<TYPE, ANNOTATION> implements WithSubparsersParser<TYPE
         return Optional.ofNullable(atSuccess.apply(ASTrees));
     }
 
-    /**
-     * Setzt die Subparser-Liste auf die übergebene Liste
-     * @param parsers Subparser-Liste
-     */
     @Override
-    public void setSubparsers(List<Parser<TYPE, ANNOTATION>> parsers) {
-        this.parsers = parsers;
+    public void addSubparser(Parser<TYPE, ANNOTATION> subparser) {
+        parsers.add(subparser);
     }
 }
