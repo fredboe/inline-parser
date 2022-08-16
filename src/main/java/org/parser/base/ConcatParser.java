@@ -1,7 +1,6 @@
 package org.parser.base;
 
 import org.parser.Consumable;
-import org.parser.Utils;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
@@ -14,11 +13,11 @@ import java.util.function.Function;
  * Regeln:
  * - Die atSuccess Funktion muss auf jeden Fall auch den Fall beachten, wenn die übergebene Liste leer ist.
  */
-public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
+public class ConcatParser<TYPE, ANNOTATION> implements WithSubparsersParser<TYPE, ANNOTATION> {
     /**
      * Menge von Parsern, die hintereinander gefügt werden sollen (Reihenfolge ist wichtig)
      */
-    private final List<Parser<TYPE, ANNOTATION>> parsers;
+    private List<Parser<TYPE, ANNOTATION>> parsers;
     /**
      * Diese Funktion wird aufgerufen, wenn alle Parser in der Parser-Liste einen erfolgreichen AST
      * geliefert haben. Die Liste der gelieferten ASTs (ohne die ignored-ASTs) wird dann an diese Methode
@@ -26,9 +25,14 @@ public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> 
      */
     private final Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess;
 
+    public ConcatParser(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
+        this.atSuccess = atSuccess;
+        this.parsers = new ArrayList<>();
+    }
+
     public ConcatParser(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess,
                         List<Parser<TYPE, ANNOTATION>> parsers) {
-        this.atSuccess = atSuccess;
+        this(atSuccess);
         this.parsers = parsers;
     }
 
@@ -50,6 +54,15 @@ public class ConcatParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> 
             }
             if (!tree.get().shouldIgnore()) ASTrees.add(tree.get());
         }
-        return Utils.convertToOptional(atSuccess.apply(ASTrees));
+        return Optional.ofNullable(atSuccess.apply(ASTrees));
+    }
+
+    /**
+     * Setzt die Subparser-Liste auf die übergebene Liste
+     * @param parsers Subparser-Liste
+     */
+    @Override
+    public void setSubparsers(List<Parser<TYPE, ANNOTATION>> parsers) {
+        this.parsers = parsers;
     }
 }

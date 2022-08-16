@@ -3,6 +3,7 @@ package org.parser.base;
 import org.parser.Consumable;
 import org.parser.tree.AST;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -10,20 +11,25 @@ import java.util.function.Function;
 /**
  * Or-Parser
  */
-public class OrParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
+public class OrParser<TYPE, ANNOTATION> implements WithSubparsersParser<TYPE, ANNOTATION> {
     /**
      * Menge an Parsern, die verodert werden sollen.
      */
-    private final List<Parser<TYPE, ANNOTATION>> parsers;
+    private List<Parser<TYPE, ANNOTATION>> parsers;
     /**
      * Diese Methode wird aufgerufen, sobald der erste Parser erfolgreich war. Ihr wird dann der gelieferte
      * AST übergeben. Diese Methode soll letztendlich dann den resultierenden AST liefern.
      */
     private final Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess;
 
+    public OrParser(Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess) {
+        this.atSuccess = atSuccess;
+        this.parsers = new ArrayList<>();
+    }
+
     public OrParser(Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess,
                     List<Parser<TYPE, ANNOTATION>> parsers) {
-        this.atSuccess = atSuccess;
+        this(atSuccess);
         this.parsers = parsers;
     }
 
@@ -42,5 +48,14 @@ public class OrParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
                 .map(Optional::get)
                 .findFirst();
         return optionalAST.map(ast -> atSuccess.apply(ast).setIgnore(ast.shouldIgnore()));
+    }
+
+    /**
+     * Setzt die Subparser-Liste auf die übergebene Liste
+     * @param parsers Subparser-Liste
+     */
+    @Override
+    public void setSubparsers(List<Parser<TYPE, ANNOTATION>> parsers) {
+        this.parsers = parsers;
     }
 }
