@@ -1,43 +1,31 @@
 package org.parser.base.build;
 
-import org.parser.base.*;
+import org.parser.base.Parser;
 
-import java.util.*;
+import java.util.Map;
 
 /**
- * Dient zur Erzeugung eines ParserPools
+ * Enthält mehrere Parser, auf die mit einem Namen zugegriffen werden kann (entsteht durch ParserBuilder)
  * @param <TYPE> Typ für den AST
  * @param <ANNOTATION> Annotation für den AST
  */
 public class ParserPool<TYPE, ANNOTATION> {
-    private final Map<String, Parser<TYPE, ANNOTATION>> namedParsers;
+    /**
+     * Map mit Namen der Parser als Key und dem Parser als Value
+     */
+    private final Map<String, Parser<TYPE, ANNOTATION>> parsers;
 
-    public ParserPool() {
-        this.namedParsers = new HashMap<>();
+    public ParserPool(Map<String, Parser<TYPE, ANNOTATION>> parsers) {
+        this.parsers = parsers;
     }
 
-    public Optional<Parser<TYPE, ANNOTATION>> getParser(String name) {
-        return Optional.ofNullable(namedParsers.get(name));
-    }
-
-    public void addParser(String name, Parser<TYPE, ANNOTATION> parser) {
-        namedParsers.put(name, parser);
-    }
-
-    public NewRuleInvocationChain newRule(String name, TYPE type) {
-        return new NewRuleInvocationChain(new RuleBuilder<>(this, name, type));
-    }
-
-
-    public class NewRuleInvocationChain {
-        private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
-
-        public NewRuleInvocationChain(RuleBuilder<TYPE, ANNOTATION> ruleBuilder) {
-            this.ruleBuilder = ruleBuilder;
-        }
-
-        public RuleBuilder<TYPE, ANNOTATION> consistsOf() {
-            return ruleBuilder;
-        }
+    /**
+     *
+     * @param name Parser-Name
+     * @return Gibt einen Parser mit dem Namen zurück. Falls es keinen Parser mit diesem Namen gibt, wird null
+     *         zurückgegeben.
+     */
+    public Parser<TYPE, ANNOTATION> getParser(String name) {
+        return parsers.get(name);
     }
 }

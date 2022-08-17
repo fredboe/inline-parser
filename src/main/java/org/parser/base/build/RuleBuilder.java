@@ -9,18 +9,15 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-// concat ohne typ, or mit typ, pattern funktionen einfügen, atSuccess Option einfügen
-// evtl umwandlung der PlaceholderParser zu anderen parsern (dann ergibt auch build einen sinn)
-// testen vor allem rule
-// operator parser
+// operator-parser
 public class RuleBuilder<TYPE, ANNOTATION> {
     private final String name;
-    private final ParserPool<TYPE, ANNOTATION> parserBuilder;
+    private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     private final OrParser<TYPE, ANNOTATION> rule;
     private ConcatParser<TYPE, ANNOTATION> currentSubrule;
     private boolean editable;
 
-    public RuleBuilder(ParserPool<TYPE, ANNOTATION> parserBuilder, String name,
+    public RuleBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, String name,
                        Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccessOr) {
         this.parserBuilder = parserBuilder;
         this.name = name;
@@ -29,7 +26,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
         this.editable = true;
     }
 
-    public RuleBuilder(ParserPool<TYPE, ANNOTATION> parserBuilder, String name, TYPE type) {
+    public RuleBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, String name, TYPE type) {
         this(parserBuilder, name, ast -> ast.getType() == null
                 ? new AST<>(type, null, ast.getChildren())
                 : ast
@@ -70,7 +67,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     public RuleBuilder<TYPE, ANNOTATION> rule(String name) {
-        return addToConcat(new PlaceholderParser<>(parserBuilder, name));
+        return addToConcat(parserBuilder.getPlaceholder(name));
     }
 
     public RuleBuilder<TYPE, ANNOTATION> or() {
