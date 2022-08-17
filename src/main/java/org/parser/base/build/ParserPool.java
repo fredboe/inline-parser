@@ -24,8 +24,8 @@ public class ParserPool<TYPE, ANNOTATION> {
         namedParsers.put(name, parser);
     }
 
-    public NewRuleInvocationChain newRule(String name) {
-        return new NewRuleInvocationChain(new RuleBuilder<>(this, name));
+    public NewRuleInvocationChain newRule(String name, TYPE type) {
+        return new NewRuleInvocationChain(new RuleBuilder<>(this, name, type));
     }
 
 
