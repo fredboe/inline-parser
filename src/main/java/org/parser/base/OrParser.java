@@ -23,14 +23,14 @@ public class OrParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION>
     private final Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess;
 
     public OrParser(Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess) {
-        this.atSuccess = atSuccess;
+        this.atSuccess = atSuccess != null ? atSuccess : Parser.basicOrAtSuccess();
         this.parsers = new ArrayList<>();
     }
 
     public OrParser(Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess,
                     List<Parser<TYPE, ANNOTATION>> parsers) {
         this(atSuccess);
-        this.parsers = parsers;
+        if (parsers != null) this.parsers = parsers;
     }
 
     /**
@@ -52,6 +52,11 @@ public class OrParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION>
 
     @Override
     public void addSubparser(Parser<TYPE, ANNOTATION> subparser) {
-        parsers.add(subparser);
+        if (subparser != null) parsers.add(subparser);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return parsers.isEmpty();
     }
 }

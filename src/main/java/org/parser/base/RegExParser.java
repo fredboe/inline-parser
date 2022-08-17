@@ -22,8 +22,8 @@ public class RegExParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     private final Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess;
 
     public RegExParser(Pattern pattern, Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess) {
-        this.pattern = pattern;
-        this.atSuccess = atSuccess;
+        this.pattern = pattern != null ? pattern : Pattern.compile("");
+        this.atSuccess = atSuccess != null ? atSuccess : Parser.basicHideAtSuccess();
     }
 
     /**

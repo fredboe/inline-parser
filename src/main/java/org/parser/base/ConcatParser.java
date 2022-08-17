@@ -23,17 +23,17 @@ public class ConcatParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTAT
      * geliefert haben. Die Liste der gelieferten ASTs (ohne die ignored-ASTs) wird dann an diese Methode
      * weitergegeben. Diese Methode soll letztendlich dann den resultierenden AST liefern.
      */
-    private final Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess;
+    private Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess;
 
     public ConcatParser(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
-        this.atSuccess = atSuccess;
+        this.atSuccess = atSuccess != null ? atSuccess : Parser.basicConcatAtSuccess(null);
         this.parsers = new ArrayList<>();
     }
 
     public ConcatParser(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess,
                         List<Parser<TYPE, ANNOTATION>> parsers) {
         this(atSuccess);
-        this.parsers = parsers;
+        if (parsers != null) this.parsers = parsers;
     }
 
     /**
@@ -59,6 +59,15 @@ public class ConcatParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTAT
 
     @Override
     public void addSubparser(Parser<TYPE, ANNOTATION> subparser) {
-        parsers.add(subparser);
+        if (subparser != null) parsers.add(subparser);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return parsers.isEmpty();
+    }
+
+    public void changeAtSuccess(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
+        this.atSuccess = atSuccess;
     }
 }

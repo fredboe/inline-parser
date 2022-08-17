@@ -26,8 +26,8 @@ public class Consumable {
     private int startIndex;
 
     public Consumable(CharSequence sequence) {
-        this.sequence = sequence;
-        this.startIndex = sequence.length() > 0 ? 0 : -1;
+        this.sequence = sequence != null ? sequence : "";
+        this.startIndex = this.sequence.length() > 0 ? 0 : -1;
     }
 
     public Consumable(Consumable other) {

@@ -5,9 +5,9 @@ import org.parser.tree.AST;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
-// operator parser
 /**
  * Regeln:
  * - Ein Parser sollte das Consumable nur konsumieren, wenn der Parser erfolgreich ist.
@@ -35,15 +35,15 @@ public interface Parser<TYPE, ANNOTATION> {
     }
 
     static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> or(List<Parser<TYPE, ANNOTATION>> parsers) {
-        return new OrParser<>(ast -> ast , parsers);
+        return new OrParser<>(basicOrAtSuccess(), parsers);
     }
 
     static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> orWithNode(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
-        return new OrParser<>(ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast), parsers);
+        return new OrParser<>(basicOrWithNodeAtSuccess(type), parsers);
     }
 
     static <TYPE, ANNOTATION> ConcatParser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
-        return new ConcatParser<>(trees -> new AST<>(type, null, trees), parsers);
+        return new ConcatParser<>(basicConcatAtSuccess(type), parsers);
     }
 
     /**
@@ -53,7 +53,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Ein grundlegender Hide-Parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<TYPE, ANNOTATION>(null).setIgnore(true));
+        return new RegExParser<>(pattern, basicHideAtSuccess());
     }
 
     /**
@@ -74,7 +74,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Ein grundlegender Keyword-Parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<>(type, null));
+        return new RegExParser<>(pattern, basicKeywordAtSuccess(type));
     }
 
     /**
@@ -96,7 +96,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Ein grundlegender Match-Parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
-        return new RegExParser<>(pattern, match -> new AST<>(type, match));
+        return new RegExParser<>(pattern, basicMatchAtSuccess(type));
     }
 
     /**
@@ -108,5 +108,31 @@ public interface Parser<TYPE, ANNOTATION> {
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, String regex) {
         return match(type, Pattern.compile(regex));
+    }
+
+
+
+    static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrAtSuccess() {
+        return ast -> ast;
+    }
+
+    static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrWithNodeAtSuccess(TYPE type) {
+        return ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast);
+    }
+
+    static <TYPE, ANNOTATION> Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> basicConcatAtSuccess(TYPE type) {
+        return trees -> new AST<>(type, null, trees);
+    }
+
+    static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicMatchAtSuccess(TYPE type) {
+        return match -> new AST<>(type, match);
+    }
+
+    static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicHideAtSuccess() {
+        return match -> new AST<TYPE, ANNOTATION>(null).setIgnore(true);
+    }
+
+    static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicKeywordAtSuccess(TYPE type) {
+        return match -> new AST<>(type, null);
     }
 }
