@@ -38,18 +38,20 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     void addParser(String name, Parser<TYPE, ANNOTATION> parser) {
-        namedParsers.put(name, parser);
+        if (name != null && parser != null) namedParsers.put(name, parser);
     }
 
     PlaceholderParser<TYPE, ANNOTATION> getPlaceholder(String name) {
+        if (name == null) return null;
         if (placeholders.containsKey(name)) return placeholders.get(name);
+
         PlaceholderParser<TYPE, ANNOTATION> placeholder = new PlaceholderParser<>();
         placeholders.put(name, placeholder);
         return placeholder;
     }
 
-    public NewRuleInvocationChain newRule(String name, TYPE type) {
-        return new NewRuleInvocationChain(new RuleBuilder<>(this, name, type));
+    public NewRuleInvocationChain newRule(String name) {
+        return new NewRuleInvocationChain(new RuleBuilder<>(name, this));
     }
 
 

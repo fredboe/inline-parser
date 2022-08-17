@@ -1,106 +1,82 @@
 package org.parser.base.build;
 
 import org.parser.Consumable;
-import org.parser.base.*;
+import org.parser.base.OrParser;
+import org.parser.base.Parser;
+import org.parser.base.RegExParser;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-// operator-parser
+// null checks
+// Patterns und atSuccess hinzufügen
 public class RuleBuilder<TYPE, ANNOTATION> {
-    private final String name;
+    private final String ruleName;
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     private final OrParser<TYPE, ANNOTATION> rule;
-    private ConcatParser<TYPE, ANNOTATION> currentSubrule;
-    private boolean editable;
+    private boolean frozen;
 
-    public RuleBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, String name,
-                       Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccessOr) {
+    private final NextIsOrBuilder<TYPE, ANNOTATION> nextIsOrBuilder;
+    private final ConcatRuleBuilder<TYPE, ANNOTATION> concatRuleBuilder;
+
+    public RuleBuilder(String ruleName, ParserBuilder<TYPE, ANNOTATION> parserBuilder) {
+        this.ruleName = ruleName;
         this.parserBuilder = parserBuilder;
-        this.name = name;
-        this.rule = new OrParser<>(atSuccessOr, new ArrayList<>());
-        this.currentSubrule = null;
-        this.editable = true;
+        this.rule = Parser.or(new ArrayList<>());
+        this.nextIsOrBuilder = new NextIsOrBuilder<>(parserBuilder, this);
+        this.concatRuleBuilder = new ConcatRuleBuilder<>(parserBuilder, this);
+        this.frozen = false;
     }
 
-    public RuleBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, String name, TYPE type) {
-        this(parserBuilder, name, ast -> ast.getType() == null
-                ? new AST<>(type, null, ast.getChildren())
-                : ast
+    public ConcatRuleBuilder<TYPE, ANNOTATION> concat() {
+        concatRuleBuilder.newSubrule(trees ->
+                trees.size() >= 1
+                ? trees.get(0)
+                : null
         );
+        return concatRuleBuilder;
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> concat(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
-        if (currentSubrule == null) genNewSubrule(atSuccess);
-        return this;
+    public ConcatRuleBuilder<TYPE, ANNOTATION> concat(TYPE type) {
+        concatRuleBuilder.newSubrule(type);
+        return concatRuleBuilder;
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> customRegEx(Pattern pattern, Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess) {
-        return addToConcat(new RegExParser<>(pattern, atSuccess));
+    public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
+        return addSingleClause(Parser.match(type, regex));
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
-        return addToConcat(Parser.match(type, pattern));
+    public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
+        return addSingleClause(Parser.keyword(type, regex));
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
-        return match(type, Pattern.compile(regex));
+    public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
+                                                         String regex) {
+        if (regex == null) regex = "";
+        return addSingleClause(new RegExParser<>(Pattern.compile(regex), atSuccess));
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> hide(Pattern pattern) {
-        return addToConcat(Parser.hide(pattern));
+    public NextIsOrBuilder<TYPE, ANNOTATION> rule(String name) {
+        return addSingleClause(parserBuilder.getPlaceholder(name));
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> hide(String regex) {
-        return hide(Pattern.compile(regex));
+    public String getName() {
+        return ruleName;
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
-        return addToConcat(Parser.keyword(type, pattern));
+    private NextIsOrBuilder<TYPE, ANNOTATION> addSingleClause(Parser<TYPE, ANNOTATION> singleParser) {
+        addClause(singleParser);
+        return nextIsOrBuilder;
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
-        return keyword(type, Pattern.compile(regex));
+    void addClause(Parser<TYPE, ANNOTATION> parser) {
+        if (!frozen) rule.addSubparser(parser);
     }
 
-    public RuleBuilder<TYPE, ANNOTATION> rule(String name) {
-        return addToConcat(parserBuilder.getPlaceholder(name));
-    }
-
-    public RuleBuilder<TYPE, ANNOTATION> or() {
-        addClauseAndErase();
-        currentSubrule = null;
-        return this;
-    }
-
-    public void end() {
-        addClauseAndErase();
-        editable = false;
-        parserBuilder.addParser(name, rule);
-    }
-
-    private void addClauseAndErase() {
-        if (currentSubrule != null) {
-            rule.addSubparser(currentSubrule);
-            currentSubrule = null;
-        }
-    }
-
-    private RuleBuilder<TYPE, ANNOTATION> addToConcat(Parser<TYPE, ANNOTATION> parser) {
-        if (!editable) return this;
-        if (currentSubrule == null) genNewSubrule();
-        currentSubrule.addSubparser(parser);
-        return this;
-    }
-
-    private void genNewSubrule(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
-        if (currentSubrule == null) currentSubrule = new ConcatParser<>(atSuccess);
-    }
-
-    private void genNewSubrule() {
-        if (currentSubrule == null) currentSubrule = Parser.concat(null, new ArrayList<>());
+    Parser<TYPE, ANNOTATION> freeze() {
+        frozen = true;
+        return rule;
     }
 }
