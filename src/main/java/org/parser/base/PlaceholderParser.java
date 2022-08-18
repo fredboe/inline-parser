@@ -10,7 +10,6 @@ public class PlaceholderParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTAT
 
     public PlaceholderParser() {
         this.parser = null;
-
     }
 
     @Override

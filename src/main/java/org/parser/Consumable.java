@@ -108,14 +108,14 @@ public class Consumable {
      * @return Gibt ein Matcher Objekt zurück
      */
     private Matcher genMatcher(Pattern pattern) {
-        return pattern.matcher(getSequence());
+        return pattern.matcher(getSequenceLeft());
     }
 
     /**
      *
      * @return Gibt die aktuelle Sequence zurück (mit Konsumierung)
      */
-    private CharSequence getSequence() {
+    public CharSequence getSequenceLeft() {
         if (isEmpty()) return "";
         return sequence.subSequence(startIndex, sequence.length());
     }
@@ -135,5 +135,13 @@ public class Consumable {
      */
     public boolean isEmpty() {
         return sequence == null || sequence.isEmpty() || startIndex >= sequence.length();
+    }
+
+    /**
+     *
+     * @return Erzeugt aus der übriggebliebenen CharSequence einen String.
+     */
+    public String toString() {
+        return getSequenceLeft().toString();
     }
 }
