@@ -4,10 +4,16 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class GenPattern {
+    /**
+     * Flags, die angeben, welche Modi es für die Pattern-Erzeugung gibt.
+     */
     public enum Flag {
         NONE, IGNORE_WHITESPACE
     }
 
+    /**
+     * Funktion, die eine gegebene RegEx je nach den Flags zu einer anderen RegEx transformiert.
+     */
     private final Function<String, String> transformRegex;
 
     public GenPattern() {
@@ -22,11 +28,21 @@ public class GenPattern {
         }
     }
 
+    /**
+     *
+     * @param regex RegEx
+     * @return Gibt ein Pattern, für die transformierte RegEx zurück.
+     */
     public Pattern getPattern(String regex) {
         return Pattern.compile(transformRegex.apply(regex));
     }
 
-
+    /**
+     * Identitätsfunktion
+     */
     private static final Function<String, String> identity = regex -> regex;
+    /**
+     * Transformiert die RegEx so, dass Leerzeichen am Anfang und am Ende ignoriert werden.
+     */
     private static final Function<String, String> ignore_whitespace = regex -> "\\s*" + regex + "\\s*";
 }
