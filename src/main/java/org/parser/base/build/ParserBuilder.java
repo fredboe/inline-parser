@@ -1,8 +1,10 @@
 package org.parser.base.build;
 
+import org.parser.GenPattern;
 import org.parser.base.*;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Dient zur Erzeugung eines ParserPools
@@ -13,9 +15,18 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     private Map<String, Parser<TYPE, ANNOTATION>> namedParsers;
     private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
 
+    private final GenPattern utils;
+
     public ParserBuilder() {
         this.namedParsers = new HashMap<>();
         this.placeholders = new HashMap<>();
+        this.utils = new GenPattern();
+    }
+
+    public ParserBuilder(GenPattern.Flag flag) {
+        this.namedParsers = new HashMap<>();
+        this.placeholders = new HashMap<>();
+        this.utils = new GenPattern(flag);
     }
 
     public ParserPool<TYPE, ANNOTATION> build() {
@@ -52,6 +63,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
 
     public NewRuleInvocationChain newRule(String name) {
         return new NewRuleInvocationChain(new RuleBuilder<>(name, this));
+    }
+
+    Pattern getPattern(String regex) {
+        return utils.getPattern(regex);
     }
 
 

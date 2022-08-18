@@ -4,7 +4,6 @@ import org.parser.base.ConcatParser;
 import org.parser.base.Parser;
 import org.parser.tree.AST;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -35,15 +34,15 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
-        return addStep(Parser.match(type, regex));
+        return addStep(Parser.match(type, parserBuilder.getPattern(regex)));
     }
 
     public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
-        return addStep(Parser.keyword(type, regex));
+        return addStep(Parser.keyword(type, parserBuilder.getPattern(regex)));
     }
 
     public ConcatRuleBuilder<TYPE, ANNOTATION> hide(String regex) {
-        return addStep(Parser.hide(regex));
+        return addStep(Parser.hide(parserBuilder.getPattern(regex)));
     }
 
     public ConcatRuleBuilder<TYPE, ANNOTATION> rule(String name) {

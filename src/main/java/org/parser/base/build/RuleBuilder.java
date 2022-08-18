@@ -8,7 +8,6 @@ import org.parser.tree.AST;
 
 import java.util.ArrayList;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 // Patterns und atSuccess hinzufügen
 public class RuleBuilder<TYPE, ANNOTATION> {
@@ -44,17 +43,17 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
-        return addSingleClause(Parser.match(type, regex));
+        return addSingleClause(Parser.match(type, parserBuilder.getPattern(regex)));
     }
 
     public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
-        return addSingleClause(Parser.keyword(type, regex));
+        return addSingleClause(Parser.keyword(type, parserBuilder.getPattern(regex)));
     }
 
     public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
                                                          String regex) {
         if (regex == null) regex = "";
-        return addSingleClause(new RegExParser<>(Pattern.compile(regex), atSuccess));
+        return addSingleClause(new RegExParser<>(parserBuilder.getPattern(regex), atSuccess));
     }
 
     public NextIsOrBuilder<TYPE, ANNOTATION> rule(String name) {
