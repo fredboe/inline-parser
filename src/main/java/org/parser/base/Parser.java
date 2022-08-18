@@ -111,27 +111,59 @@ public interface Parser<TYPE, ANNOTATION> {
     }
 
 
-
+    /**
+     *
+     * @return Gibt die Identitätsfunktion zurück, denn ein normaler Or-Parser besitzt keinen Typ, sondern
+     * übernimmt den Typen des erfolgreichen Subparsers.
+     */
     static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrAtSuccess() {
         return ast -> ast;
     }
 
+    /**
+     *
+     * @param type Typ des resultierenden AST
+     * @return Gibt eine Funktion zurück, die aus einem AST A einen AST B mit dem übergebenen Typen und A als Kind macht.
+     *
+     */
     static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrWithNodeAtSuccess(TYPE type) {
         return ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast);
     }
 
+    /**
+     *
+     * @param type Typ des resultierenden AST
+     * @return Gibt eine Funktion zurück, die aus mehreren ASTs einen AST B erstellt mit dem übergebenen Typen und den
+     * ASTs als Kindern.
+     */
     static <TYPE, ANNOTATION> Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> basicConcatAtSuccess(TYPE type) {
         return trees -> new AST<>(type, null, trees);
     }
 
+    /**
+     *
+     * @param type Typ des resultierenden AST
+     * @return Gibt eine Funktion zurück, die aus einem Match einen AST erzeugt, der den übergebenen Typen hat und
+     * das Match als "Match".
+     */
     static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicMatchAtSuccess(TYPE type) {
         return match -> new AST<>(type, match);
     }
 
+    /**
+     *
+     * @return Gibt eine Funktion zurück, die aus einem Match einen AST erzeugt, bei dem das Ignore-Bit gesetzt ist.
+     */
     static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicHideAtSuccess() {
         return match -> new AST<TYPE, ANNOTATION>(null).setIgnore(true);
     }
 
+    /**
+     *
+     * @param type Typ des resultierenden AST
+     * @return Gibt eine Funktion zurück, die aus einem Match einen AST erzeugt, der den übergebenen Typen hat
+     * und das Match des ASTs ist aber null.
+     */
     static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicKeywordAtSuccess(TYPE type) {
         return match -> new AST<>(type, null);
     }
