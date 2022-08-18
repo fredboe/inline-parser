@@ -7,7 +7,9 @@ import org.parser.base.RegExParser;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 // Patterns und atSuccess hinzufügen
 public class RuleBuilder<TYPE, ANNOTATION> {
@@ -37,17 +39,30 @@ public class RuleBuilder<TYPE, ANNOTATION> {
         return concatRuleBuilder;
     }
 
+    public ConcatRuleBuilder<TYPE, ANNOTATION> concat(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
+        concatRuleBuilder.newSubrule(atSuccess);
+        return concatRuleBuilder;
+    }
+
     public ConcatRuleBuilder<TYPE, ANNOTATION> concat(TYPE type) {
         concatRuleBuilder.newSubrule(type);
         return concatRuleBuilder;
     }
 
+    public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
+        return addSingleClause(Parser.match(type, pattern));
+    }
+
     public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
-        return addSingleClause(Parser.match(type, parserBuilder.getPattern(regex)));
+        return match(type, parserBuilder.getPattern(regex));
+    }
+
+    public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
+        return addSingleClause(Parser.keyword(type, pattern));
     }
 
     public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
-        return addSingleClause(Parser.keyword(type, parserBuilder.getPattern(regex)));
+        return keyword(type, parserBuilder.getPattern(regex));
     }
 
     public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
