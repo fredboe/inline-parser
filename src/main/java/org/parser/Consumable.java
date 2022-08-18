@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// irgendwo ein fehler in der logik mit isEmpty
 /**
  * CharSequence, die konsumiert werden kann
  */
@@ -27,7 +28,7 @@ public class Consumable {
 
     public Consumable(CharSequence sequence) {
         this.sequence = sequence != null ? sequence : "";
-        this.startIndex = this.sequence.length() > 0 ? 0 : -1;
+        this.startIndex = 0;
     }
 
     public Consumable(Consumable other) {
@@ -43,7 +44,11 @@ public class Consumable {
      *         wird Optional.empty() zurückgegeben
      */
     public Optional<Match> lookingAt(Pattern pattern) {
-        if (isEmpty()) return Optional.empty();
+        if (isEmpty()) {
+            System.out.println();
+            return Optional.empty();
+        }
+
         Matcher matcher = genMatcher(pattern);
         return genMatch(matcher.lookingAt(), matcher);
     }
@@ -111,6 +116,7 @@ public class Consumable {
      * @return Gibt die aktuelle Sequence zurück (mit Konsumierung)
      */
     private CharSequence getSequence() {
+        if (isEmpty()) return "";
         return sequence.subSequence(startIndex, sequence.length());
     }
 
@@ -121,7 +127,6 @@ public class Consumable {
      */
     public void resetTo(Consumable other) {
         if (other.sequence == this.sequence) this.startIndex = other.startIndex;
-
     }
 
     /**
@@ -129,6 +134,6 @@ public class Consumable {
      * @return Gibt zurück, ob das Consumable Objekt noch einen (nicht konsumierten) Character besitzt
      */
     public boolean isEmpty() {
-        return sequence == null || sequence.isEmpty() || startIndex == sequence.length();
+        return sequence == null || sequence.isEmpty() || startIndex >= sequence.length();
     }
 }

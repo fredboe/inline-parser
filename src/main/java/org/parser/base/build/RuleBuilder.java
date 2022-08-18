@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-// null checks
 // Patterns und atSuccess hinzufügen
 public class RuleBuilder<TYPE, ANNOTATION> {
     private final String ruleName;
