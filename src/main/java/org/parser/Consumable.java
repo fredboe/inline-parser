@@ -75,9 +75,12 @@ public class Consumable {
      */
     public Optional<Match> lookingAt(Pattern pattern) {
         if (isEmpty()) return Optional.empty();
-        ignore(whatToIgnore.prefixToIgnore());
+
+        ignore();
         Matcher matcher = genMatcher(pattern);
-        return genMatch(matcher.lookingAt(), matcher);
+        Optional<Match> res = genMatch(matcher.lookingAt(), matcher);
+        ignore();
+        return res;
     }
 
     /**
@@ -100,9 +103,12 @@ public class Consumable {
      */
     public Optional<Match> find(Pattern pattern) {
         if (isEmpty()) return Optional.empty();
-        ignore(whatToIgnore.prefixToIgnore());
+
+        ignore();
         Matcher matcher = genMatcher(pattern);
-        return genMatch(matcher.find(), matcher);
+        Optional<Match> res = genMatch(matcher.find(), matcher);
+        ignore();
+        return res;
     }
 
     /**
@@ -116,9 +122,15 @@ public class Consumable {
         return find(Pattern.compile(regex));
     }
 
-    private void ignore(Pattern pattern) {
-        Matcher matcher = genMatcher(pattern);
-        genMatch(matcher.lookingAt(), matcher);
+    /**
+     * Versucht das toIgnore-Pattern zu matchen und ignoriert das Ergebnis
+     */
+    private void ignore() {
+        Pattern pattern = whatToIgnore.toIgnore();
+        if (pattern != null) {
+            Matcher matcher = genMatcher(pattern);
+            genMatch(matcher.lookingAt(), matcher);
+        }
     }
 
     /**
@@ -179,30 +191,33 @@ public class Consumable {
     }
 
 
+    /**
+     * Speichert ein Pattern, welches als prefix ignoriert werden soll
+     */
     private static class WhatToIgnore {
-        private final Pattern prefixToIgnore;
+        private final Pattern toIgnore;
 
         public WhatToIgnore() {
-            prefixToIgnore = Pattern.compile("");
+            toIgnore = null;
         }
 
         public WhatToIgnore(Ignore flag) {
-            prefixToIgnore = Pattern.compile(flag.getValue());
+            toIgnore = Pattern.compile(flag.getValue());
         }
 
-        public WhatToIgnore(Ignore... flags) {
-            StringBuilder prefixToIgnoreBuilder = new StringBuilder().append("(");
-            prefixToIgnoreBuilder.append(flags[0].getValue());
+        public WhatToIgnore(Ignore ... flags) {
+            StringBuilder toIgnoreBuilder = new StringBuilder().append("(");
+            toIgnoreBuilder.append(flags[0].getValue());
             for (int i = 1; i < flags.length; i++) {
-                prefixToIgnoreBuilder.append("|").append(flags[i].getValue());
+                toIgnoreBuilder.append("|").append(flags[i].getValue());
             }
-            prefixToIgnoreBuilder.append(")*");
+            toIgnoreBuilder.append(")*");
 
-            this.prefixToIgnore = Pattern.compile(prefixToIgnoreBuilder.toString());
+            this.toIgnore = Pattern.compile(toIgnoreBuilder.toString());
         }
 
-        public Pattern prefixToIgnore() {
-            return prefixToIgnore;
+        public Pattern toIgnore() {
+            return toIgnore;
         }
     }
 }

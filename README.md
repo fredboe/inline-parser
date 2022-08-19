@@ -10,3 +10,4 @@ Basic implementation of a recursive parser in Java.
 ### notes
 - Testen, was passiert, wenn eine rule einen Regelnamen verwendet, den es gar nicht gibt.
 - set comments
+- base name komisch
