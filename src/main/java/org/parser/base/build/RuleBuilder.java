@@ -158,10 +158,22 @@ public class RuleBuilder<TYPE, ANNOTATION> {
         return addSingleClause(parserBuilder.getPlaceholder(name));
     }
 
+    /**
+     * Erzeugt als neue Klausel einen Many-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
+     * @param type Typ zu dem der Many-Ausdruck zusammengefasst werden soll
+     * @param name Regelname
+     * @return Gibt den NextIsOrBuilder zurück.
+     */
     public NextIsOrBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
         return addSingleClause(parserBuilder.getMany(type, name));
     }
 
+    /**
+     * Erzeugt als neue Klausel einen Some-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
+     * @param type Typ zu dem der Some-Ausdruck zusammengefasst werden soll
+     * @param name Regelname
+     * @return Gibt den NextIsOrBuilder zurück.
+     */
     public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
         return addSingleClause(parserBuilder.getSome(type, name));
     }

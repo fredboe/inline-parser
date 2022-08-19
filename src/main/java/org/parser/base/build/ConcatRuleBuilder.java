@@ -130,10 +130,24 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
+    /**
+     * Fügt der aktuellen Subrule als neuen Schritt einen Many-Parser, der die Regel mit dem übergebenen Namen
+     * abbilden wird, ein
+     * @param type Typ zu dem der Many-Ausdruck zusammengefasst werden soll
+     * @param name Name der Rule
+     * @return Der zugrundeliegende ConcaRuleBuilder
+     */
     public ConcatRuleBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
         return addStep(parserBuilder.getMany(type, name));
     }
 
+    /**
+     * Fügt der aktuellen Subrule als neuen Schritt einen Some-Parser, der die Regel mit dem übergebenen Namen
+     * abbilden wird, ein
+     * @param type Typ zu dem der Some-Ausdruck zusammengefasst werden soll
+     * @param name Name der Rule
+     * @return Der zugrundeliegende ConcaRuleBuilder
+     */
     public ConcatRuleBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
         return addStep(parserBuilder.getSome(type, name));
     }

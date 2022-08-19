@@ -20,7 +20,15 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
      */
     private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
+    /**
+     * Speichert alle Many-Aufrufe mit dem Namen, welche Regel sie repräsentieren sollen.
+     * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
+     */
     private Map<String, ManyParser<TYPE, ANNOTATION>> manys;
+    /**
+     * Speichert alle Some-Aufrufe mit dem Namen, welche Regel sie repräsentieren sollen.
+     * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
+     */
     private Map<String, SomeParser<TYPE, ANNOTATION>> somes;
 
 
@@ -55,6 +63,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         });
     }
 
+    /**
+     * Baut die ganzen Many-Parser auf, indem die Parser in den Many-Parsern durch die zu dem Namen
+     * gehörigen Regeln ersetzt werden.
+     */
     private void buildManys() {
         manys.forEach((name, placeholder) -> {
             var parser = rules.get(name);
@@ -62,6 +74,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         });
     }
 
+    /**
+     * Baut die ganzen Some-Parser auf, indem die Parser in den Some-Parsern durch die zu dem Namen
+     * gehörigen Regeln ersetzt werden.
+     */
     private void buildSomes() {
         somes.forEach((name, placeholder) -> {
             var parser = rules.get(name);
@@ -103,6 +119,12 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         return placeholder;
     }
 
+    /**
+     * Falls es zu diesem Namen noch keinen Many-Parser gibt, wird dieser erst erzeugt und dann zurückgegeben.
+     * Ansonsten wird der Many-Parser mit dem Namen einfach zurückgegeben.
+     * @param name Regelname
+     * @return Einen Many-Parser, der zu dem übergebenen Namen passt.
+     */
     ManyParser<TYPE, ANNOTATION> getMany(TYPE type, String name) {
         if (name == null) return null;
         if (manys.containsKey(name)) return manys.get(name);
@@ -112,6 +134,12 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         return many;
     }
 
+    /**
+     * Falls es zu diesem Namen noch keinen Some-Parser gibt, wird dieser erst erzeugt und dann zurückgegeben.
+     * Ansonsten wird der Some-Parser mit dem Namen einfach zurückgegeben.
+     * @param name Regelname
+     * @return Einen Some-Parser, der zu dem übergebenen Namen passt.
+     */
     SomeParser<TYPE, ANNOTATION> getSome(TYPE type, String name) {
         if (name == null) return null;
         if (somes.containsKey(name)) return somes.get(name);

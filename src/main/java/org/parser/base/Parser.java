@@ -34,22 +34,51 @@ public interface Parser<TYPE, ANNOTATION> {
         return applyTo(new Consumable(sequence));
     }
 
+    /**
+     * Grundlegender Or-Parser mit den übergebenen Parsern als Subparsern und atSuccess ist Parser.basicOrAtSuccess().
+     * @param parsers Subparser
+     * @return Gibt einen Or-Parser mit Parser.basicOrAtSuccess() als Erfolgsmethode zurück
+     */
     static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> or(List<Parser<TYPE, ANNOTATION>> parsers) {
         return new OrParser<>(basicOrAtSuccess(), parsers);
     }
 
+    /**
+     *
+     * @param type Typ des erstellten AST
+     * @param parsers Subparser
+     * @return Gibt einen Or-Parser zurück mit Parser.basicOrWithNodeAtSuccess(type) als Erfolgsmethode zurück.
+     */
     static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> orWithNode(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
         return new OrParser<>(basicOrWithNodeAtSuccess(type), parsers);
     }
 
+    /**
+     *
+     * @param type Typ des erstellten AST
+     * @param parsers Subparser
+     * @return Gibt einen Concat-Parser mit Parser.basicConcatAtSuccess(type) als Erfolgsmethode zurück.
+     */
     static <TYPE, ANNOTATION> ConcatParser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
         return new ConcatParser<>(basicConcatAtSuccess(type), parsers);
     }
 
+    /**
+     *
+     * @param type Typ des erstellten AST
+     * @param parser Subparser
+     * @return Gibt einen Many-Parser mit dem übergebenen Typen und dem übergebenen Parser als Subparser zurück.
+     */
     static <TYPE, ANNOTATION> ManyParser<TYPE, ANNOTATION> many(TYPE type, Parser<TYPE, ANNOTATION> parser) {
         return new ManyParser<>(type, parser);
     }
 
+    /**
+     *
+     * @param type Typ des erstellten AST
+     * @param parser Subparser
+     * @return Gibt einen Some-Parser mit dem übergebenen Typen und dem übergebenen Parser als Subparser zurück.
+     */
     static <TYPE, ANNOTATION> SomeParser<TYPE, ANNOTATION> some(TYPE type, Parser<TYPE, ANNOTATION> parser) {
         return new SomeParser<>(type, parser);
     }
