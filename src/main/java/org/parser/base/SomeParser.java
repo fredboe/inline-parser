@@ -35,13 +35,22 @@ public class SomeParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      * Bei einem Some-Parser wird der gespeicherte Parser zunächst einmal ausgeführt. Dabei muss er erfolgreich
      * sein, ansonsten schlägt auch der Some-Parser fehl. Danach wird der gespeicherte Parser so lange ausgeführt,
      * bis dieser fehlschlägt. Am Ende wird dann ein AST erstellt, mit den beim mehrmaligen Ausführen des Parsers
-     * entstandenen ASTs als Kindern (die Liste ist also mindestens einelementig) und dem gespeicherten Typen.
+     * entstandenen ASTs als Kindern (die Liste ist also mindestens einelementig) und dem gespeicherten Typen. <br>
+     *
+     * Funktionsweise: Es wird ein Concat-Parser erzeugt, der aus dem normalen Parser und einem Many-Parser
+     * des normalen Parsers besteht. Das Ergebnis ergibt sich dann aus dem ersten Durchlauf des Parsers
+     * und dann aus den im Many-Parser erfolgreichen Durchläufen, also den Kindern des Many-Parsers.
      * @param consumable Consumable
      * @return Ein AST mit Optional gewrappt (bei Many ist dieser immer present).
      */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
-        ConcatParser<TYPE, ANNOTATION> someParser = new ConcatParser<>(trees -> trees.get(1).addChild(trees.get(0)));
+        // Es wird ein Concat-Parser erzeugt, der aus dem normalen Parser und einem Many-Parser des normalen Parsers besteht.
+        // Das Ergebnis ergibt sich dann aus dem ersten Durchlauf des Parsers und dann aus den im Many-Parser
+        // erfolgreichen Durchläufen, also den Kindern des Many-Parsers.
+        ConcatParser<TYPE, ANNOTATION> someParser = new ConcatParser<>(
+                trees -> new AST<TYPE, ANNOTATION>(type, null).addChild(trees.get(0)).addChildren(trees.get(1).getChildren())
+        );
         someParser.addSubparser(parser);
         someParser.addSubparser(new ManyParser<>(type, parser));
         return someParser.applyTo(consumable);

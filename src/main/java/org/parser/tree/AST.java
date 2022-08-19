@@ -2,10 +2,7 @@ package org.parser.tree;
 
 import org.parser.Consumable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Abstract Syntax Tree
@@ -69,6 +66,16 @@ public class AST<TYPE, ANNOTATION> {
      */
     public AST<TYPE, ANNOTATION> addChild(AST<TYPE, ANNOTATION> ast) {
         children.add(ast);
+        return this;
+    }
+
+    /**
+     * Fügt diesem Knoten mehrere Kinder ein (einen anderen AST)
+     * @param ASTs Collections aus ASTs
+     * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
+     */
+    public AST<TYPE, ANNOTATION> addChildren(Collection<AST<TYPE, ANNOTATION>> ASTs) {
+        children.addAll(ASTs);
         return this;
     }
 
