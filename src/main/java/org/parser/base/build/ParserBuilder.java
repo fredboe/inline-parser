@@ -1,8 +1,10 @@
 package org.parser.base.build;
 
 import org.parser.base.*;
+import org.parser.tree.AST;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -20,11 +22,15 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
      */
     private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
+    private Map<String, ManyParser<TYPE, ANNOTATION>> manys;
+    private Map<String, SomeParser<TYPE, ANNOTATION>> somes;
 
 
     public ParserBuilder() {
         this.rules = new HashMap<>();
         this.placeholders = new HashMap<>();
+        this.manys = new HashMap<>();
+        this.somes = new HashMap<>();
     }
 
     /**
@@ -33,6 +39,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      */
     public ParserPool<TYPE, ANNOTATION> build() {
         buildPlaceholders();
+        buildManys();
+        buildSomes();
         ParserPool<TYPE, ANNOTATION> pool = new ParserPool<>(rules);
         clear();
         return pool;
@@ -49,12 +57,28 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         });
     }
 
+    private void buildManys() {
+        manys.forEach((name, placeholder) -> {
+            var parser = rules.get(name);
+            placeholder.setParserIfNull(parser);
+        });
+    }
+
+    private void buildSomes() {
+        somes.forEach((name, placeholder) -> {
+            var parser = rules.get(name);
+            placeholder.setParserIfNull(parser);
+        });
+    }
+
     /**
      * Löscht alle in diesem Objekt enthaltenen Informationen.
      */
     public void clear() {
         rules = null;
         placeholders = null;
+        manys = null;
+        somes = null;
     }
 
     /**
@@ -79,6 +103,24 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         PlaceholderParser<TYPE, ANNOTATION> placeholder = new PlaceholderParser<>();
         placeholders.put(name, placeholder);
         return placeholder;
+    }
+
+    ManyParser<TYPE, ANNOTATION> getMany(TYPE type, String name) {
+        if (name == null) return null;
+        if (manys.containsKey(name)) return manys.get(name);
+
+        ManyParser<TYPE, ANNOTATION> many = new ManyParser<>(type);
+        manys.put(name, many);
+        return many;
+    }
+
+    SomeParser<TYPE, ANNOTATION> getSome(TYPE type, String name) {
+        if (name == null) return null;
+        if (somes.containsKey(name)) return somes.get(name);
+
+        SomeParser<TYPE, ANNOTATION> some = new SomeParser<>(type);
+        somes.put(name, some);
+        return some;
     }
 
     /**

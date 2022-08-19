@@ -130,6 +130,14 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
+    public ConcatRuleBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
+        return addStep(parserBuilder.getMany(type, name));
+    }
+
+    public ConcatRuleBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
+        return addStep(parserBuilder.getSome(type, name));
+    }
+
     /**
      * Fügt der zugrundeliegenden Rule die aktuelle Subrule als Klausel ein und gibt den RuleBuilder wieder zurück.
      * Die or-Methode pausiert diesen ConcatRuleBuilder, sodass andere Methodenaufrufe als newSubrule keine

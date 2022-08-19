@@ -158,6 +158,14 @@ public class RuleBuilder<TYPE, ANNOTATION> {
         return addSingleClause(parserBuilder.getPlaceholder(name));
     }
 
+    public NextIsOrBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
+        return addSingleClause(parserBuilder.getMany(type, name));
+    }
+
+    public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
+        return addSingleClause(parserBuilder.getSome(type, name));
+    }
+
     /**
      *
      * @return Gibt den Regelnamen zurück
