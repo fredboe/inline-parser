@@ -17,10 +17,10 @@ public class Consumable {
     public record Match(String matched, int start, int end) {}
 
     /**
-     * Flags, die angeben, welche Modi es für die Pattern-Erzeugung gibt.
+     * Flags, die angeben, welche Zeichenketten ignoriert werden sollen.
      */
     public enum Ignore {
-        IGNORE_WHITESPACE("\\s"), IGNORE_LINEBREAK("\n"), IGNORE_COMMENTS(".");
+        IGNORE_WHITESPACE("\\s"), IGNORE_LINEBREAK("\n"), IGNORE_COMMENT("//.*\n|((?s)/\\*.*\\*/)");
 
         private final String value;
 
@@ -28,6 +28,10 @@ public class Consumable {
             this.value = value;
         }
 
+        /**
+         *
+         * @return Gibt die Regular Expression zu dem Ignore zurück.
+         */
         private String getValue() {
             return value;
         }
@@ -42,22 +46,45 @@ public class Consumable {
      */
     private int startIndex;
 
+    /**
+     * Speichert ein Pattern, dass alle RegEx enthält, die ignoriert werden sollen
+     */
     private WhatToIgnore whatToIgnore;
 
+    /**
+     * Erzeugt ein Consumable-Objekt mit der übergebenen CharSequence, bei der keine Zeichenketten ignoriert werden.
+     * @param sequence CharSequence
+     */
     public Consumable(CharSequence sequence) {
         this.sequence = sequence != null ? sequence : "";
         this.startIndex = 0;
         this.whatToIgnore = new WhatToIgnore();
+        this.whatToIgnore.build();
     }
 
-    public Consumable(CharSequence sequence, Ignore toIgnore) {
-        this(sequence);
-        this.whatToIgnore = new WhatToIgnore(toIgnore);
-    }
-
-    public Consumable(CharSequence sequence, Ignore... toIgnores) {
+    /**
+     * Erzeugt ein Consumable-Objekt mit der übergebenen CharSequence und den toIgnores als zu ignorierenden Zeichenketten.
+     * @param sequence CharSequence
+     * @param toIgnores zu ignorierende Zeichenketten
+     */
+    public Consumable(CharSequence sequence, Ignore ... toIgnores) {
         this(sequence);
         this.whatToIgnore = new WhatToIgnore(toIgnores);
+        this.whatToIgnore.build();
+    }
+
+    /**
+     * Erzeugt ein Consumable-Objekt mit der übergebenen CharSequence, den toIgnores als zu ignorierenden Zeichenketten und
+     * dem comment-String als Regular Expression für einen Comment, der auch ignoriert werden soll
+     * @param sequence CharSequence
+     * @param commentRegEx Regular Expression, die einen Comment repräsentiert
+     * @param toIgnores zu ignorierende Zeichenketten
+     */
+    public Consumable(CharSequence sequence, String commentRegEx, Ignore ... toIgnores) {
+        this(sequence);
+        this.whatToIgnore = new WhatToIgnore(toIgnores);
+        this.whatToIgnore.addIgnore(commentRegEx);
+        this.whatToIgnore.build();
     }
 
     public Consumable(Consumable other) {
@@ -195,27 +222,64 @@ public class Consumable {
      * Speichert ein Pattern, welches als prefix ignoriert werden soll
      */
     private static class WhatToIgnore {
-        private final Pattern toIgnore;
+        /**
+         * Pattern, dass alle zu ignorierenden Zeichenketten repräsentiert.
+         */
+        private Pattern toIgnore = null;
+        /**
+         * StringBuilder, mit dem das Pattern gebaut wird
+         */
+        private StringBuilder toIgnoreBuilder;
 
         public WhatToIgnore() {
-            toIgnore = null;
+            toIgnoreBuilder = new StringBuilder().append("(");
         }
 
-        public WhatToIgnore(Ignore flag) {
-            toIgnore = Pattern.compile(flag.getValue());
-        }
-
+        /**
+         * Fügt die übergebenen Ignores zu den ignorierenden Zeichenketten hinzu
+         * @param flags zu ignorierende Zeichenketten
+         */
         public WhatToIgnore(Ignore ... flags) {
-            StringBuilder toIgnoreBuilder = new StringBuilder().append("(");
-            toIgnoreBuilder.append(flags[0].getValue());
-            for (int i = 1; i < flags.length; i++) {
-                toIgnoreBuilder.append("|").append(flags[i].getValue());
+            toIgnoreBuilder = new StringBuilder().append("(");
+            for (Ignore flag : flags) {
+                toIgnoreBuilder.append(flag.getValue()).append("|");
             }
-            toIgnoreBuilder.append(")*");
-
-            this.toIgnore = Pattern.compile(toIgnoreBuilder.toString());
         }
 
+        /**
+         * Fügt eine RegEx zu den ignorierenden Zeichenketten hinzu
+         * @param regex Regular Expression
+         */
+        public void addIgnore(String regex) {
+            if (toIgnoreBuilder != null) toIgnoreBuilder.append(regex).append("|");
+        }
+
+        /**
+         * Fügt ein Ignore zu den ignorierenden Zeichenketten hinzu
+         * @param flag zu ignorierende Zeichenkette
+         */
+        public void addIgnore(Ignore flag) {
+            if (toIgnoreBuilder != null) toIgnoreBuilder.append(flag.getValue()).append("|");
+        }
+
+        /**
+         * Baut aus den ignorierenden Zeichenketten ein Pattern.
+         */
+        public void build() {
+            if (toIgnoreBuilder.length() == 1) {
+                toIgnore = Pattern.compile("");
+            } else {
+                toIgnoreBuilder.setCharAt(toIgnoreBuilder.length() - 1, ')');
+                toIgnoreBuilder.append("*");
+                toIgnore = Pattern.compile(toIgnoreBuilder.toString());
+            }
+            toIgnoreBuilder = null;
+        }
+
+        /**
+         *
+         * @return Gibt das erzeugte Pattern zurück, welches ignoriert werden soll (muss nach build() aufgerufen werden).
+         */
         public Pattern toIgnore() {
             return toIgnore;
         }
