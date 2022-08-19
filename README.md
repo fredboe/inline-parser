@@ -1,7 +1,12 @@
-# parser
+# inline-parser
+Bibliothek zum Erstellen von Parsern im Java-Code.
 
 ### Grundsätzliches
-Implementierung eines rekursiven Parsers in Java.
+inline-parser ist eine Bibliothek zum Erstellen von Parsern, ohne einen Parser-Generator
+zu verwenden. Die Grammatik wird also direkt im Code angeben und anschließend
+wird daraus ein rekursiver Parser erstellt.
+Die Bibliothek versucht vor allem eine einfache Lesbarkeit und Implementierbarkeit zu ermöglichen;
+weniger im Vordergrund steht die Möglichkeit high-performance Parser erstellen zu können.
 
 ### Beispiel
 In diesem Abschnitt möchte ich in sehr knapper Form die Funktionsweise dieser
@@ -10,7 +15,7 @@ Bibliothek vorstellen. Wenn sie ausführliche Beispiele sehen wollen, schauen si
 
 Als einführendes Beispiel in die Bibliothek, möchte ich zeigen, wie ein if-Parser
 erstellt werden kann. Zunächst muss hierfür ein `ParserBuilder` Objekt erstellt werden:
-```
+```java
 ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 ```
 Nun können wir in diesem Builder Regeln erstellen, die die Grammatik repräsentieren.
@@ -40,9 +45,8 @@ ParserPool<TYPE, ANNOTATION> pool = builder.build();
 
 Hierbei ist `TYPE` ein Enum mit den Werten `IF, LEQ, GEQ, ...` und 
 `ANNOTATION` ist eine Klasse (diese müssen sie selber definieren), mit der sie beim entstehenden AST 
-Anmerkungen an die Knoten schreiben können.
-
-
+Anmerkungen an die Knoten schreiben können. Außerdem kommen die Backslashes in den hide-Methoden
+daher, dass dort eine Regular Expression angegeben werden muss.
 
 ### Autor
 Frederik Böcker
