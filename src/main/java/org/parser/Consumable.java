@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// irgendwo ein fehler in der logik mit isEmpty
 /**
  * CharSequence, die konsumiert werden kann
  */
@@ -18,6 +17,23 @@ public class Consumable {
     public record Match(String matched, int start, int end) {}
 
     /**
+     * Flags, die angeben, welche Modi es für die Pattern-Erzeugung gibt.
+     */
+    public enum Ignore {
+        IGNORE_WHITESPACE("\\s"), IGNORE_LINEBREAK("\n"), IGNORE_COMMENTS(".");
+
+        private final String value;
+
+        Ignore(String value) {
+            this.value = value;
+        }
+
+        private String getValue() {
+            return value;
+        }
+    }
+
+    /**
      * CharSequence, die konsumierbar sein soll
      */
     private final CharSequence sequence;
@@ -26,14 +42,28 @@ public class Consumable {
      */
     private int startIndex;
 
+    private WhatToIgnore whatToIgnore;
+
     public Consumable(CharSequence sequence) {
         this.sequence = sequence != null ? sequence : "";
         this.startIndex = 0;
+        this.whatToIgnore = new WhatToIgnore();
+    }
+
+    public Consumable(CharSequence sequence, Ignore toIgnore) {
+        this(sequence);
+        this.whatToIgnore = new WhatToIgnore(toIgnore);
+    }
+
+    public Consumable(CharSequence sequence, Ignore... toIgnores) {
+        this(sequence);
+        this.whatToIgnore = new WhatToIgnore(toIgnores);
     }
 
     public Consumable(Consumable other) {
         this.sequence = other.sequence;
         this.startIndex = other.startIndex;
+        this.whatToIgnore = other.whatToIgnore;
     }
 
     /**
@@ -44,11 +74,8 @@ public class Consumable {
      *         wird Optional.empty() zurückgegeben
      */
     public Optional<Match> lookingAt(Pattern pattern) {
-        if (isEmpty()) {
-            System.out.println();
-            return Optional.empty();
-        }
-
+        if (isEmpty()) return Optional.empty();
+        ignore(whatToIgnore.prefixToIgnore());
         Matcher matcher = genMatcher(pattern);
         return genMatch(matcher.lookingAt(), matcher);
     }
@@ -73,6 +100,7 @@ public class Consumable {
      */
     public Optional<Match> find(Pattern pattern) {
         if (isEmpty()) return Optional.empty();
+        ignore(whatToIgnore.prefixToIgnore());
         Matcher matcher = genMatcher(pattern);
         return genMatch(matcher.find(), matcher);
     }
@@ -86,6 +114,11 @@ public class Consumable {
      */
     public Optional<Match> find(String regex) {
         return find(Pattern.compile(regex));
+    }
+
+    private void ignore(Pattern pattern) {
+        Matcher matcher = genMatcher(pattern);
+        genMatch(matcher.lookingAt(), matcher);
     }
 
     /**
@@ -143,5 +176,33 @@ public class Consumable {
      */
     public String toString() {
         return getSequenceLeft().toString();
+    }
+
+
+    private static class WhatToIgnore {
+        private final Pattern prefixToIgnore;
+
+        public WhatToIgnore() {
+            prefixToIgnore = Pattern.compile("");
+        }
+
+        public WhatToIgnore(Ignore flag) {
+            prefixToIgnore = Pattern.compile(flag.getValue());
+        }
+
+        public WhatToIgnore(Ignore... flags) {
+            StringBuilder prefixToIgnoreBuilder = new StringBuilder().append("(");
+            prefixToIgnoreBuilder.append(flags[0].getValue());
+            for (int i = 1; i < flags.length; i++) {
+                prefixToIgnoreBuilder.append("|").append(flags[i].getValue());
+            }
+            prefixToIgnoreBuilder.append(")*");
+
+            this.prefixToIgnore = Pattern.compile(prefixToIgnoreBuilder.toString());
+        }
+
+        public Pattern prefixToIgnore() {
+            return prefixToIgnore;
+        }
     }
 }

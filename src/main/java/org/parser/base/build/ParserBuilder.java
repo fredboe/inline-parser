@@ -1,6 +1,5 @@
 package org.parser.base.build;
 
-import org.parser.GenPattern;
 import org.parser.base.*;
 
 import java.util.*;
@@ -22,21 +21,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      */
     private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
 
-    /**
-     * Speichert Flags/Zustände, die verwendet werden sollen.
-     */
-    private final GenPattern utils;
 
     public ParserBuilder() {
         this.rules = new HashMap<>();
         this.placeholders = new HashMap<>();
-        this.utils = new GenPattern();
-    }
-
-    public ParserBuilder(GenPattern.Flag flag) {
-        this.rules = new HashMap<>();
-        this.placeholders = new HashMap<>();
-        this.utils = new GenPattern(flag);
     }
 
     /**
@@ -109,7 +97,7 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      *         (verändert diese, falls Flags gesetzt wurden).
      */
     Pattern getPattern(String regex) {
-        return utils.getPattern(regex);
+        return Pattern.compile(regex);
     }
 
 
