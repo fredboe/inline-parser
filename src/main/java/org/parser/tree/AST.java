@@ -164,10 +164,12 @@ public class AST<TYPE, ANNOTATION> {
         builder.append('\n');
         for (Iterator<AST<TYPE, ANNOTATION>> it = children.iterator(); it.hasNext();) {
             var next = it.next();
-            if (it.hasNext()) {
-                next.toStringRec(builder, childrenPrefix + "├── ", childrenPrefix + "│   ");
-            } else {
-                next.toStringRec(builder, childrenPrefix + "└── ", childrenPrefix + "    ");
+            if (next != null) {
+                if (it.hasNext()) {
+                    next.toStringRec(builder, childrenPrefix + "├── ", childrenPrefix + "│   ");
+                } else {
+                    next.toStringRec(builder, childrenPrefix + "└── ", childrenPrefix + "    ");
+                }
             }
         }
     }

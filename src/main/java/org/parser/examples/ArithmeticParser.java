@@ -9,18 +9,16 @@ public class ArithmeticParser {
     }
 
     /**
-     * Grammar:
-     * <number> ::= [0-9] <number> | [0-9]
-     * <factor> ::= ( <expr> ) | <number>
-     * <term> ::= <factor> * <term> | <factor> / <term> | <number>
-     * <expr> ::= <term> + <expr> | <term> - <expr> | <term>
+     * Grammar: <br>
+     * number ::= [0-9] number | [0-9] <br>
+     * factor ::= "(" expr ")" | number <br>
+     * term ::= factor "*" term | factor "/" term | number <br>
+     * expr ::= term "+" expr | term "-" expr | term <br>
+     *
      * @return Gibt einen ParserPool für arithmetische Ausdrücke zurück
      * @param <ANNOTATION> ANNOTATION-Typ des AST
      */
-    public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> arithmeticParser() {
-        /*
-
-         */
+    public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> arithmeticExample() {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
         builder.newRule("NUMBER").consistsOf().match(TYPE.NUMBER, "\\d+").end();
 
