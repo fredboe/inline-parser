@@ -46,6 +46,14 @@ public interface Parser<TYPE, ANNOTATION> {
         return new ConcatParser<>(basicConcatAtSuccess(type), parsers);
     }
 
+    static <TYPE, ANNOTATION> ManyParser<TYPE, ANNOTATION> many(TYPE type, Parser<TYPE, ANNOTATION> parser) {
+        return new ManyParser<>(type, parser);
+    }
+
+    static <TYPE, ANNOTATION> SomeParser<TYPE, ANNOTATION> some(TYPE type, Parser<TYPE, ANNOTATION> parser) {
+        return new SomeParser<>(type, parser);
+    }
+
     /**
      * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
      * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
