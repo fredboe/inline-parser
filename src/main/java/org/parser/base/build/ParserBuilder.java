@@ -1,10 +1,8 @@
 package org.parser.base.build;
 
 import org.parser.base.*;
-import org.parser.tree.AST;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
