@@ -2,3 +2,4 @@
 - parser generator
 - many, some parser (ohne typen sollen von concat drüber als kinder übernommen werden)
 - many builder als parameter in ...
+- addAll und add optimieren

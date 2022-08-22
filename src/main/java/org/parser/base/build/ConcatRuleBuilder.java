@@ -94,6 +94,10 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         return addStep(parserBuilder.getMany(null, name));
     }
 
+    public ManyBuilder<TYPE, ANNOTATION> many() {
+        return new ManyBuilder<>(parserBuilder, this);
+    }
+
     /**
      * Fügt der zugrundeliegenden Rule die aktuelle Subrule als Klausel ein und gibt den RuleBuilder wieder zurück.
      * Die or-Methode pausiert diesen ConcatRuleBuilder, sodass andere Methodenaufrufe als newSubrule keine
@@ -124,7 +128,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param parser Parser
      * @return Der zugrundeliegende ConcatRuleBuilder.
      */
-    private ConcatRuleBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
+    public ConcatRuleBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
         if (!frozen && subrule != null) subrule.addSubparser(parser);
         return this;
     }

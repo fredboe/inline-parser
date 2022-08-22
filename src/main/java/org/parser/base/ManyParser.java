@@ -46,7 +46,12 @@ public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
         List<AST<TYPE, ANNOTATION>> ASTs = new ArrayList<>();
 
         while ((optionalAST = parser.applyTo(consumable)).isPresent()) {
-            ASTs.add(optionalAST.get());
+            var ast = optionalAST.get();
+            if (ast.getType() != null) {
+                ASTs.add(optionalAST.get());
+            } else {
+                ASTs.addAll(ast.getChildren());
+            }
         }
         return Optional.of(new AST<>(type, null, ASTs));
     }
