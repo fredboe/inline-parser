@@ -26,8 +26,17 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      */
     private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
 
+    /**
+     * Der manyBuilder (dieser kann immer wieder verwendet werden und muss nicht immer neu erzeugt werden
+     * oder zurückgesetzt werden)
+     */
     private final ManyBuilder<TYPE, ANNOTATION> manyBuilder;
+    /**
+     * Der someBuilder (dieser kann immer wieder verwendet werden und muss nicht immer neu erzeugt werden,
+     * denn er kann einfach zurückgesetzt werden)
+     */
     private final SomeBuilder<TYPE, ANNOTATION> someBuilder;
+
     /**
      * Subrule (ConcatParser der einzelnen RegEx-Parser. Dieser wird später als Klausel dem RuleBuilder hinzugefügt.)
      */
@@ -68,7 +77,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Subrule als neue Schritt einen Hide-Parser ein.
+     * Fügt der aktuellen Subrule als neuen Schritt einen Hide-Parser ein.
      * @param pattern Pattern
      * @return Der zugrundeliegende ConcatRuleBuilder.
      */
@@ -77,7 +86,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Subrule als neue Schritt einen Hide-Parser ein.
+     * Fügt der aktuellen Subrule als neuen Schritt einen Hide-Parser ein.
      * @param regex RegEx
      * @return Der zugrundeliegende ConcatRuleBuilder.
      */
