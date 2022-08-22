@@ -98,6 +98,15 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         return new ManyBuilder<>(parserBuilder, this);
     }
 
+    public ConcatRuleBuilder<TYPE, ANNOTATION> some(String name) {
+        this.rule(name);
+        return this.many(name);
+    }
+
+    public SomeBuilder<TYPE, ANNOTATION> some() {
+        return new SomeBuilder<>(parserBuilder, this);
+    }
+
     /**
      * Fügt der zugrundeliegenden Rule die aktuelle Subrule als Klausel ein und gibt den RuleBuilder wieder zurück.
      * Die or-Methode pausiert diesen ConcatRuleBuilder, sodass andere Methodenaufrufe als newSubrule keine
