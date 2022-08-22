@@ -12,13 +12,10 @@ import java.util.function.Function;
  * Or-Parser
  */
 public class OrParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION> {
-    /**
-     * Menge an Parsern, die verodert werden sollen.
-     */
     private List<Parser<TYPE, ANNOTATION>> parsers;
     /**
-     * Diese Methode wird aufgerufen, sobald der erste Parser erfolgreich war. Ihr wird dann der gelieferte
-     * AST übergeben. Diese Methode soll letztendlich dann den resultierenden AST liefern.
+     * This method is called as soon as the first parser was successful. It is then passed the supplied
+     * AST is passed to it. This method should then eventually return the resulting AST.
      */
     private final Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> atSuccess;
 
@@ -34,11 +31,11 @@ public class OrParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION>
     }
 
     /**
-     * Die Methode geht durch alle Parser durch und sobald der erste Parser erfolgreich auf dem Consumable
-     * war, wird die Methode atSuccess aufgerufen. Zum Schluss wird das ignore-Bit dann noch auf das ignore-Bit
-     * des erfolgreichen ASTs gesetzt.
+     * The method goes through all parsers and as soon as the first parser was successful on the consumable
+     * was successful, the method atSuccess is called. Finally, the ignore bit is then set to the ignore bit * of the successful AST.
+     * of the successful AST.
      * @param consumable Consumable
-     * @return Ein AST mit Optional gewrappt (empty, falls alle der Parser einen Fehler liefern)
+     * @return An AST wrapped with Optional (empty if all of the parsers return an error)
      */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {

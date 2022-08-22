@@ -16,8 +16,8 @@ public class RegExParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      */
     private final Pattern pattern;
     /**
-     * Diese Funktion wird aufgerufen, wenn das RegEx-Pattern erfolgreich gematcht wurde.
-     * Diese Methode soll letztendlich dann den resultierenden AST liefern.
+     * This function is called when the RegEx pattern has been successfully matched.
+     * This method should then eventually return the resulting AST.
      */
     private final Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess;
 
@@ -27,10 +27,10 @@ public class RegExParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     }
 
     /**
-     * Prüft, ob die Regular-Expression erfolgreich gematcht wird. Wenn ja, wird auf dem zurückgegebenen
-     * Match Objekt atSuccess aufgerufen, ansonsten wird Optional.empty() zurückgegeben.
+     * Checks if the regular expression is successfully matched. If so, atSuccess is called on the returned
+     * Match object atSuccess is called, otherwise Optional.empty() is returned.
      * @param consumable Consumable
-     * @return Ein AST mit Optional gewrappt (empty, falls die RegEx nicht gematcht wird)
+     * @return An AST wrapped with Optional (empty if the regex is not matched).
      */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {

@@ -11,35 +11,35 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Regeln:
- * - Ein Parser sollte das Consumable nur konsumieren, wenn der Parser erfolgreich ist.
- * - Wird ein Verbindungsparser (ASTs als Input) implementiert, sollten die ASTs ignoriert werden,
- *   bei denen das ignore-Bit gesetzt ist
- * - Ein Parsing-Fehler soll mittels Optional übergeben werden (empty)
- * @param <TYPE> Typ
- * @param <ANNOTATION> ANNOTATION-Class beim Abstract Syntax Tree
+ * Rules:
+ * - A parser should consume the consumable only if the parser is successful.
+ * - If a connection parser (ASTs as input) is implemented, the ASTs should be ignored,
+ * where the ignore bit is set
+ * - A parsing error should be passed using Optional (empty).
+ * @param <TYPE> type
+ * @param <ANNOTATION> ANNOTATION-Class at Abstract Syntax Tree
  */
 public interface Parser<TYPE, ANNOTATION> {
     /**
-     * Erhält eine CharSequence und erzeugt aus dieser einen AST.
+     * Obtains a CharSequence and creates an AST from it.
      * @param consumable Consumable
-     * @return Ein AST mit Optional gewrappt (empty falls Parsing-Fehler)
+     * @return An AST wrapped with Optional (empty if parsing error)
      */
     Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable);
 
     /**
-     * Erhält eine CharSequence und erzeugt aus dieser einen AST.
+     * Receives a CharSequence and creates an AST from it.
      * @param sequence CharSequence
-     * @return Ein AST mit Optional gewrappt (empty falls Parsing-Fehler)
+     * @return An AST wrapped with optional (empty if parsing error)
      */
     default Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
         return applyTo(new Consumable(sequence));
     }
 
     /**
-     * Grundlegender Or-Parser mit den übergebenen Parsern als Subparsern und atSuccess ist Parser.basicOrAtSuccess().
-     * @param parsers Subparser
-     * @return Gibt einen Or-Parser mit Parser.basicOrAtSuccess() als Erfolgsmethode zurück
+     * Basic Or parser with the passed parsers as subparsers and atSuccess is Parser.basicOrAtSuccess().
+     * @param parsers Subparser.
+     * @return Returns an Or parser with Parser.basicOrAtSuccess() as success method.
      */
     static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> or(List<Parser<TYPE, ANNOTATION>> parsers) {
         return new OrParser<>(basicOrAtSuccess(), parsers);
@@ -47,9 +47,9 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param type Typ des erstellten AST
-     * @param parsers Subparser
-     * @return Gibt einen Or-Parser zurück mit Parser.basicOrWithNodeAtSuccess(type) als Erfolgsmethode zurück.
+     * @param type Type of the created AST.
+     * @param parsers subparser
+     * @return Returns an Or parser with Parser.basicOrWithNodeAtSuccess(type) as success method.
      */
     static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> orWithNode(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
         return new OrParser<>(basicOrWithNodeAtSuccess(type), parsers);
@@ -57,9 +57,9 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param type Typ des erstellten AST
+     * @param type Type of the created AST.
      * @param parsers Subparser
-     * @return Gibt einen Concat-Parser mit Parser.basicConcatAtSuccess(type) als Erfolgsmethode zurück.
+     * @return Returns a concat parser with Parser.basicConcatAtSuccess(type) as success method.
      */
     static <TYPE, ANNOTATION> ConcatParser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
         return new ConcatParser<>(basicConcatAtSuccess(type), parsers);
@@ -67,73 +67,73 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param type Typ des erstellten AST
-     * @param parser Subparser
-     * @return Gibt einen Many-Parser mit dem übergebenen Typen und dem übergebenen Parser als Subparser zurück.
+     * @param type Type of the created AST.
+     * @param parser subparser
+     * @return Returns a many-parser with the passed type and the passed parser as subparser.
      */
     static <TYPE, ANNOTATION> ManyParser<TYPE, ANNOTATION> many(TYPE type, Parser<TYPE, ANNOTATION> parser) {
         return new ManyParser<>(type, parser);
     }
 
     /**
-     * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
-     * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
+     * A basic hide parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be successfully matched. The success method simply returns an AST, with type set to the ignore bit.
      * @param pattern Pattern
-     * @return Ein grundlegender Hide-Parser
+     * @return A basic hide parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(Pattern pattern) {
         return new RegExParser<>(pattern, basicHideAtSuccess());
     }
 
     /**
-     * Ein grundlegender Hide-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
-     * werden konnte. Die Erfolgsmethode gibt einfach einen AST zurück, mit dem Typ type, bei dem das ignore-Bit gesetzt ist.
+     * A basic hide parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be successfully matched. The success method simply returns an AST, with type set to the ignore bit.
      * @param regex Regular-Expression
-     * @return Ein grundlegender Hide-Parser
+     * @return A basic hide parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(String regex) {
         return hide(Pattern.compile(regex));
     }
 
     /**
-     * Ein grundlegender Keyword-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
-     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type, bei dem das Match-Objekt auf null gesetzt ist.
-     * @param type Typ
+     * A basic keyword parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be matched. The success method returns an AST with type type where the match object is set to null.
+     * @param type type
      * @param pattern Pattern
-     * @return Ein grundlegender Keyword-Parser
+     * @return A basic keyword parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicKeywordAtSuccess(type));
     }
 
     /**
-     * Ein grundlegender Keyword-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
-     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type, bei dem das Match-Objekt auf null gesetzt ist.
-     * @param type Typ
+     * A basic keyword parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be matched. The success method returns an AST with type type where the match object is set to null.
+     * @param type type
      * @param regex Regular-Expression
-     * @return Ein grundlegender Keyword-Parser
+     * @return A basic keyword parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
         return keyword(type, Pattern.compile(regex));
     }
 
     /**
-     * Ein grundlegender Match-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
-     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type und dem gematchten Match.
-     * @param type Typ
+     * A basic match parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be matched. The success method returns an AST with type type and the matched match.
+     * @param type Type
      * @param pattern Pattern
-     * @return Ein grundlegender Match-Parser
+     * @return A basic match parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicMatchAtSuccess(type));
     }
 
     /**
-     * Ein grundlegender Match-Parser. Dieser ruft die Erfolgsmethode auf, wenn das übergebene Pattern erfolgreich gematcht
-     * werden konnte. Die Erfolgsmethode gibt einen AST zurück mit dem Typ type und dem gematchten Match.
-     * @param type Typ
-     * @param regex Regular-Expression
-     * @return Ein grundlegender Match-Parser
+     * A basic match parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be matched. The success method returns an AST with type type and the matched match.
+     * @param type Type
+     * @param regex regular expression
+     * @return A basic match parser
      */
     static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, String regex) {
         return match(type, Pattern.compile(regex));
@@ -142,8 +142,8 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt die Identitätsfunktion zurück, denn ein normaler Or-Parser besitzt keinen Typ, sondern
-     * übernimmt den Typen des erfolgreichen Subparsers.
+     * @return Returns the identity function, because a normal Or parser does not have a type but
+     * takes the type of the successful subparser.
      */
     static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrAtSuccess() {
         return ast -> ast;
@@ -151,19 +151,18 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param type Typ des resultierenden AST
-     * @return Gibt eine Funktion zurück, die aus einem AST A einen AST B mit dem übergebenen Typen und A als Kind macht.
-     *
+     * @param type Type of the resulting AST.
+     * @return Returns a function that turns an AST A into an AST B with the passed type and A as child.
      */
     static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrWithNodeAtSuccess(TYPE type) {
         return ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast);
     }
 
     /**
-     * Falls einer der Kindknoten den Typ null haben, wird dieser AST in der Liste durch seine Kinder ersetzt.
-     * @param type Typ des resultierenden AST
-     * @return Gibt eine Funktion zurück, die aus mehreren ASTs einen AST B erstellt mit dem übergebenen Typen und den
-     * ASTs als Kindern.
+     * If any of the child nodes have type null, this AST will be replaced by its children in the list.
+     * @param type Type of the resulting AST.
+     * @return Returns a function that creates an AST B from multiple ASTs with the passed type and the
+     * ASTs as children.
      */
     static <TYPE, ANNOTATION> Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> basicConcatAtSuccess(TYPE type) {
         return trees -> {
@@ -175,9 +174,9 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param type Typ des resultierenden AST
-     * @return Gibt eine Funktion zurück, die aus einem Match einen AST erzeugt, der den übergebenen Typen hat und
-     * das Match als "Match".
+     * @param type Type of the resulting AST.
+     * @return Returns a function that creates an AST from a match that has the passed type, and
+     * the match as "match".
      */
     static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicMatchAtSuccess(TYPE type) {
         return match -> new AST<>(type, match);
@@ -185,7 +184,7 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt eine Funktion zurück, die aus einem Match einen AST erzeugt, bei dem das Ignore-Bit gesetzt ist.
+     * @return Returns a function that creates an AST from a match with the ignore bit set.
      */
     static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicHideAtSuccess() {
         return match -> new AST<TYPE, ANNOTATION>(null).setIgnore(true);
@@ -193,9 +192,9 @@ public interface Parser<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param type Typ des resultierenden AST
-     * @return Gibt eine Funktion zurück, die aus einem Match einen AST erzeugt, der den übergebenen Typen hat
-     * und das Match des ASTs ist aber null.
+     * @param type Type of the resulting AST.
+     * @return Returns a function which creates an AST from a match which has the passed type
+     * but the match of the AST is null.
      */
     static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicKeywordAtSuccess(TYPE type) {
         return match -> new AST<>(type, null);

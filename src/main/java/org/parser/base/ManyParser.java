@@ -8,18 +8,18 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Ein Many-Parser hält einen Parser und führt diesen so lange aus, bis dieser fehlschlägt.
- * Ein Many-Parser ist immer erfolgreich, gibt also immer einen AST zurück.
- * @param <TYPE> Typ-Klasse des AST
- * @param <ANNOTATION> Annotation-Klasse des AST
+ * A many-parser holds a parser and executes it until it fails.
+ * A many-parser is always successful, so it always returns an AST.
+ * @param <TYPE> Type class of the AST.
+ * @param <ANNOTATION> annotation class of the AST.
  */
 public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     /**
-     * Typ eines mit Many erstellten AST
+     * Type of an AST created with Many
      */
     private final TYPE type;
     /**
-     * Parser der wiederholt ausgeführt werden soll
+     * Parser to be executed repeatedly
      */
     private Parser<TYPE, ANNOTATION> parser;
 
@@ -34,13 +34,13 @@ public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     }
 
     /**
-     * Bei einem Many-Parser wird der gespeicherte Parser so lange ausgeführt, bis dieser fehlschlägt.
-     * Am Ende wird dann ein AST erstellt, mit den beim mehrmaligen Ausführen des Parsers entstandenen ASTs als
-     * Kindern (die Kinder-Liste kann also auch leer sein) und dem gespeicherten Typen. Falls der Typ des
-     * ASTs null ist, wird nicht der AST als Kind übernommen, sondern die Kinder des ASTs werden als Kinder
-     * übernommen.
+     * With a many-parser, the stored parser is executed until it fails.
+     * At the end, an AST is then created, with the ASTs created by running the parser multiple times as the
+     * children (so the children list can also be empty) and the stored type. If the type of the
+     * AST is null, the AST is not taken as a child, but the children of the AST are taken as children.
+     * are taken over.
      * @param consumable Consumable
-     * @return Ein AST mit Optional gewrappt (bei Many ist dieser immer present).
+     * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {

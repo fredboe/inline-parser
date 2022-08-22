@@ -2,14 +2,14 @@ package org.parser.base;
 
 public interface DepthParser<TYPE, ANNOTATION> extends Parser<TYPE, ANNOTATION> {
     /**
-     * Fügt dem Parser einen neuen Subparser ein
-     * @param subparser Subparser
+     * Inserts a new subparser into the parser
+     * @param subparser subparser
      */
     void addSubparser(Parser<TYPE, ANNOTATION> subparser);
 
     /**
-     * Prüft, ob der Parser Subparser besitzt.
-     * @return true, falls der Parser Subparser besitzt, sonst false
+     * Checks if the parser has subparsers.
+     * @return true if the parser has subparsers, false otherwise.
      */
     boolean isEmpty();
 }
