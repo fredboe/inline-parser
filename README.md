@@ -48,6 +48,9 @@ Hierbei ist `TYPE` ein Enum mit den Werten `IF, LEQ, GEQ, ...` und
 Anmerkungen an die Knoten schreiben können. Außerdem kommen die Backslashes in den hide-Methoden
 daher, dass dort eine Regular Expression angegeben werden muss.
 
+### Notes
+- Links-rekursive Grammatiken sind nicht möglich, da sie zu unendlicher Rekursion führen
+
 ### Autor
 Frederik Böcker
 

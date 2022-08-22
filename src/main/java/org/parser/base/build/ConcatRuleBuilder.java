@@ -63,51 +63,11 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Subrule als neue Schritt einen Match-Parser ein.
-     * @param type Typ zu dem ein Match zusammengefasst wird
-     * @param pattern Pattern
-     * @return Der zugrundeliegende ConcatRuleBuilder.
-     */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
-        return addStep(Parser.match(type, pattern));
-    }
-
-    /**
-     * Fügt der aktuellen Subrule als neue Schritt einen Match-Parser ein.
-     * @param type Typ zu dem ein Match zusammengefasst wird
-     * @param regex RegEx
-     * @return Der zugrundeliegende ConcatRuleBuilder.
-     */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
-        return match(type, parserBuilder.getPattern(regex));
-    }
-
-    /**
-     * Fügt der aktuellen Subrule als neue Schritt einen Keyword-Parser ein.
-     * @param type Typ zu dem ein Match zusammengefasst wird
-     * @param pattern Pattern
-     * @return Der zugrundeliegende ConcatRuleBuilder.
-     */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
-        return addStep(Parser.keyword(type, pattern));
-    }
-
-    /**
-     * Fügt der aktuellen Subrule als neue Schritt einen Keyword-Parser ein.
-     * @param type Typ zu dem ein Match zusammengefasst wird
-     * @param regex RegEx
-     * @return Der zugrundeliegende ConcatRuleBuilder.
-     */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
-        return keyword(type, parserBuilder.getPattern(regex));
-    }
-
-    /**
      * Fügt der aktuellen Subrule als neue Schritt einen Hide-Parser ein.
      * @param pattern Pattern
      * @return Der zugrundeliegende ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> hide(Pattern pattern) {
+    public ConcatRuleBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
         return addStep(Parser.hide(pattern));
     }
 
@@ -116,8 +76,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return Der zugrundeliegende ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> hide(String regex) {
-        return hide(parserBuilder.getPattern(regex));
+    public ConcatRuleBuilder<TYPE, ANNOTATION> match(String regex) {
+        return match(parserBuilder.getPattern(regex));
     }
 
     /**
@@ -130,26 +90,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
-    /**
-     * Fügt der aktuellen Subrule als neuen Schritt einen Many-Parser, der die Regel mit dem übergebenen Namen
-     * abbilden wird, ein
-     * @param type Typ zu dem der Many-Ausdruck zusammengefasst werden soll
-     * @param name Name der Rule
-     * @return Der zugrundeliegende ConcaRuleBuilder
-     */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
-        return addStep(parserBuilder.getMany(type, name));
-    }
-
-    /**
-     * Fügt der aktuellen Subrule als neuen Schritt einen Some-Parser, der die Regel mit dem übergebenen Namen
-     * abbilden wird, ein
-     * @param type Typ zu dem der Some-Ausdruck zusammengefasst werden soll
-     * @param name Name der Rule
-     * @return Der zugrundeliegende ConcaRuleBuilder
-     */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
-        return addStep(parserBuilder.getSome(type, name));
+    public ConcatRuleBuilder<TYPE, ANNOTATION> many(String name) {
+        return addStep(parserBuilder.getMany(null, name));
     }
 
     /**

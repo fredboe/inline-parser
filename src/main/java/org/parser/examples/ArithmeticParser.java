@@ -23,23 +23,23 @@ public class ArithmeticParser {
         builder.newRule("NUMBER").consistsOf().match(TYPE.NUMBER, "\\d+").end();
 
         builder.newRule("FACTOR").consistsOf()
-                .concat().hide("\\(").rule("EXPR").hide("\\)")
+                .concat().match("\\(").rule("EXPR").match("\\)")
                 .or()
                 .rule("NUMBER")
                 .end();
 
         builder.newRule("TERM").consistsOf()
-                .concat(TYPE.MUL).rule("FACTOR").hide("\\*").rule("TERM")
+                .concat(TYPE.MUL).rule("FACTOR").match("\\*").rule("TERM")
                 .or()
-                .concat(TYPE.DIV).rule("FACTOR").hide("/").rule("TERM")
+                .concat(TYPE.DIV).rule("FACTOR").match("/").rule("TERM")
                 .or()
                 .rule("FACTOR")
                 .end();
 
         builder.newRule("EXPR").consistsOf()
-                .concat(TYPE.ADD).rule("TERM").hide("\\+").rule("EXPR")
+                .concat(TYPE.ADD).rule("TERM").match("\\+").rule("EXPR")
                 .or()
-                .concat(TYPE.SUB).rule("TERM").hide("\\-").rule("EXPR")
+                .concat(TYPE.SUB).rule("TERM").match("\\-").rule("EXPR")
                 .or()
                 .rule("TERM")
                 .end();

@@ -1,3 +1,4 @@
 - switch to english
 - parser generator
-- many, some parser
+- many, some parser (ohne typen sollen von concat drüber als kinder übernommen werden)
+- many builder als parameter in ...

@@ -25,18 +25,12 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
      */
     private Map<String, ManyParser<TYPE, ANNOTATION>> manys;
-    /**
-     * Speichert alle Some-Aufrufe mit dem Namen, welche Regel sie repräsentieren sollen.
-     * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
-     */
-    private Map<String, SomeParser<TYPE, ANNOTATION>> somes;
 
 
     public ParserBuilder() {
         this.rules = new HashMap<>();
         this.placeholders = new HashMap<>();
         this.manys = new HashMap<>();
-        this.somes = new HashMap<>();
     }
 
     /**
@@ -46,7 +40,6 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     public ParserPool<TYPE, ANNOTATION> build() {
         buildPlaceholders();
         buildManys();
-        buildSomes();
         ParserPool<TYPE, ANNOTATION> pool = new ParserPool<>(rules);
         clear();
         return pool;
@@ -75,24 +68,12 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Baut die ganzen Some-Parser auf, indem die Parser in den Some-Parsern durch die zu dem Namen
-     * gehörigen Regeln ersetzt werden.
-     */
-    private void buildSomes() {
-        somes.forEach((name, placeholder) -> {
-            var parser = rules.get(name);
-            placeholder.setParserIfNull(parser);
-        });
-    }
-
-    /**
      * Löscht alle in diesem Objekt enthaltenen Informationen.
      */
     public void clear() {
         rules = null;
         placeholders = null;
         manys = null;
-        somes = null;
     }
 
     /**
@@ -132,21 +113,6 @@ public class ParserBuilder<TYPE, ANNOTATION> {
         ManyParser<TYPE, ANNOTATION> many = new ManyParser<>(type);
         manys.put(name, many);
         return many;
-    }
-
-    /**
-     * Falls es zu diesem Namen noch keinen Some-Parser gibt, wird dieser erst erzeugt und dann zurückgegeben.
-     * Ansonsten wird der Some-Parser mit dem Namen einfach zurückgegeben.
-     * @param name Regelname
-     * @return Einen Some-Parser, der zu dem übergebenen Namen passt.
-     */
-    SomeParser<TYPE, ANNOTATION> getSome(TYPE type, String name) {
-        if (name == null) return null;
-        if (somes.containsKey(name)) return somes.get(name);
-
-        SomeParser<TYPE, ANNOTATION> some = new SomeParser<>(type);
-        somes.put(name, some);
-        return some;
     }
 
     /**

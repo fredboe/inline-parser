@@ -3,10 +3,12 @@ package org.parser.base;
 import org.parser.Consumable;
 import org.parser.tree.AST;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Regeln:
@@ -71,16 +73,6 @@ public interface Parser<TYPE, ANNOTATION> {
      */
     static <TYPE, ANNOTATION> ManyParser<TYPE, ANNOTATION> many(TYPE type, Parser<TYPE, ANNOTATION> parser) {
         return new ManyParser<>(type, parser);
-    }
-
-    /**
-     *
-     * @param type Typ des erstellten AST
-     * @param parser Subparser
-     * @return Gibt einen Some-Parser mit dem übergebenen Typen und dem übergebenen Parser als Subparser zurück.
-     */
-    static <TYPE, ANNOTATION> SomeParser<TYPE, ANNOTATION> some(TYPE type, Parser<TYPE, ANNOTATION> parser) {
-        return new SomeParser<>(type, parser);
     }
 
     /**
@@ -168,13 +160,17 @@ public interface Parser<TYPE, ANNOTATION> {
     }
 
     /**
-     *
+     * Falls einer der Kindknoten den Typ null haben, wird dieser AST in der Liste durch seine Kinder ersetzt.
      * @param type Typ des resultierenden AST
      * @return Gibt eine Funktion zurück, die aus mehreren ASTs einen AST B erstellt mit dem übergebenen Typen und den
      * ASTs als Kindern.
      */
     static <TYPE, ANNOTATION> Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> basicConcatAtSuccess(TYPE type) {
-        return trees -> new AST<>(type, null, trees);
+        return trees -> {
+            var children = trees.stream().map(tree -> tree.getType() == null ? tree.getChildren() : List.of(tree))
+                  .flatMap(Collection::stream).collect(Collectors.toList());
+            return new AST<>(type, null, children);
+        };
     }
 
     /**

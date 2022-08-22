@@ -60,21 +60,18 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param atSuccess Wird aufgerufen, wenn der ConcatParser erfolgreich ist.
      * @return Ein zurückgesetzter ConcatRuleBuilder, dessen ConcatParser die übergebene atSuccess-Methode verwendet.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> concat(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
+    private ConcatRuleBuilder<TYPE, ANNOTATION> concat(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
         if (!frozen) concatRuleBuilder.newSubrule(atSuccess);
         return concatRuleBuilder;
     }
 
     /**
      * Erzeugt eine neue Subrule, die aus mehreren Elementen besteht.
+     * (Übernimmt als AST das erste Kind, wenn es dieses gibt.)
      * @return Ein zurückgesetzter ConcatRuleBuilder, dessen ConcatParser als AST einfach den AST des ersten Kindes nimmt.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> concat() {
-        return concat(
-                trees -> trees.size() >= 1
-                        ? trees.get(0)
-                        : null
-        );
+        return concat(trees -> trees.size() >= 1 ? trees.get(0) : null);
     }
 
     /**
@@ -166,16 +163,6 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
         return addSingleClause(parserBuilder.getMany(type, name));
-    }
-
-    /**
-     * Erzeugt als neue Klausel einen Some-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
-     * @param type Typ zu dem der Some-Ausdruck zusammengefasst werden soll
-     * @param name Regelname
-     * @return Gibt den NextIsOrBuilder zurück.
-     */
-    public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
-        return addSingleClause(parserBuilder.getSome(type, name));
     }
 
     /**

@@ -39,26 +39,25 @@ public class BranchParser {
                 .end();
 
         builder.newRule("IF").consistsOf()
-                .concat(TYPE.IF).hide("if").hide("\\(").rule("CONDITION")
-                .hide("\\)").rule("BLOCK")
+                .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
                 .end();
 
         builder.newRule("CONDITION").consistsOf()
-                .concat(TYPE.LEQ).rule("LITERAL").hide("<=").rule("LITERAL")
+                .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
                 .or()
-                .concat(TYPE.GEQ).rule("LITERAL").hide(">=").rule("LITERAL")
+                .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
                 .end();
 
         builder.newRule("BLOCK").consistsOf()
-                .concat().hide("\\{").many(TYPE.BLOCK, "ASSIGN").hide("\\}")
+                .concat(TYPE.BLOCK).match("\\{").many("ASSIGN").match("\\}")
                 .end();
 
         builder.newRule("ASSIGN").consistsOf()
-                .concat(TYPE.ASSIGN).rule("IDENTIFIER").hide("=").rule("EXPR").hide(";")
+                .concat(TYPE.ASSIGN).rule("IDENTIFIER").match("=").rule("EXPR").match(";")
                 .end();
 
         builder.newRule("EXPR").consistsOf()
-                .concat(TYPE.ADD).rule("LITERAL").hide("\\+").rule("EXPR")
+                .concat(TYPE.ADD).rule("LITERAL").match("\\+").rule("EXPR")
                 .or()
                 .rule("LITERAL")
                 .end();
