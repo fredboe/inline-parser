@@ -5,19 +5,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * CharSequence, die konsumiert werden kann
+ * CharSequence that can be consumed.
  */
 public class Consumable {
     /**
-     * Repräsentiert einen erfolgreichen RegEx-Match in der CharSequence
-     * @param matched Zeichenkette, die mit der RegEx übereinstimmt
+     * Represents a successful RegEx match in the CharSequence.
+     * @param matched string that matches the RegEx
      * @param start Start Index (matcher.start())
      * @param end End Index (matcher.end())
      */
     public record Match(String matched, int start, int end) {}
 
     /**
-     * Flags, die angeben, welche Zeichenketten ignoriert werden sollen.
+     * Flags that specify which strings to ignore.
      */
     public enum Ignore {
         IGNORE_WHITESPACE("\\s"), IGNORE_LINEBREAK("\n"), IGNORE_COMMENT("//.*\n|((?s)/\\*.*\\*/)");
@@ -30,7 +30,7 @@ public class Consumable {
 
         /**
          *
-         * @return Gibt die Regular Expression zu dem Ignore zurück.
+         * @return Returns the Regular Expression to the Ignore.
          */
         private String getValue() {
             return value;
@@ -38,21 +38,21 @@ public class Consumable {
     }
 
     /**
-     * CharSequence, die konsumierbar sein soll
+     * CharSequence to be consumable
      */
     private final CharSequence sequence;
     /**
-     * Der aktuelle Index, bei der die konsumierte Sequence starten soll (erhöht sich bei Konsumierung)
+     * The current index at which the consumed sequence should start (increases when consumed).
      */
     private int startIndex;
 
     /**
-     * Speichert ein Pattern, dass alle RegEx enthält, die ignoriert werden sollen
+     * Stores a pattern that contains all regexes that should be ignored.
      */
     private WhatToIgnore whatToIgnore;
 
     /**
-     * Erzeugt ein Consumable-Objekt mit der übergebenen CharSequence, bei der keine Zeichenketten ignoriert werden.
+     * Creates a Consumable object with the passed CharSequence, where no strings are ignored.
      * @param sequence CharSequence
      */
     public Consumable(CharSequence sequence) {
@@ -63,9 +63,9 @@ public class Consumable {
     }
 
     /**
-     * Erzeugt ein Consumable-Objekt mit der übergebenen CharSequence und den toIgnores als zu ignorierenden Zeichenketten.
+     * Creates a Consumable object with the passed CharSequence and the toIgnores as strings to be ignored.
      * @param sequence CharSequence
-     * @param toIgnores zu ignorierende Zeichenketten
+     * @param toIgnores strings to be ignored
      */
     public Consumable(CharSequence sequence, Ignore ... toIgnores) {
         this(sequence);
@@ -74,11 +74,11 @@ public class Consumable {
     }
 
     /**
-     * Erzeugt ein Consumable-Objekt mit der übergebenen CharSequence, den toIgnores als zu ignorierenden Zeichenketten und
-     * dem comment-String als Regular Expression für einen Comment, der auch ignoriert werden soll
+     * Creates a Consumable object with the passed CharSequence, the toIgnores as strings to be ignored and
+     * the comment string as a regular expression for a comment that should also be ignored
      * @param sequence CharSequence
-     * @param commentRegEx Regular Expression, die einen Comment repräsentiert
-     * @param toIgnores zu ignorierende Zeichenketten
+     * @param commentRegEx Regular Expression, which represents a Comment
+     * @param toIgnores strings to be ignored
      */
     public Consumable(CharSequence sequence, String commentRegEx, Ignore ... toIgnores) {
         this(sequence);
@@ -94,11 +94,11 @@ public class Consumable {
     }
 
     /**
-     * Ruft lookingAt mit dem Pattern auf und falls die RegEx gefunden wurde, wird die Sequence bis zum
-     * Ende des gefundenen Matches konsumiert.
-     * @param pattern RegEx-Pattern
-     * @return Gibt das Match-Objekt der zur RegEx passenden Zeichenkette zurück, falls die RegEx fehlschlug,
-     *         wird Optional.empty() zurückgegeben
+     * Calls lookingAt with the pattern and if the regex is found, the sequence is consumed until the
+     * end of the match found is consumed.
+     * @param pattern RegEx pattern
+     * @return Returns the match object of the string matching the RegEx, if the RegEx failed,
+     * optional.empty() is returned
      */
     public Optional<Match> lookingAt(Pattern pattern) {
         if (isEmpty()) return Optional.empty();
@@ -111,11 +111,11 @@ public class Consumable {
     }
 
     /**
-     * Ruft lookingAt mit dem Pattern auf und falls die RegEx gefunden wurde, wird die Sequence bis zum
-     * Ende des gefundenen Matches konsumiert.
-     * @param regex RegEx-String
-     * @return Gibt das Match-Objekt der zur RegEx passenden Zeichenkette zurück, falls die RegEx fehlschlug,
-     *         wird Optional.empty() zurückgegeben
+     * Calls lookingAt with the pattern and if the regex is found, the sequence is consumed until the
+     * end of the match found is consumed.
+     * @param regex RegEx string
+     * @return Returns the match object of the string matching the regex if the regex failed,
+     * optional.empty() is returned
      */
     public Optional<Match> lookingAt(String regex) {
         return lookingAt(Pattern.compile(regex));
@@ -139,18 +139,18 @@ public class Consumable {
     }
 
     /**
-     * Ruft find mit dem Pattern auf und falls die RegEx gefunden wurde, wird die Sequence bis zum
-     * Ende des gefundenen Matches konsumiert.
-     * @param regex RegEx-String
-     * @return Gibt das Match-Objekt der zur RegEx passenden Zeichenkette zurück, falls die RegEx fehlschlug,
-     *         wird Optional.empty() zurückgegeben
+     * Calls find with the pattern and if the regex is found, the sequence is consumed to the
+     * end of the match found is consumed.
+     * @param regex RegEx string
+     * @return Returns the match object of the string matching the regex if the regex failed,
+     * optional.empty() is returned
      */
     public Optional<Match> find(String regex) {
         return find(Pattern.compile(regex));
     }
 
     /**
-     * Versucht das toIgnore-Pattern zu matchen und ignoriert das Ergebnis
+     * Attempts to match the toIgnore pattern and ignores the result.
      */
     private void ignore() {
         Pattern pattern = whatToIgnore.toIgnore();
@@ -161,10 +161,10 @@ public class Consumable {
     }
 
     /**
-     * Generiert ein Match-Objekt, basierend auf dem übergebenen Matcher.
-     * @param success success-Bit
+     * Generates a match object based on the passed matcher.
+     * @param success success bit
      * @param matcher Matcher
-     * @return Gibt ein Optional<Match> Objekt zurück
+     * @return Returns an Optional<Match> object.
      */
     private Optional<Match> genMatch(boolean success, Matcher matcher) {
         if (success) {
@@ -175,9 +175,9 @@ public class Consumable {
     }
 
     /**
-     * Generiert ein Matcher Objekt basierend auf dem übergebenen Pattern und der aktuellen Sequebce
+     * Generates a Matcher object based on the passed pattern and the current sequebce.
      * @param pattern Pattern
-     * @return Gibt ein Matcher Objekt zurück
+     * @return Returns a Matcher object
      */
     private Matcher genMatcher(Pattern pattern) {
         return pattern.matcher(getSequenceLeft());
@@ -185,7 +185,7 @@ public class Consumable {
 
     /**
      *
-     * @return Gibt die aktuelle Sequence zurück (mit Konsumierung)
+     * @return Returns the current sequence (with consumption)
      */
     public CharSequence getSequenceLeft() {
         if (isEmpty()) return "";
@@ -193,9 +193,9 @@ public class Consumable {
     }
 
     /**
-     * Setzt das aktuelle Consumable Objekt auf das übergebene Consumable-Objekt zurück, falls
-     * die Sequence Objekte von beiden übereinstimmen
-     * @param other Consumable-Objekt
+     * Resets the current consumable object to the passed consumable object if
+     * the Sequence objects of both match
+     * @param other Consumable object
      */
     public void resetTo(Consumable other) {
         if (other.sequence == this.sequence) this.startIndex = other.startIndex;
@@ -203,7 +203,7 @@ public class Consumable {
 
     /**
      *
-     * @return Gibt zurück, ob das Consumable Objekt noch einen (nicht konsumierten) Character besitzt
+     * @return Returns whether the consumable object still has a (non-consumed) character.
      */
     public boolean isEmpty() {
         return sequence == null || sequence.isEmpty() || startIndex >= sequence.length();
@@ -211,7 +211,7 @@ public class Consumable {
 
     /**
      *
-     * @return Erzeugt aus der übriggebliebenen CharSequence einen String.
+     * @return Creates a string from the remaining CharSequence.
      */
     public String toString() {
         return getSequenceLeft().toString();
@@ -219,15 +219,15 @@ public class Consumable {
 
 
     /**
-     * Speichert ein Pattern, welches als prefix ignoriert werden soll
+     * Stores a pattern to be ignored as prefix
      */
     private static class WhatToIgnore {
         /**
-         * Pattern, dass alle zu ignorierenden Zeichenketten repräsentiert.
+         * Pattern that represents all strings to be ignored.
          */
         private Pattern toIgnore = null;
         /**
-         * StringBuilder, mit dem das Pattern gebaut wird
+         * StringBuilder, which is used to build the pattern.
          */
         private StringBuilder toIgnoreBuilder;
 
@@ -236,8 +236,8 @@ public class Consumable {
         }
 
         /**
-         * Fügt die übergebenen Ignores zu den ignorierenden Zeichenketten hinzu
-         * @param flags zu ignorierende Zeichenketten
+         * Adds the passed ignores to the ignoring strings.
+         * @param flags to be ignored strings
          */
         public WhatToIgnore(Ignore ... flags) {
             toIgnoreBuilder = new StringBuilder().append("(");
@@ -247,7 +247,7 @@ public class Consumable {
         }
 
         /**
-         * Fügt eine RegEx zu den ignorierenden Zeichenketten hinzu
+         * Adds a regex to the ignoring strings.
          * @param regex Regular Expression
          */
         public void addIgnore(String regex) {
@@ -255,15 +255,15 @@ public class Consumable {
         }
 
         /**
-         * Fügt ein Ignore zu den ignorierenden Zeichenketten hinzu
-         * @param flag zu ignorierende Zeichenkette
+         * Adds a flag to the ignoring strings.
+         * @param flag to be ignored string
          */
         public void addIgnore(Ignore flag) {
             if (toIgnoreBuilder != null) toIgnoreBuilder.append(flag.getValue()).append("|");
         }
 
         /**
-         * Baut aus den ignorierenden Zeichenketten ein Pattern.
+         * Builds a pattern from the ignoring strings.
          */
         public void build() {
             if (toIgnoreBuilder.length() == 1) {
@@ -278,7 +278,7 @@ public class Consumable {
 
         /**
          *
-         * @return Gibt das erzeugte Pattern zurück, welches ignoriert werden soll (muss nach build() aufgerufen werden).
+         * @return Returns the generated pattern to be ignored (must be called after build()).
          */
         public Pattern toIgnore() {
             return toIgnore;

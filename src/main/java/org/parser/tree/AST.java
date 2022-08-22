@@ -11,23 +11,23 @@ import java.util.*;
  */
 public class AST<TYPE, ANNOTATION> {
     /**
-     * Der Typ des aktuellen Knotens
+     * The type of the current node
      */
     private final TYPE type;
     /**
-     * Das Match-Objekt in der CharSequence (kann null sein)
+     * The match object in the CharSequence (can be null).
      */
     private Consumable.Match match;
     /**
-     * Die Kind-Knoten
+     * The child nodes
      */
     private List<AST<TYPE, ANNOTATION>> children;
     /**
-     * Liste von Annotations, für diesen Knoten
+     * List of annotations, for this node
      */
     private final List<ANNOTATION> annotations;
     /**
-     * Ignore-Bit. Wenn das bit gesetzt ist, soll dieser AST (mit Kindern) ignoriert werden
+     * Ignore bit. If the bit is set, this AST (with children) should be ignored.
      */
     private boolean ignore;
 
@@ -50,9 +50,9 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt diesem Knoten eine Annotation ein
+     * Inserts an annotation to this node
      * @param annotation Annotation
-     * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
+     * @return Returns the AST on which the method was called
      */
     public AST<TYPE, ANNOTATION> addAnnotation(ANNOTATION annotation) {
         annotations.add(annotation);
@@ -60,9 +60,9 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt diesem Knoten ein Kind ein (einen anderen AST)
+     * Adds a child to this node (another AST)
      * @param ast AST
-     * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
+     * @return Returns the AST on which the method was called
      */
     public AST<TYPE, ANNOTATION> addChild(AST<TYPE, ANNOTATION> ast) {
         children.add(ast);
@@ -70,9 +70,9 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt diesem Knoten mehrere Kinder ein (einen anderen AST)
-     * @param ASTs Collections aus ASTs
-     * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
+     * Inserts multiple children to this node (another AST).
+     * @param ASTs Collections from ASTs
+     * @return Returns the AST on which the method was called
      */
     public AST<TYPE, ANNOTATION> addChildren(Collection<AST<TYPE, ANNOTATION>> ASTs) {
         children.addAll(ASTs);
@@ -80,8 +80,8 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Setzt das Ignore-Bit
-     * @return Gibt den AST auf dem die Methode aufgerufen wurde zurück
+     * Sets the ignore bit
+     * @return Returns the AST on which the method was called
      */
     public AST<TYPE, ANNOTATION> setIgnore(boolean ignore) {
         this.ignore = ignore;
@@ -89,8 +89,8 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Gibt an, ob dieser AST ignoriert werden sollte
-     * @return Gibt das Ignore-Bit zurück
+     * Indicates whether this AST should be ignored.
+     * @return Returns the ignore bit
      */
     public boolean shouldIgnore() {
         return ignore;
@@ -98,7 +98,7 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt den Typen/Token, des AST zurück
+     * @return Returns the type/token, of the AST
      */
     public TYPE getType() {
         return type;
@@ -106,7 +106,7 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt das Match als Optional gewrappt zurück (empty falls Match null ist)
+     * @return Returns the match as optional (empty if match is null)
      */
     public Optional<Consumable.Match> getMatch() {
         return Optional.ofNullable(match);
@@ -114,7 +114,7 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt die Liste der Kind-Knoten zurück
+     * @return Returns the list of child nodes
      */
     public List<AST<TYPE, ANNOTATION>> getChildren() {
         return children;
@@ -122,9 +122,9 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param i Index des Knotens
-     * @return Gibt den i-ten Kind-Knoten zurück
-     * @throws IndexOutOfBoundsException, falls der Index zu groß bzw. zu klein ist
+     * @param i Index of the node
+     * @return Returns the i-th child node
+     * @throws IndexOutOfBoundsException, if the index is too big or too small
      */
     public AST<TYPE, ANNOTATION> getChild(int i) {
         return children.get(i);
@@ -132,7 +132,7 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt die Anzahl an Kindern zurück
+     * @return Returns the number of children
      */
     public int numChildren(){
         return children.size();
@@ -140,7 +140,7 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt die Liste der Annotations zurück
+     * @return Returns the list of annotations
      */
     public List<ANNOTATION> getAnnotations() {
         return annotations;
@@ -148,7 +148,7 @@ public class AST<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt den AST als String zurück
+     * @return Returns the AST as string
      */
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -157,9 +157,9 @@ public class AST<TYPE, ANNOTATION> {
     }
 
     /**
-     * Wandelt den AST in einen String um, indem der Builder rekursiv von den Kindern erweitert wird.
+     * Converts the AST to a string by recursively expanding the builder from the children.
      * @param builder StringBuilder
-     * @param prefix String-Prefix, der vor dem aktuellen Knoten eingefügt werden soll
+     * @param prefix String prefix to be inserted before the current node.
      */
     public void toStringRec(StringBuilder builder, String prefix, String childrenPrefix) {
         builder.append(prefix);

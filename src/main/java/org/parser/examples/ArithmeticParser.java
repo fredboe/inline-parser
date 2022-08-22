@@ -17,8 +17,8 @@ public class ArithmeticParser {
      * MUL ::= DIV ("*" DIV)+ | DIV <br>
      * DIV ::= BRAC ("/" BRAC)+ | BRAC <br>
      * BRAC ::= "(" EXPR ")" | NUMBER <br>
-     * @return Gibt einen ParserPool für arithmetische Ausdrücke zurück
-     * @param <ANNOTATION> ANNOTATION-Typ des AST
+     * @return Returns a ParserPool for arithmetic expressions.
+     * @param <ANNOTATION> ANNOTATION type of the AST
      */
     public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> arithmeticExample() {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();

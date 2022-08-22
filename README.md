@@ -1,58 +1,57 @@
 # inline-parser
-Bibliothek zum Erstellen von Parsern im Java-Code.
+Library for creating parsers in Java code.
 
-### Grundsätzliches
-inline-parser ist eine Bibliothek zum Erstellen von Parsern, ohne einen Parser-Generator
-zu verwenden. Die Grammatik wird also direkt im Code angeben und anschließend
-wird daraus ein rekursiver Parser erstellt.
-Die Bibliothek versucht vor allem eine einfache Lesbarkeit und Implementierbarkeit zu ermöglichen;
-weniger im Vordergrund steht die Möglichkeit high-performance Parser erstellen zu können.
+### Basics
+inline-parser is a library for creating parsers without using a parser generator.
+without using a parser generator. So the grammar is specified directly in the code and then
+a recursive parser is created from it.
+The library tries above all to make a simple readability and implementability possible;
+less in the foreground is the possibility to create high-performance parsers.
 
-### Beispiel
-In diesem Abschnitt möchte ich in sehr knapper Form die Funktionsweise dieser
-Bibliothek vorstellen. Wenn sie ausführliche Beispiele sehen wollen, schauen sie einfach im
-`org.parser.examples` Package nach.
+### Example
+In this section, I would like to very briefly introduce the functionality of this
+library. If you want to see detailed examples, just have a look at the
+`org.parser.examples` package.
 
-Als einführendes Beispiel in die Bibliothek, möchte ich zeigen, wie ein if-Parser
-erstellt werden kann. Zunächst muss hierfür ein `ParserBuilder` Objekt erstellt werden:
+As an introductory example to the library, I would like to show how an if-parser
+can be created. First, you have to create a `ParserBuilder` object:
 ```java
 ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 ```
-Nun können wir in diesem Builder Regeln erstellen, die die Grammatik repräsentieren.
-Eine Regel kann man sich als eine Zeile in der Backus-Naur-Form vorstellen. Ein
-If-Statement besteht aus `if`, `(`, `condition`, `)` und dann `statements`.
-Eine solche Regel kann man so konstruieren:
+Now we can create rules in this builder to represent the grammar.
+A rule can be thought of as a line in Backus-Naur form.
+If statement consists of `if`, `(`, `condition`, `)` and then `statements`.
+Such a rule can be constructed like this:
 ```java
 builder.newRule("IF").consistsOf()
-        .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
+        .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)")).rule("BLOCK")
         .end();
 ```
-Nun muss man noch die Regeln "CONDITION" und "BLOCK" definieren. Exemplarisch zeigen
-wir hier, wie eine "CONDITION"-Regel erstellt werden kann mit den Vergleichsoperatoren
-<= und >=:
+Now we have to define the rules "CONDITION" and "BLOCK". As an example we show
+how the "CONDITION" rule can be created with the relational operators
+<= and >=:
 ```java
 builder.newRule("COND").consistsOf()
-        .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
-        .or()
-        .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
-        .end();
+.concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
+.or()
+.concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
+.end();
 ```
-Würde man nun noch die Regeln "BLOCK" und "LITERAL" erstellen, könnte man am Schluss
-einen `ParserPool` für diese Grammatik folgendermaßen erstellen:
+If you would now create the rules "BLOCK" and "LITERAL", you could create at the end
+a `ParserPool` for this grammar as follows:
 ```java
 ParserPool<TYPE, ANNOTATION> pool = builder.build();
 ```
 
-Hierbei ist `TYPE` ein Enum mit den Werten `IF, LEQ, GEQ, ...` und 
-`ANNOTATION` ist eine Klasse (diese müssen sie selber definieren), mit der sie beim entstehenden AST 
-Anmerkungen an die Knoten schreiben können. Außerdem kommen die Backslashes in den match-Methoden
-daher, dass dort eine Regular Expression angegeben werden muss.
+Where `TYPE` is an enum with the values `IF, LEQ, GEQ, ...` and
+`ANNOTATION` is a class (you have to define it yourself), with which you can write annotations to the nodes in the AST.
+Also, the backslashes in the match methods are due to the fact that a Regular Expression must be specified there.
 
 ### Notes
-- Links-rekursive Grammatiken sind nicht möglich, da sie zu unendlicher Rekursion führen.
-- Hat ein Kind eines Concat- oder Many-Parsers einen Typ von null, so wird nicht dieser AST
-  übernommen, sondern die Kinder des ASTs werden dem entstandenen AST an der richtigen Stelle hinzugefügt.
+- Left-recursive grammars are not possible because they lead to infinite recursion.
+- If a child of a concat or many parser has a type of null, this AST will not be
+  taken over, but the children of the AST are added to the resulting AST at the correct position.
 
-### Autor
+### Author
 Frederik Böcker
 

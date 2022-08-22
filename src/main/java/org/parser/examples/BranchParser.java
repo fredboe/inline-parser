@@ -22,8 +22,8 @@ public class BranchParser {
      * assign ::= identifier "=" expr <br>
      * expr ::= literal "+" expr | literal <br>
      *
-     * @return Gibt einen ParserPool für vereinfachte If-Ausdrücke zurück
-     * @param <ANNOTATION> ANNOTATION-Typ des AST
+     * @return Returns a ParserPool for simplified If expressions.
+     * @param <ANNOTATION> ANNOTATION type of the AST
      */
     public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> ifExample() {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
