@@ -1,20 +1,20 @@
 package org.parser.base.build;
 
 /**
- * Der NextIsOrBuilder dient nur dazu, dass der Benutzer dazu gezwungen wird, als Nächstes die or-Methode aufzurufen,
- * oder die end-Methode, welche die ganze Rule beendet.
- * @param <TYPE> Typ des AST
- * @param <ANNOTATION> Annotation des AST
+ * The NextIsOrBuilder is only used to force the user to call the or method next,
+ * or the end method, which terminates the whole rule.
+ * @param <TYPE> type of AST
+ * @param <ANNOTATION> annotation of the AST
  */
 public class NextIsOrBuilder<TYPE, ANNOTATION> {
     /**
-     * Der zugrundeliegende ParserBuilder. Dieser wird bei der end-Methode benötigt, damit die entstandene
-     * Rule zu ihm hinzugefügt werden kann.
+     * The underlying ParserBuilder. This is needed in the end method so that the resulting
+     * Rule can be added to it.
      */
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     /**
-     * Der zugrundeliegende RuleBuilder. Dieser wird benötigt, damit bei Aufruf der or-Methode die Regel
-     * ergänzt werden kann.
+     * The underlying RuleBuilder. This is needed so that when the or method is called the rule
+     * can be added.
      */
     private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
 
@@ -25,15 +25,15 @@ public class NextIsOrBuilder<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt einfach den zugrundeliegenden RuleBuilder zurück.
+     * @return Simply returns the underlying RuleBuilder.
      */
     public RuleBuilder<TYPE, ANNOTATION> or() {
         return ruleBuilder;
     }
 
     /**
-     * Beendet den RuleBuilder, sodass ein Methoden-Aufruf auf diesem nichts mehr bewirkt.
-     * Die entstandene Rule wird dann dem ParserBuilder hinzugefügt.
+     * Terminates the RuleBuilder so that a method call on it does nothing more.
+     * The resulting rule is then added to the ParserBuilder.
      */
     public void end() {
         parserBuilder.addParser(ruleBuilder.getName(), ruleBuilder.freeze());

@@ -6,23 +6,23 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Dient zur Erzeugung eines ParserPools
- * @param <TYPE> Typ für den AST
- * @param <ANNOTATION> Annotation für den AST
+ * Used to create a ParserPool.
+ * @param <TYPE> type for the AST
+ * @param <ANNOTATION> annotation for the AST.
  */
 public class ParserBuilder<TYPE, ANNOTATION> {
     /**
-     * Speichert alle Regeln mit Namen (Eine Regel ist eine Zeile in der BNF).
+     * Stores all rules by name (A rule is one line in the BNF).
      */
     private Map<String, Parser<TYPE, ANNOTATION>> rules;
     /**
-     * Speichert alle Placeholder mit dem Namen, welche Regel sie repräsentieren sollen.
-     * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
+     * Stores all placeholders with the name of the rule they should represent.
+     * This map must be passed through when building, as the placeholders before it do not represent a parser.
      */
     private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
     /**
-     * Speichert alle Many-Aufrufe mit dem Namen, welche Regel sie repräsentieren sollen.
-     * Diese Map muss beim Bauen durchgegangen werden, da die Placeholder davor keinen Parser repräsentieren.
+     * Stores all many calls with the name of which rule they should represent.
+     * This map must be passed through when building, as the placeholders before it do not represent a parser.
      */
     private Map<String, ManyParser<TYPE, ANNOTATION>> manys;
 
@@ -34,8 +34,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Baut den ParserPool, der dann alle Regeln als Parser enthält.
-     * @return Gibt den ParserPool zurück, der alle Regeln als Parser enthält
+     * Builds the ParserPool, which then contains all rules as parsers.
+     * @return Returns the ParserPool which contains all rules as parser.
      */
     public ParserPool<TYPE, ANNOTATION> build() {
         buildPlaceholders();
@@ -46,8 +46,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Baut die ganzen Placeholder auf, indem die Parser in den Placeholdern durch die zu dem Namen
-     * gehörigen Regeln ersetzt werden.
+     * Builds the whole placeholders by replacing the parsers in the placeholders with the rules associated with the name
+     * are replaced by the rules associated with the name.
      */
     private void buildPlaceholders() {
         placeholders.forEach((name, placeholder) -> {
@@ -57,8 +57,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Baut die ganzen Many-Parser auf, indem die Parser in den Many-Parsern durch die zu dem Namen
-     * gehörigen Regeln ersetzt werden.
+     * Builds the many-parsers by replacing the parsers in the many-parsers with the rules associated with the name
+     * are replaced by the rules associated with the name.
      */
     private void buildManys() {
         manys.forEach((name, placeholder) -> {
@@ -68,7 +68,7 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Löscht alle in diesem Objekt enthaltenen Informationen.
+     * Deletes all information contained in this object.
      */
     public void clear() {
         rules = null;
@@ -77,19 +77,19 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt dem Builder einen neuen benannten Parser ein.
-     * @param name Regelname
-     * @param parser Parser
+     * Inserts a new named parser into the builder.
+     * @param name rule name
+     * @param parser parser
      */
     void addParser(String name, Parser<TYPE, ANNOTATION> parser) {
         if (name != null && parser != null) rules.put(name, parser);
     }
 
     /**
-     * Falls es zu diesem Namen noch keinen Placeholder gibt, wird dieser erst erzeugt und dann zurückgegeben.
-     * Ansonsten wird der Placeholder mit dem Namen einfach zurückgegeben.
-     * @param name Regelname
-     * @return Einen Placeholder-Parser, der zu dem übergebenen Namen passt.
+     * If there is no placeholder for this name yet, it will be created first and then returned.
+     * Otherwise the placeholder with the name is simply returned.
+     * @param name Rule name
+     * @return A placeholder parser that matches the passed name.
      */
     PlaceholderParser<TYPE, ANNOTATION> getPlaceholder(String name) {
         if (name == null) return null;
@@ -101,10 +101,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Falls es zu diesem Namen noch keinen Many-Parser gibt, wird dieser erst erzeugt und dann zurückgegeben.
-     * Ansonsten wird der Many-Parser mit dem Namen einfach zurückgegeben.
-     * @param name Regelname
-     * @return Einen Many-Parser, der zu dem übergebenen Namen passt.
+     * If there is no many-parser for this name yet, it will be created first and then returned.
+     * Otherwise the many-parser is simply returned with the name.
+     * @param name Rule name
+     * @return A many-parser that matches the passed name.
      */
     ManyParser<TYPE, ANNOTATION> getMany(TYPE type, String name) {
         if (name == null) return null;
@@ -116,9 +116,9 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt einen neuen RuleBuilder mit dem übergebenen Namen.
-     * @param name Regelname
-     * @return Gibt die Aufruf-Kette des RuleBuilders zurück.
+     * Creates a new RuleBuilder with the passed name.
+     * @param name Rule name
+     * @return Returns the call chain of the RuleBuilder.
      */
     public NewRuleInvocationChain newRule(String name) {
         return new NewRuleInvocationChain(new RuleBuilder<>(name, this));
@@ -127,8 +127,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     /**
      *
      * @param regex RegEx
-     * @return Gibt ein Pattern basierend auf der übergebenen RegEx zurück
-     *         (verändert diese, falls Flags gesetzt wurden).
+     * @return Returns a pattern based on the given regex.
+     * (modifies it if flags are set).
      */
     Pattern getPattern(String regex) {
         return Pattern.compile(regex);
@@ -136,8 +136,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
 
 
     /**
-     * Erster Teil der Aufruf-Kette eines RuleBuilders. Dieser dient nur der Lesbarkeit und erfordert
-     * den Aufruf von consistsOf, damit die Regel gebaut werden kann.
+     * First part of the call chain of a RuleBuilder. This is for readability only and requires
+     * the call to consistsOf in order for the rule to be built.
      */
     public class NewRuleInvocationChain {
         private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;

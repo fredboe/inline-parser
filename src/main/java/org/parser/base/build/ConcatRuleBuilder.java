@@ -9,40 +9,39 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
- * Der ConcatRuleBuilder ermöglicht das Bauen einer Concat-Subrule (also mehreren RegEx oder Rule-Parsern hintereinander)
- * @param <TYPE> Typ des AST
- * @param <ANNOTATION> Annotation des AST
+ * ConcatRuleBuilder allows building a concat subrule (i.e. multiple regex or rule parsers in a row).
+ * @param <TYPE> type of the AST
+ * @param <ANNOTATION> annotation of the AST
  */
 public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     /**
-     * ParserBuilder, im ConcatRuleBuilder wird dieser verwendet für die rule-Parser, um einen
-     * Placeholder-Parser der Placeholder-Map hinzuzufügen, damit dieser später gebaut werden kann und bei
-     * der end-Methode, damit die zugrundeliegende Rule dem ParserBuilder hinzugefügt werden kann.
+     * ParserBuilder, in the ConcatRuleBuilder this is used for the rule parser to add a
+     * placeholder parser to the placeholder map so that it can be built later and for
+     * the end method, so that the underlying rule can be added to the ParserBuilder.
      */
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     /**
-     * RuleBuilder, im ConcatRuleBuilder wird dieser verwendet, um bei or() oder end() die subrule als neue
-     * Klausel hinzuzufügen.
+     * RuleBuilder, in ConcatRuleBuilder this is used to add the subrule as a new clause when using or() or end().
      */
     private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
 
     /**
-     * Der manyBuilder (dieser kann immer wieder verwendet werden und muss nicht immer neu erzeugt werden
-     * oder zurückgesetzt werden)
+     * The manyBuilder (this can be used over and over again and does not have to be always recreated
+     * or be reset)
      */
     private final ManyBuilder<TYPE, ANNOTATION> manyBuilder;
     /**
-     * Der someBuilder (dieser kann immer wieder verwendet werden und muss nicht immer neu erzeugt werden,
-     * denn er kann einfach zurückgesetzt werden)
+     * The someBuilder (this can be used over and over again and does not need to be recreated every time,
+     * because it can be easily reset)
      */
     private final SomeBuilder<TYPE, ANNOTATION> someBuilder;
 
     /**
-     * Subrule (ConcatParser der einzelnen RegEx-Parser. Dieser wird später als Klausel dem RuleBuilder hinzugefügt.)
+     * Subrule (ConcatParser of the individual RegEx/Placholder parsers. This will be added later as a clause to the RuleBuilder).
      */
     private ConcatParser<TYPE, ANNOTATION> subrule;
     /**
-     * Gibt an, ob der ConcatRuleBuilder noch weitere Methodenaufrufe erlaubt
+     * Indicates whether the ConcatRuleBuilder allows any other method calls.
      */
     private boolean frozen;
 
@@ -58,8 +57,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt eine neue Subrule (ConcatParser) mit der übergebenen atSuccess-Methode
-     * @param atSuccess Wird beim Erfolg des ConcatParsers aufgerufen
+     * Creates a new subrule (ConcatParser) with the passed atSuccess method.
+     * @param atSuccess Called on ConcatParser success.
      */
     void newSubrule(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
         if (frozen) {
@@ -69,54 +68,52 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt eine neue Subrule (ConcatParser) mithilfe der Parser.basicConcatAtSuccess Methode.
-     * @param type Typ, zu dem die Concatenation zusammengefasst wird
+     * Creates a new subrule (ConcatParser) using the Parser.basicConcatAtSuccess method.
+     * @param type Type to which the concatenation will be combined.
      */
     void newSubrule(TYPE type) {
         newSubrule(Parser.basicConcatAtSuccess(type));
     }
 
     /**
-     * Fügt der aktuellen Subrule als neuen Schritt einen Hide-Parser ein.
+     * Inserts a hide parser as a new step to the current subrule.
      * @param pattern Pattern
-     * @return Der zugrundeliegende ConcatRuleBuilder.
+     * @return The underlying ConcatRuleBuilder.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
         return addStep(Parser.hide(pattern));
     }
 
     /**
-     * Fügt der aktuellen Subrule als neuen Schritt einen Hide-Parser ein.
+     * Inserts a hide parser as a new step to the current subrule.
      * @param regex RegEx
-     * @return Der zugrundeliegende ConcatRuleBuilder.
+     * @return The underlying ConcatRuleBuilder.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> match(String regex) {
         return match(parserBuilder.getPattern(regex));
     }
 
     /**
-     * Fügt der aktuellen Subrule als neuen Schritt einen Placeholder-Parser, der die Regel mit dem übergebenen
-     * Namen abbilden wird, ein.
-     * @param name Name der Rule
-     * @return Der zugrundeliegende ConcatRuleBuilder.
+     * Inserts a placeholder parser with the supplied name as a new step to the current subrule.
+     * @param name name of the rule
+     * @return The underlying ConcatRuleBuilder.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> rule(String name) {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
     /**
-     * Fügt der aktuellen Subrule als neuen Schritt einen Many-Parser, der die Regel mit dem übergebenen
-     * Namen abbilden wird, ein.
-     * @param name Name der Rule
-     * @return Der zugrundeliegende ConcatRuleBuilder.
+     * Inserts a many parser with the supplied name as a new step to the current subrule.
+     * @param name name of the rule
+     * @return The underlying ConcatRuleBuilder.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> many(String name) {
         return addStep(parserBuilder.getMany(null, name));
     }
 
     /**
-     * Erzeugt einen neuen ManyBuilder, der dann an die Subrule angehängt wird
-     * @return Ein neuer ManyBuilder
+     * Creates a new ManyBuilder, which is then attached to the subrule.
+     * @return A new ManyBuilder
      */
     public ManyBuilder<TYPE, ANNOTATION> many() {
         manyBuilder.newManyRule();
@@ -124,10 +121,10 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Subrule als neuen Schritt zuerst die Rule mit dem übergebenen Namen ein und dann
-     * einen Many-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
-     * @param name Name der Rule
-     * @return Der zugrundeliegende ConcatRuleBuilder.
+     * Inserts into the current subrule as a new step first the rule with the passed name, and then
+     * inserts a many-parser that will map the rule with the passed name.
+     * @param name Name of the rule
+     * @return The underlying ConcatRuleBuilder.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> some(String name) {
         this.rule(name);
@@ -135,8 +132,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt einen neuen Some, der dann an die Subrule angehängt wird
-     * @return Ein neuer SomeBuilder
+     * Creates a new SomeBuilder, which is then attached to the subrule.
+     * @return A new SomeBuilder
      */
     public SomeBuilder<TYPE, ANNOTATION> some() {
         someBuilder.newSomeRule();
@@ -144,10 +141,10 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der zugrundeliegenden Rule die aktuelle Subrule als Klausel ein und gibt den RuleBuilder wieder zurück.
-     * Die or-Methode pausiert diesen ConcatRuleBuilder, sodass andere Methodenaufrufe als newSubrule keine
-     * Auswirkungen auf diesen Builder haben.
-     * @return Der zugrundeliegenden RuleBuilder.
+     * Inserts the current subrule as a clause into the underlying rule and returns the RuleBuilder.
+     * The or method pauses this ConcatRuleBuilder so that method calls other than newSubrule have no * effect on this builder.
+     * have any effect on this builder.
+     * @return The underlying RuleBuilder.
      */
     public RuleBuilder<TYPE, ANNOTATION> or() {
         frozen = true;
@@ -156,8 +153,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Beendet diesen ConcatRuleBuilder und ebenso den zugrundeliegenden RuleBuilder. Die entstandene Rule
-     * wird dann dem ParserBuilder hinzugefügt.
+     * Terminates this ConcatRuleBuilder and also the underlying RuleBuilder. The resulting rule
+     * is then added to the ParserBuilder.
      */
     public void end() {
         if (!subrule.isEmpty()) {
@@ -169,9 +166,9 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Subrule einen neuen Schritt ein, falls dieser ConcatRuleBuilder nicht pausiert ist.
+     * Inserts a new step to the current subrule if this ConcatRuleBuilder is not paused.
      * @param parser Parser
-     * @return Der zugrundeliegende ConcatRuleBuilder.
+     * @return The underlying ConcatRuleBuilder.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
         if (!frozen && subrule != null) subrule.addSubparser(parser);

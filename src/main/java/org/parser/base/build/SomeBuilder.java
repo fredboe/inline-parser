@@ -8,27 +8,27 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * Der SomeBuilder ermöglicht das Bauen einer Some-Subrule (also ein Parser der so lange ausgeführt wird,
- * bis er fehlschlägt, wobei dieser Parser mindestens einmal erfolgreich sein muss).
- * @param <TYPE> Typ des AST
- * @param <ANNOTATION> Annotation des AST
+ * The SomeBuilder allows to build a some-subrule (i.e. a parser that is executed,
+ * until it fails, where this parser must succeed at least once).
+ * @param <TYPE> type of AST.
+ * @param <ANNOTATION> annotation of the AST.
  */
 public class SomeBuilder<TYPE, ANNOTATION> {
     /**
-     * Der ParserBuilder wird verwendet, um neue PlaceholderParser zu erhalten
+     * The ParserBuilder is used to get new placeholder parsers.
      */
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     /**
-     * Der ConcatRuleBuilder wird verwendet, um beim Aufrufen von someEnd() den entstandenen Some-Ausdruck
-     * in der Concat-Rule zu speichern
+     * The ConcatRuleBuilder is used to store the resulting some expression when calling someEnd().
+     * in the Concat-Rule.
      */
     private final ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder;
     /**
-     * Der Parser, der mit some gewrappt wird.
+     * The parser wrapped with some.
      */
     private ConcatParser<TYPE, ANNOTATION> concatParser;
     /**
-     * Gibt an, ob der SomeBuilder noch weitere Methodenaufrufe erlaubt
+     * Indicates whether the SomeBuilder allows any other method calls.
      */
     private boolean frozen;
 
@@ -40,7 +40,7 @@ public class SomeBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt eine neue Some-Rule, wenn die alte bereits eingefroren war.
+     * Creates a new some-rule if the old one was already frozen.
      */
     void newSomeRule() {
         if (frozen) {
@@ -50,36 +50,36 @@ public class SomeBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Some-Rule als neuen Schritt einen Hide-Parser ein.
+     * Inserts a hide parser as a new step to the current some-rule.
      * @param pattern Pattern
-     * @return Der zugrundeliegende SomeBuilder.
+     * @return The underlying SomeBuilder.
      */
     public SomeBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
         return addStep(Parser.hide(pattern));
     }
 
     /**
-     * Fügt der aktuellen Some-Rule als neuen Schritt einen Hide-Parser ein.
+     * Inserts a hide parser as a new step to the current some-rule.
      * @param regex RegEx
-     * @return Der zugrundeliegende SomeBuilder.
+     * @return The underlying SomeBuilder.
      */
     public SomeBuilder<TYPE, ANNOTATION> match(String regex) {
         return match(parserBuilder.getPattern(regex));
     }
 
     /**
-     * Fügt der aktuellen Some-Rule als neuen Schritt einen Placeholder-Parser, der die Regel mit dem übergebenen
-     * Namen abbilden wird, ein.
-     * @param name Name der Rule
-     * @return Der zugrundeliegende SomeBuilder.
+     * Adds a placeholder parser to the current some-rule as a new step, which will map the rule with the given
+     * name will map.
+     * @param name Name of the rule
+     * @return The underlying SomeBuilder.
      */
     public SomeBuilder<TYPE, ANNOTATION> rule(String name) {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
     /**
-     * Friert diesen SomeBuilder ein und speichert den Some-Ausdruck im ConcatRuleBuilder.
-     * @return Gibt den ConcatRuleBuilder zurück, in dem der Some-Ausdruck abgespeichert wurde.
+     * Freezes this SomeBuilder and stores the Some expression in the ConcatRuleBuilder.
+     * @return Returns the ConcatRuleBuilder where the some expression was stored.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> someEnd() {
         frozen = true;
@@ -91,9 +91,9 @@ public class SomeBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt dem aktuellen Some-Ausdruck einen neuen Schritt ein, falls dieser SomeBuilder nicht eingefroren ist.
+     * Inserts a new step into the current Some expression if this SomeBuilder is not frozen.
      * @param parser Parser
-     * @return Der zugrundeliegende SomeBuilder.
+     * @return The underlying SomeBuilder.
      */
     private SomeBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
         if (parser != null && !frozen) concatParser.addSubparser(parser);

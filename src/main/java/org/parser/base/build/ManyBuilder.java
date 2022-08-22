@@ -8,27 +8,27 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * Der ManyBuilder ermöglicht das Bauen einer Many-Subrule (also ein Parser der so lange ausgeführt wird,
- * bis er fehlschlägt).
- * @param <TYPE> Typ des AST
- * @param <ANNOTATION> Annotation des AST
+ * The ManyBuilder allows you to build a many-subrule (i.e. a parser that runs,
+ * until it fails).
+ * @param <TYPE> type of AST
+ * @param <ANNOTATION> annotation of the AST
  */
 public class ManyBuilder<TYPE, ANNOTATION> {
     /**
-     * Der ParserBuilder wird verwendet, um neue PlaceholderParser zu erhalten
+     * The ParserBuilder is used to get new placeholderParser.
      */
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     /**
-     * Der ConcatRuleBuilder wird verwendet, um beim Aufrufen von manyEnd() den entstandenen Many-Ausdruck
-     * in der Concat-Rule zu speichern
+     * The ConcatRuleBuilder is used to, when manyEnd() is called, add the resulting many-expression
+     * in the Concat-Rule
      */
     private final ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder;
     /**
-     * Der Parser, der mit many gewrappt wird.
+      The parser that is wrapped with many .
      */
     private ConcatParser<TYPE, ANNOTATION> concatParser;
     /**
-     * Gibt an, ob der ManyBuilder noch weitere Methodenaufrufe erlaubt
+     * Indicates whether the ManyBuilder allows any other method calls.
      */
     private boolean frozen;
 
@@ -36,12 +36,12 @@ public class ManyBuilder<TYPE, ANNOTATION> {
                        ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder) {
         this.parserBuilder = parserBuilder;
         this.concatBuilder = concatBuilder;
-        this.concatParser  = Parser.concat(null, new ArrayList<>());
+        this.concatParser = Parser.concat(null, new ArrayList<>());
         this.frozen = true;
     }
 
     /**
-     * Erzeugt eine neue Many-Rule, wenn die alte bereits eingefroren war.
+     * Creates a new many-rule if the old one was already frozen.
      */
     void newManyRule() {
         if (frozen) {
@@ -51,36 +51,36 @@ public class ManyBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt der aktuellen Many-Rule als neuen Schritt einen Hide-Parser ein.
+     * Inserts a hide parser as a new step to the current many-rule.
      * @param pattern Pattern
-     * @return Der zugrundeliegende ManyBuilder.
+     * @return The underlying ManyBuilder.
      */
     public ManyBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
         return addStep(Parser.hide(pattern));
     }
 
     /**
-     * Fügt der aktuellen Many-Rule als neuen Schritt einen Hide-Parser ein.
+     * Adds a hide parser to the current many-rule as a new step.
      * @param regex RegEx
-     * @return Der zugrundeliegende ManyBuilder.
+     * @return The underlying ManyBuilder.
      */
     public ManyBuilder<TYPE, ANNOTATION> match(String regex) {
         return match(parserBuilder.getPattern(regex));
     }
 
     /**
-     * Fügt der aktuellen Many-Rule als neuen Schritt einen Placeholder-Parser, der die Regel mit dem übergebenen
-     * Namen abbilden wird, ein.
-     * @param name Name der Rule
-     * @return Der zugrundeliegende ManyBuilder.
+     * Adds as a new step to the current many-rule a placeholder parser that will map the rule with the passed
+     * name passed in.
+     * @param name Name of the rule
+     * @return The underlying ManyBuilder.
      */
     public ManyBuilder<TYPE, ANNOTATION> rule(String name) {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
     /**
-     * Friert diesen ManyBuilder ein und speichert den Many-Ausdruck im ConcatRuleBuilder.
-     * @return Gibt den ConcatRuleBuilder zurück, in dem der Many-Ausdruck abgespeichert wurde.
+     * Freezes this manyBuilder and stores the many expression in the ConcatRuleBuilder.
+     * @return Returns the ConcatRuleBuilder where the many expression was stored.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> manyEnd() {
         frozen = true;
@@ -89,9 +89,9 @@ public class ManyBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt dem aktuellen Many-Ausdruck einen neuen Schritt ein, falls dieser ManyBuilder nicht eingefroren ist.
+     * Adds a new step to the current many expression if this ManyBuilder is not frozen.
      * @param parser Parser
-     * @return Der zugrundeliegende ManyBuilder.
+     * @return The underlying ManyBuilder.
      */
     private ManyBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
         if (parser != null && !frozen) concatParser.addSubparser(parser);

@@ -5,13 +5,13 @@ import org.parser.base.Parser;
 import java.util.Map;
 
 /**
- * Enthält mehrere Parser, auf die mit einem Namen zugegriffen werden kann (entsteht durch ParserBuilder)
- * @param <TYPE> Typ für den AST
- * @param <ANNOTATION> Annotation für den AST
+ * Contains multiple parsers that can be accessed with one name (created by ParserBuilder).
+ * @param <TYPE> type for the AST
+ * @param <ANNOTATION> annotation for the AST
  */
 public class ParserPool<TYPE, ANNOTATION> {
     /**
-     * Map mit Namen der Parser als Key und dem Parser als Value
+     * Map with names of parsers as key and the parser as value
      */
     private final Map<String, Parser<TYPE, ANNOTATION>> parsers;
 
@@ -21,9 +21,9 @@ public class ParserPool<TYPE, ANNOTATION> {
 
     /**
      *
-     * @param name Parser-Name
-     * @return Gibt einen Parser mit dem Namen zurück. Falls es keinen Parser mit diesem Namen gibt, wird null
-     *         zurückgegeben.
+     * @param name Parser name
+     * @return Returns a parser with the name. If there is no parser with that name, null
+     * is returned.
      */
     public Parser<TYPE, ANNOTATION> getParser(String name) {
         return parsers.get(name);

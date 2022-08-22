@@ -12,37 +12,37 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
- * Der Rule-Builder ermöglicht das Bauen von Regeln (also einer Zeile in der BNF).
- * @param <TYPE> Typ des AST
- * @param <ANNOTATION> Annotation des AST
+ * The rule builder allows building rules (i.e. a line in the BNF).
+ * @param <TYPE> type of the AST
+ * @param <ANNOTATION> annotation of the AST
  */
 public class RuleBuilder<TYPE, ANNOTATION> {
     /**
-     * Regelname (mit diesem wird man auf sie zugreifen können)
+     * Rule name (with this you will be able to access it)
      */
     private final String ruleName;
     /**
-     * Der zugrundeliegende ParserBuilder. Dieser wird für die rule-Methode verwendet, damit ihm ein
-     * Placeholder hinzugefügt werden kann und für das Erzeugen der ConcatRuleBuilder und NextIsOrBuilder.
+     * The underlying ParserBuilder. This is used for the rule method, so that a * placeholder can be added to it, and for creating the
+     * placeholder can be added to it and for creating the ConcatRuleBuilder and NextIsOrBuilder.
      */
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     /**
-     * Die letztendliche Regel
+     * The final rule
      */
     private final OrParser<TYPE, ANNOTATION> rule;
     /**
-     * Gibt an, ob der RuleBuilder noch modifizierbar ist oder nicht.
+     * Indicates whether the RuleBuilder is still modifiable or not.
      */
     private boolean frozen;
 
     /**
-     * Der nextIsOrBuilder (dieser kann immer wieder verwendet werden und muss nicht immer neu erzeugt werden
-     * oder zurückgesetzt werden)
+     * The nextIsOrBuilder (this can be used over and over again and does not have to be always recreated
+     * or be reset)
      */
     private final NextIsOrBuilder<TYPE, ANNOTATION> nextIsOrBuilder;
     /**
-     * Der ConcatRuleBuilder (dieser kann immer wieder verwendet werden und muss nicht immer neu erzeugt werden,
-     * denn er kann einfach zurückgesetzt werden)
+     * The ConcatRuleBuilder (this can be used over and over again and does not have to be regenerated every time,
+     * because it can be easily reset)
      */
     private final ConcatRuleBuilder<TYPE, ANNOTATION> concatRuleBuilder;
 
@@ -56,9 +56,9 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt eine neue Subrule, die aus mehreren Elementen besteht.
-     * @param atSuccess Wird aufgerufen, wenn der ConcatParser erfolgreich ist.
-     * @return Ein zurückgesetzter ConcatRuleBuilder, dessen ConcatParser die übergebene atSuccess-Methode verwendet.
+     * Creates a new subrule consisting of multiple elements.
+     * @param atSuccess Called when the ConcatParser succeeds.
+     * @return A reset ConcatRuleBuilder whose ConcatParser uses the passed atSuccess method.
      */
     private ConcatRuleBuilder<TYPE, ANNOTATION> concat(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
         if (!frozen) concatRuleBuilder.newSubrule(atSuccess);
@@ -66,69 +66,69 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt eine neue Subrule, die aus mehreren Elementen besteht.
-     * (Übernimmt als AST das erste Kind, wenn es dieses gibt.)
-     * @return Ein zurückgesetzter ConcatRuleBuilder, dessen ConcatParser als AST einfach den AST des ersten Kindes nimmt.
+     * Creates a new subrule consisting of multiple elements.
+     * (Takes as AST the first child, if any).
+     * @return A reset ConcatRuleBuilder whose ConcatParser simply takes as AST the AST of the first child.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> concat() {
         return concat(trees -> trees.size() >= 1 ? trees.get(0) : null);
     }
 
     /**
-     * Erzeugt eine neue Subrule, die aus mehreren Elementen besteht.
-     * @param type Typ des AST
-     * @return Ein zurückgesetzter ConcatRuleBuilder, dessen ConcatParser als AST den übergebenen Typen hat und
-     *         als Kinder einfach die ASTs der Elemente der Subrule hat.
+     * Creates a new subrule consisting of several elements.
+     * @param type Type of the AST.
+     * @return A reset ConcatRuleBuilder whose ConcatParser has as its AST the type passed and
+     * simply has as children the ASTs of the elements of the subrule.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> concat(TYPE type) {
         return concat(Parser.basicConcatAtSuccess(type));
     }
 
     /**
-     * Erzeugt als neue Klausel einen match-Parser (für mehrelementige Klauseln muss zunächst concat aufgerufen werden).
-     * @param type Typ des AST
+     * Creates a match parser as a new clause (for multi-element clauses, concat must be called first).
+     * @param type Type of the AST
      * @param pattern Pattern
-     * @return Gibt den NextIsOrBuilder zurück.
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
         return addSingleClause(Parser.match(type, pattern));
     }
 
     /**
-     * Erzeugt als neue Klausel einen match-Parser (für mehrelementige Klauseln muss zunächst concat aufgerufen werden).
-     * @param type Typ des AST
+     * Creates a match parser as a new clause (for multi-element clauses, concat must be called first).
+     * @param type Type of the AST
      * @param regex RegEx
-     * @return Gibt den NextIsOrBuilder zurück.
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
         return match(type, parserBuilder.getPattern(regex));
     }
 
     /**
-     * Erzeugt als neue Klausel einen keyword-Parser (für mehrelementige Klauseln muss zunächst concat aufgerufen werden).
-     * @param type Typ des AST
+     * Creates a keyword parser as a new clause (for multi-element clauses, concat must be called first).
+     * @param type Type of the AST
      * @param pattern Pattern
-     * @return Gibt den NextIsOrBuilder zurück.
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
         return addSingleClause(Parser.keyword(type, pattern));
     }
 
     /**
-     * Erzeugt als neue Klausel einen keyword-Parser (für mehrelementige Klauseln muss zunächst concat aufgerufen werden).
-     * @param type Typ des AST
+     * Creates a keyword parser as a new clause (for multi-element clauses, concat must be called first).
+     * @param type Type of the AST
      * @param regex RegEx
-     * @return Gibt den NextIsOrBuilder zurück.
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
         return keyword(type, parserBuilder.getPattern(regex));
     }
 
     /**
-     * Erzeugt als neue Klausel einen customRegEx-Parser (für mehrelementige Klauseln muss zunächst concat aufgerufen werden).
-     * @param atSuccess Wird beim Erfolg des RegEx-Parsers aufgerufen
+     * Creates a customRegEx parser as a new clause (for multi-element clauses, concat must be called first).
+     * @param atSuccess Will be called when the RegEx parser succeeds.
      * @param pattern Pattern
-     * @return Gibt den NextIsOrBuilder zurück.
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
                                                          Pattern pattern) {
@@ -136,10 +136,10 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt als neue Klausel einen customRegEx-Parser (für mehrelementige Klauseln muss zunächst concat aufgerufen werden).
-     * @param atSuccess Wird beim Erfolg des RegEx-Parsers aufgerufen
+     * Creates a customRegEx parser as a new clause (for multi-element clauses, concat must be called first).
+     * @param atSuccess Called when the RegEx parser succeeds.
      * @param regex RegEx
-     * @return Gibt den NextIsOrBuilder zurück.
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
                                                          String regex) {
@@ -147,30 +147,30 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Erzeugt als neue Klausel einen Placeholder-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
-     * @param name Regelname
-     * @return Gibt den NextIsOrBuilder zurück.
+     * Creates as a new clause a placeholder parser that will map the rule with the passed name.
+     * @param name Rule name
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> rule(String name) {
         return addSingleClause(parserBuilder.getPlaceholder(name));
     }
 
     /**
-     * Erzeugt als neue Klausel einen Many-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
-     * @param type Typ zu dem der Many-Ausdruck zusammengefasst werden soll
-     * @param name Regelname
-     * @return Gibt den NextIsOrBuilder zurück.
+     * Creates as a new clause a many-parser that will map the rule with the name passed in.
+     * @param type Type to which the many expression will be mapped.
+     * @param name Rule name
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
         return addSingleClause(parserBuilder.getMany(type, name));
     }
 
     /**
-     * Erzeugt als neue Klausel eine Some-Rule, also einen Concat aus zuerst der Rule mit dem übergebenen
-     * Namen und dann eine Many-Rule mit dem übergebenen Namen.
-     * @param type Typ des entstehenden ASTs
-     * @param name Regelname
-     * @return Gibt den NextIsOrBuilder zurück.
+     * Creates a Some-Rule as a new clause, i.e. a concat of first the Rule with the passed
+     * name and then a Many-Rule with the passed name.
+     * @param type Type of the resulting AST.
+     * @param name Rule name
+     * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
         var placeholder = parserBuilder.getPlaceholder(name);
@@ -180,16 +180,16 @@ public class RuleBuilder<TYPE, ANNOTATION> {
 
     /**
      *
-     * @return Gibt den Regelnamen zurück
+     * @return Returns the rule name
      */
     public String getName() {
         return ruleName;
     }
 
     /**
-     * Fügt als neue Klausel einen einelementigen Parser ein
-     * @param singleParser einelementiger Parser
-     * @return Gibt den NextIsOrBuilder zurück.
+     * Inserts a single-element parser as a new clause.
+     * @param singleParser one-element parser
+     * @return Returns the NextIsOrBuilder.
      */
     private NextIsOrBuilder<TYPE, ANNOTATION> addSingleClause(Parser<TYPE, ANNOTATION> singleParser) {
         addClause(singleParser);
@@ -197,7 +197,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Fügt den übergebenen Parser als neue Klausel ein.
+     * Inserts the passed parser as a new clause.
      * @param parser Parser
      */
     void addClause(Parser<TYPE, ANNOTATION> parser) {
@@ -205,9 +205,9 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
-     * Friert den RuleBuilder ein, sodass Methodenaufrufe nichts mehr bewirken und gibt den entstandenen
-     * Parser des RuleBuilders zurück.
-     * @return Der Parser, der aus dem RuleBuilder entsteht.
+     * Freezes the RuleBuilder so that method calls no longer have any effect and returns the resulting
+     * parser of the RuleBuilder.
+     * @return The parser that emerges from the RuleBuilder.
      */
     Parser<TYPE, ANNOTATION> freeze() {
         frozen = true;
