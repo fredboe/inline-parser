@@ -24,7 +24,7 @@ If-Statement besteht aus `if`, `(`, `condition`, `)` und dann `statements`.
 Eine solche Regel kann man so konstruieren:
 ```java
 builder.newRule("IF").consistsOf()
-        .concat(TYPE.IF).hide("if").hide("\\(").rule("CONDITION").hide("\\)").rule("BLOCK")
+        .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
         .end();
 ```
 Nun muss man noch die Regeln "CONDITION" und "BLOCK" definieren. Exemplarisch zeigen
@@ -32,9 +32,9 @@ wir hier, wie eine "CONDITION"-Regel erstellt werden kann mit den Vergleichsoper
 <= und >=:
 ```java
 builder.newRule("COND").consistsOf()
-        .concat(TYPE.LEQ).rule("LITERAL").hide("<=").rule("LITERAL")
+        .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
         .or()
-        .concat(TYPE.GEQ).rule("LITERAL").hide(">=").rule("LITERAL")
+        .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
         .end();
 ```
 Würde man nun noch die Regeln "BLOCK" und "LITERAL" erstellen, könnte man am Schluss
@@ -45,7 +45,7 @@ ParserPool<TYPE, ANNOTATION> pool = builder.build();
 
 Hierbei ist `TYPE` ein Enum mit den Werten `IF, LEQ, GEQ, ...` und 
 `ANNOTATION` ist eine Klasse (diese müssen sie selber definieren), mit der sie beim entstehenden AST 
-Anmerkungen an die Knoten schreiben können. Außerdem kommen die Backslashes in den hide-Methoden
+Anmerkungen an die Knoten schreiben können. Außerdem kommen die Backslashes in den match-Methoden
 daher, dass dort eine Regular Expression angegeben werden muss.
 
 ### Notes
