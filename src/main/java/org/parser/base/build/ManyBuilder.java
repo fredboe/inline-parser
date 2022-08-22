@@ -11,7 +11,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
     private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
     private final ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder;
 
-    private final ConcatParser<TYPE, ANNOTATION> concatParser;
+    private ConcatParser<TYPE, ANNOTATION> concatParser;
 
     private boolean frozen;
 
@@ -20,7 +20,14 @@ public class ManyBuilder<TYPE, ANNOTATION> {
         this.parserBuilder = parserBuilder;
         this.concatBuilder = concatBuilder;
         this.concatParser  = Parser.concat(null, new ArrayList<>());
-        this.frozen = false;
+        this.frozen = true;
+    }
+
+    void newManyRule() {
+        if (frozen) {
+            concatParser = Parser.concat(null, new ArrayList<>());
+            frozen = false;
+        }
     }
 
     public ManyBuilder<TYPE, ANNOTATION> match(Pattern pattern) {

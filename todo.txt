@@ -1,3 +1,2 @@
 - switch to english
 - parser generator
-- addAll und add optimieren

@@ -165,6 +165,13 @@ public class RuleBuilder<TYPE, ANNOTATION> {
         return addSingleClause(parserBuilder.getMany(type, name));
     }
 
+    /**
+     * Erzeugt als neue Klausel eine Some-Rule, also einen Concat aus zuerst der Rule mit dem übergebenen
+     * Namen und dann eine Many-Rule mit dem übergebenen Namen.
+     * @param type Typ des entstehenden ASTs
+     * @param name Regelname
+     * @return Gibt den NextIsOrBuilder zurück.
+     */
     public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
         var placeholder = parserBuilder.getPlaceholder(name);
         var many = parserBuilder.getMany(null, name);

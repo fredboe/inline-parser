@@ -25,6 +25,9 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * Klausel hinzuzufügen.
      */
     private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
+
+    private final ManyBuilder<TYPE, ANNOTATION> manyBuilder;
+    private final SomeBuilder<TYPE, ANNOTATION> someBuilder;
     /**
      * Subrule (ConcatParser der einzelnen RegEx-Parser. Dieser wird später als Klausel dem RuleBuilder hinzugefügt.)
      */
@@ -40,6 +43,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         this.parserBuilder = parserBuilder;
         this.ruleBuilder = ruleBuilder;
         this.subrule = null;
+        this.manyBuilder = new ManyBuilder<>(parserBuilder, this);
+        this.someBuilder = new SomeBuilder<>(parserBuilder, this);
         this.frozen = true;
     }
 
@@ -90,21 +95,43 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
+    /**
+     * Fügt der aktuellen Subrule als neuen Schritt einen Many-Parser, der die Regel mit dem übergebenen
+     * Namen abbilden wird, ein.
+     * @param name Name der Rule
+     * @return Der zugrundeliegende ConcatRuleBuilder.
+     */
     public ConcatRuleBuilder<TYPE, ANNOTATION> many(String name) {
         return addStep(parserBuilder.getMany(null, name));
     }
 
+    /**
+     * Erzeugt einen neuen ManyBuilder, der dann an die Subrule angehängt wird
+     * @return Ein neuer ManyBuilder
+     */
     public ManyBuilder<TYPE, ANNOTATION> many() {
-        return new ManyBuilder<>(parserBuilder, this);
+        manyBuilder.newManyRule();
+        return manyBuilder;
     }
 
+    /**
+     * Fügt der aktuellen Subrule als neuen Schritt zuerst die Rule mit dem übergebenen Namen ein und dann
+     * einen Many-Parser, der die Regel mit dem übergebenen Namen abbilden wird, ein.
+     * @param name Name der Rule
+     * @return Der zugrundeliegende ConcatRuleBuilder.
+     */
     public ConcatRuleBuilder<TYPE, ANNOTATION> some(String name) {
         this.rule(name);
         return this.many(name);
     }
 
+    /**
+     * Erzeugt einen neuen Some, der dann an die Subrule angehängt wird
+     * @return Ein neuer SomeBuilder
+     */
     public SomeBuilder<TYPE, ANNOTATION> some() {
-        return new SomeBuilder<>(parserBuilder, this);
+        someBuilder.newSomeRule();
+        return someBuilder;
     }
 
     /**

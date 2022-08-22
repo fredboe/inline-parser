@@ -36,7 +36,9 @@ public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     /**
      * Bei einem Many-Parser wird der gespeicherte Parser so lange ausgeführt, bis dieser fehlschlägt.
      * Am Ende wird dann ein AST erstellt, mit den beim mehrmaligen Ausführen des Parsers entstandenen ASTs als
-     * Kindern (die Kinder-Liste kann also auch leer sein) und dem gespeicherten Typen.
+     * Kindern (die Kinder-Liste kann also auch leer sein) und dem gespeicherten Typen. Falls der Typ des
+     * ASTs null ist, wird nicht der AST als Kind übernommen, sondern die Kinder des ASTs werden als Kinder
+     * übernommen.
      * @param consumable Consumable
      * @return Ein AST mit Optional gewrappt (bei Many ist dieser immer present).
      */

@@ -49,7 +49,9 @@ Anmerkungen an die Knoten schreiben können. Außerdem kommen die Backslashes in
 daher, dass dort eine Regular Expression angegeben werden muss.
 
 ### Notes
-- Links-rekursive Grammatiken sind nicht möglich, da sie zu unendlicher Rekursion führen
+- Links-rekursive Grammatiken sind nicht möglich, da sie zu unendlicher Rekursion führen.
+- Hat ein Kind eines Concat- oder Many-Parsers einen Typ von null, so wird nicht dieser AST
+  übernommen, sondern die Kinder des ASTs werden dem entstandenen AST an der richtigen Stelle hinzugefügt.
 
 ### Autor
 Frederik Böcker
