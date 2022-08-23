@@ -1,5 +1,6 @@
 package org.parser.base.build;
 
+import org.parser.Tuple;
 import org.parser.base.*;
 
 import java.util.*;
@@ -24,7 +25,7 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * Stores all many calls with the name of which rule they should represent.
      * This map must be passed through when building, as the placeholders before it do not represent a parser.
      */
-    private Map<String, ManyParser<TYPE, ANNOTATION>> manys;
+    private Map<Tuple<String, TYPE>, ManyParser<TYPE, ANNOTATION>> manys;
 
 
     public ParserBuilder() {
@@ -61,9 +62,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * are replaced by the rules associated with the name.
      */
     private void buildManys() {
-        manys.forEach((name, placeholder) -> {
+        manys.forEach((tuple, many) -> {
+            var name = tuple.x();
             var parser = rules.get(name);
-            placeholder.setParserIfNull(parser);
+            many.setParserIfNull(parser);
         });
     }
 
@@ -108,10 +110,11 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      */
     ManyParser<TYPE, ANNOTATION> getMany(TYPE type, String name) {
         if (name == null) return null;
-        if (manys.containsKey(name)) return manys.get(name);
+        var tuple = new Tuple<>(name, type);
+        if (manys.containsKey(tuple)) return manys.get(tuple);
 
         ManyParser<TYPE, ANNOTATION> many = new ManyParser<>(type);
-        manys.put(name, many);
+        manys.put(tuple, many);
         return many;
     }
 

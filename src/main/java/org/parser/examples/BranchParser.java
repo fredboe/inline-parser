@@ -57,7 +57,7 @@ public class BranchParser {
                 .end();
 
         builder.newRule("EXPR").consistsOf()
-                .concat(TYPE.ADD).rule("LITERAL").match("\\+").rule("EXPR")
+                .concat(TYPE.ADD).rule("LITERAL").some().match("\\+").rule("LITERAL").someEnd()
                 .or()
                 .rule("LITERAL")
                 .end();
