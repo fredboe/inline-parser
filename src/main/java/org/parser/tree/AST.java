@@ -166,7 +166,7 @@ public class AST<TYPE, ANNOTATION> {
         builder.append(getType());
         if (match != null) {
             builder.append(" ");
-            builder.append(match.matched());
+            builder.append(match);
         }
         builder.append('\n');
         for (Iterator<AST<TYPE, ANNOTATION>> it = children.iterator(); it.hasNext();) {
@@ -179,5 +179,16 @@ public class AST<TYPE, ANNOTATION> {
                 }
             }
         }
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (this == obj) return true;
+
+        if (obj instanceof AST ast) {
+            return Objects.equals(type, ast.type) && Objects.equals(match, ast.match)
+                    && Objects.equals(children, ast.getChildren());
+        }
+        return false;
     }
 }

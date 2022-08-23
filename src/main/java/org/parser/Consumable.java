@@ -12,10 +12,8 @@ public class Consumable {
     /**
      * Represents a successful RegEx match in the CharSequence.
      * @param matched string that matches the RegEx
-     * @param start Start Index (matcher.start())
-     * @param end End Index (matcher.end())
      */
-    public record Match(String matched, int start, int end) {}
+    public record Match(String matched) {}
 
     /**
      * Flags that specify which strings to ignore.
@@ -170,7 +168,7 @@ public class Consumable {
     private Optional<Match> genMatch(boolean success, Matcher matcher) {
         if (success) {
             startIndex += matcher.end() - matcher.start();
-            return Optional.of(new Match(matcher.group(), matcher.start(), matcher.end()));
+            return Optional.of(new Match(matcher.group()));
         }
         return Optional.empty();
     }
