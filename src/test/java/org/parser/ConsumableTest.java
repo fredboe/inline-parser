@@ -17,7 +17,7 @@ public class ConsumableTest {
 
 
     @Test
-    public void lookingAt_success() {
+    public void Test_lookingAt_success() {
         Optional<Consumable.Match> optionalMatch1 = consumable1.lookingAt("My name");
         assertTrue(optionalMatch1.isPresent());
         assertEquals(optionalMatch1.get().matched(), "My name");
@@ -30,13 +30,13 @@ public class ConsumableTest {
     }
 
     @Test
-    public void lookingAt_failure() {
+    public void Test_lookingAt_failure() {
         Optional<Consumable.Match> optionalMatch = consumable1.lookingAt("\\d");
         assertEquals(optionalMatch, Optional.empty());
     }
 
     @Test
-    public void lookingAt_ignore() {
+    public void Test_lookingAt_ignore() {
         Optional<Consumable.Match> optionalMatch1 = consumable2.lookingAt("Test");
         assertTrue(optionalMatch1.isPresent());
         assertEquals(optionalMatch1.get().matched(), "Test");
