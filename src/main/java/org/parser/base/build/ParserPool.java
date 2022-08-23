@@ -19,6 +19,15 @@ public class ParserPool<TYPE, ANNOTATION> {
         this.parsers = parsers;
     }
 
+
+    /**
+     *
+     * @return Returns all named parsers.
+     */
+    public Map<String, Parser<TYPE, ANNOTATION>> getParsers() {
+        return parsers;
+    }
+
     /**
      *
      * @param name Parser name

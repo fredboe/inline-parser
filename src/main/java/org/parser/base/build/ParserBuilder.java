@@ -128,6 +128,15 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     }
 
     /**
+     * Puts all the parser in the given pool to the rule map. If there is a name that is already associated
+     * with a rule, this rule will be overridden.
+     * @param pool ParserPool
+     */
+    public void union(ParserPool<TYPE, ANNOTATION> pool) {
+        rules.putAll(pool.getParsers());
+    }
+
+    /**
      *
      * @param regex RegEx
      * @return Returns a pattern based on the given regex.

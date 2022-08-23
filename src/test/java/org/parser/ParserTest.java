@@ -15,8 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ParserTest {
-    enum ANNOTATION {
-    }
+    enum ANNOTATION {}
 
     private final Parser<TYPE, ANNOTATION> exprParser =
             ArithmeticParser.<ANNOTATION>arithmeticExample().getParser("EXPR");
