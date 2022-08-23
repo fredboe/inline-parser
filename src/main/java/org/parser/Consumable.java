@@ -1,5 +1,6 @@
 package org.parser;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -215,6 +216,19 @@ public class Consumable {
      */
     public String toString() {
         return getSequenceLeft().toString();
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (this == obj) return true;
+
+        if (obj instanceof Consumable other) {
+            return Objects.equals(this.getSequenceLeft(), other.getSequenceLeft());
+        } else if (obj instanceof CharSequence sequence) {
+            return Objects.equals(this.getSequenceLeft(), sequence);
+        }
+
+        return false;
     }
 
 
