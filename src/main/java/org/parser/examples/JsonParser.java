@@ -1,11 +1,34 @@
 package org.parser.examples;
 
+import org.parser.Consumable;
+import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
+import org.parser.tree.AST;
 
-public class JsonParser {
+import java.util.Optional;
+
+public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATION> {
     public enum TYPE {
-        NUMBER, STRING, ARRAY, OBJECT, VALUE, TRUE, FALSE, NULL
+        ARRAY, OBJECT, PROPERTY, NUMBER, STRING, TRUE, FALSE, NULL
+    }
+
+    private final Parser<TYPE, ANNOTATION> jsonParser;
+
+    public JsonParser() {
+        jsonParser = JsonParser.<ANNOTATION>jsonExample().getParser("json");
+    }
+
+    @Override
+    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+        return jsonParser.applyTo(consumable);
+    }
+
+    @Override
+    public Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
+        return applyTo(new Consumable(sequence,
+                Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_LINEBREAK, Consumable.Ignore.IGNORE_COMMENT
+        ));
     }
 
     /**
@@ -25,7 +48,7 @@ public class JsonParser {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 
         builder.newRule("key_value").consistsOf()
-                .concat(TYPE.VALUE).rule("string").match("\\:").rule("value")
+                .concat(TYPE.PROPERTY).rule("string").match("\\:").rule("value")
                 .end();
 
         builder.newRule("value").consistsOf()
@@ -57,14 +80,17 @@ public class JsonParser {
 
         // first " then any character other than " then ".
         builder.newRule("string").consistsOf()
-                        .match(TYPE.STRING, "\"[^\"]*\"").end();
+                .match(TYPE.STRING, "\"[^\"]*\"")
+                .end();
 
         // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits
         builder.newRule("number").consistsOf()
-                .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?").end();
+                .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
+                .end();
 
         builder.newRule("boolean").consistsOf()
-                .match(TYPE.TRUE, "true").or().match(TYPE.FALSE, "false").end();
+                .match(TYPE.TRUE, "true").or().match(TYPE.FALSE, "false")
+                .end();
 
         builder.newRule("json").consistsOf().rule("object").end();
 
