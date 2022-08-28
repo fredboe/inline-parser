@@ -18,12 +18,12 @@ public class ParserBuilder<TYPE, ANNOTATION> {
     private Map<String, Parser<TYPE, ANNOTATION>> rules;
     /**
      * Stores all placeholders with the name of the rule they should represent.
-     * This map must be passed through when building, as the placeholders before it do not represent a parser.
+     * This map must be iterated through when building, as the placeholders before build do not represent a parser.
      */
     private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
     /**
      * Stores all many calls with the name of which rule they should represent.
-     * This map must be passed through when building, as the placeholders before it do not represent a parser.
+     * This map must be iterated through when building, as the manys before build do not represent a parser.
      */
     private Map<Tuple<String, TYPE>, ManyParser<TYPE, ANNOTATION>> manys;
 
@@ -73,9 +73,9 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * Deletes all information contained in this object.
      */
     public void clear() {
-        rules = null;
-        placeholders = null;
-        manys = null;
+        rules = new HashMap<>();
+        placeholders = new HashMap<>();
+        manys = new HashMap<>();
     }
 
     /**
