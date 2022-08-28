@@ -166,7 +166,7 @@ public class AST<TYPE, ANNOTATION> {
         builder.append(getType());
         if (match != null) {
             builder.append(" ");
-            builder.append(match);
+            builder.append(match.matched());
         }
         builder.append('\n');
         for (Iterator<AST<TYPE, ANNOTATION>> it = children.iterator(); it.hasNext();) {

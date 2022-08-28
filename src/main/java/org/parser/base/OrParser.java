@@ -35,7 +35,7 @@ public class OrParser<TYPE, ANNOTATION> implements DepthParser<TYPE, ANNOTATION>
      * was successful, the method atSuccess is called. Finally, the ignore bit is then set to the ignore bit * of the successful AST.
      * of the successful AST.
      * @param consumable Consumable
-     * @return An AST wrapped with Optional (empty if all of the parsers return an error)
+     * @return An AST wrapped with Optional (empty if all the parsers return an error)
      */
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
