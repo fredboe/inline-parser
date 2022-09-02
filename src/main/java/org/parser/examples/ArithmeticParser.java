@@ -51,11 +51,6 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
     public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> arithmeticExample() {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 
-        // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits
-        builder.newRule("NUMBER")
-                .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
-                .end();
-
         builder.newRule("ADD")
                 .concat(TYPE.ADD).rule("SUB").some().match("\\+").rule("SUB").someEnd()
                 .or()
@@ -99,6 +94,11 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
 
         builder.newRule("BRAC")
                 .concat().match("\\(").rule("EXPR").match("\\)")
+                .end();
+
+        // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits
+        builder.newRule("NUMBER")
+                .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
                 .end();
 
         builder.newRule("FUNC_SYMBOL")
