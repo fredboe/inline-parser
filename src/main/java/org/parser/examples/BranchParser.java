@@ -1,26 +1,49 @@
 package org.parser.examples;
 
+import org.parser.Consumable;
+import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
+import org.parser.tree.AST;
 
-public class BranchParser {
+import java.util.Optional;
+
+public class BranchParser<ANNOTATION> implements Parser<BranchParser.TYPE, ANNOTATION> {
     public enum TYPE {
         IF, LEQ, GEQ,
         NUMBER, ADD,
         IDENTIFIER, ASSIGN, BLOCK
     }
 
+    private final Parser<TYPE, ANNOTATION> branchParser;
+
+    public BranchParser() {
+        branchParser = BranchParser.<ANNOTATION>ifExample().getParser("BRANCH");
+    }
+
+    @Override
+    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+        return branchParser.applyTo(consumable);
+    }
+
+    @Override
+    public Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
+        return applyTo(new Consumable(sequence,
+                Consumable.Ignore.IGNORE_LINEBREAK, Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_COMMENT)
+        );
+    }
+
     /**
      * Grammar: <br>
-     * number ::= [0-9] number | [0-9] <br>
-     * identifier ::= [a-zA-Z_0-9] identifier | [a-zA-Z_0-9] <br>
+     * branch ::= if
+     * number ::= \d+ <br>
+     * identifier ::= [a-zA-Z]\w* <br>
      * literal ::= number | identifier <br>
      * if ::= "if" "(" condition ")" block <br>
      * condition ::= literal "<=" literal | literal ">=" literal <br>
-     * block ::= "{" block2 "}" | "{" "}" <br>
-     * block2 ::= assign block2 | assign <br>
+     * block ::= "{" (block2)* "}" <br>
      * assign ::= identifier "=" expr <br>
-     * expr ::= literal "+" expr | literal <br>
+     * expr ::= literal ("+" literal)+ | literal <br>
      *
      * @return Returns a ParserPool for simplified If expressions.
      * @param <ANNOTATION> ANNOTATION type of the AST
@@ -61,6 +84,8 @@ public class BranchParser {
                 .or()
                 .rule("LITERAL")
                 .end();
+
+        builder.newRule("BRANCH").rule("IF").end();
 
         return builder.build();
     }

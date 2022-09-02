@@ -26,25 +26,25 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
 
     @Override
     public Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
-        return aritParser.applyTo(
-                new Consumable(sequence, Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_LINEBREAK)
+        return applyTo(new Consumable(sequence,
+                Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_LINEBREAK)
         );
     }
 
     /**
      * Grammar: <br>
-     * NUMBER ::= [0-9] NUMBER | [0-9] <br>
      * EXPR ::= ADD <br>
      * ADD ::= SUB ("+" SUB)+ | SUB <br>
      * SUB ::= MUL ("-" MUL)+ | MUL <br>
      * MUL ::= DIV ("*" DIV)+ | DIV <br>
      * DIV ::= POT ("/" POT)+ | POT <br>
      * POT ::= SUBEXPR ("^" SUBEXPR)+ | SUBEXPR <br>
-     * SUBEXPR ::= BRAC | VAL
-     * VAL ::= NUMBER | FUNC_SYMBOl BRAC | CONST
+     * SUBEXPR ::= BRAC | VAL <br>
+     * VAL ::= NUMBER | FUNC_SYMBOl BRAC | CONST <br>
      * BRAC ::= "(" EXPR ")" <br>
-     * FUNC_SYMBOL ::= "sin" | "cos" | "tan"
-     * CONST ::= "pi" | "e"
+     * NUMBER ::= (-)?\d+(\.\d*)?((e|E)(+|-)?\d+)? <br>
+     * FUNC_SYMBOL ::= "sin" | "cos" | "tan" <br>
+     * CONST ::= "pi" | "e" <br>
      * @return Returns a ParserPool for arithmetic expressions.
      * @param <ANNOTATION> ANNOTATION type of the AST
      */

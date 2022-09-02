@@ -33,14 +33,14 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
 
     /**
      * Grammar: <br>
+     * json ::= object <br>
      * key_value ::= string ":" value <br>
      * value ::= object | array | string | number | boolean | "null" <br>
      * object ::= "{" key_value ("," key_value)* "}" | "{" "}" <br>
      * array ::= "[" value ("," value)* "]" | "[" "]" <br>
-     * string ::= regular expression for a string <br>
-     * number ::= regular expression for a number <br>
+     * string ::= \"[^\"]*\" <br>
+     * number ::= (-)?\d+(\.\d*)?((e|E)(+|-)?\d+)? <br>
      * boolean ::= "true" | "false" <br>
-     * json ::= object <br>
      * @return Returns a ParserPool for json strings.
      * @param <ANNOTATION> ANNOTATION type of the AST
      */
@@ -62,9 +62,9 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
 
         builder.newRule("object")
                 .concat(TYPE.OBJECT)
-                    .match("\\{")
-                    .rule("key_value").many().match(",").rule("key_value").manyEnd()
-                    .match("\\}")
+                .match("\\{")
+                .rule("key_value").many().match(",").rule("key_value").manyEnd()
+                .match("\\}")
                 .or()
                 .concat(TYPE.OBJECT).match("\\{").match("\\}")
                 .end();

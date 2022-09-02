@@ -53,6 +53,7 @@ Also, the backslashes in the match methods are due to the fact that a Regular Ex
   taken over, but the children of the AST are added to the resulting AST at the correct position.
 - As I am not a professional programmer, this library might contain a some bugs.
 
+---
 ### Author
 Frederik Böcker
 
