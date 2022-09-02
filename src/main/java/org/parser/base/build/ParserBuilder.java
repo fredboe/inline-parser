@@ -123,8 +123,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * @param name Rule name
      * @return Returns the call chain of the RuleBuilder.
      */
-    public NewRuleInvocationChain newRule(String name) {
-        return new NewRuleInvocationChain(new RuleBuilder<>(name, this));
+    public RuleBuilder<TYPE, ANNOTATION> newRule(String name) {
+        return new RuleBuilder<>(name, this);
     }
 
     /**
@@ -144,22 +144,5 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      */
     Pattern getPattern(String regex) {
         return Pattern.compile(regex);
-    }
-
-
-    /**
-     * First part of the call chain of a RuleBuilder. This is for readability only and requires
-     * the call to consistsOf in order for the rule to be built.
-     */
-    public class NewRuleInvocationChain {
-        private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
-
-        public NewRuleInvocationChain(RuleBuilder<TYPE, ANNOTATION> ruleBuilder) {
-            this.ruleBuilder = ruleBuilder;
-        }
-
-        public RuleBuilder<TYPE, ANNOTATION> consistsOf() {
-            return ruleBuilder;
-        }
     }
 }

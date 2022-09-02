@@ -52,44 +52,44 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 
         // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits
-        builder.newRule("NUMBER").consistsOf()
+        builder.newRule("NUMBER")
                 .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
                 .end();
 
-        builder.newRule("ADD").consistsOf()
+        builder.newRule("ADD")
                 .concat(TYPE.ADD).rule("SUB").some().match("\\+").rule("SUB").someEnd()
                 .or()
                 .rule("SUB")
                 .end();
 
-        builder.newRule("SUB").consistsOf()
+        builder.newRule("SUB")
                 .concat(TYPE.SUB).rule("MUL").some().match("\\-").rule("MUL").someEnd()
                 .or()
                 .rule("MUL")
                 .end();
 
-        builder.newRule("MUL").consistsOf()
+        builder.newRule("MUL")
                 .concat(TYPE.MUL).rule("DIV").some().match("\\*").rule("DIV").someEnd()
                 .or()
                 .rule("DIV")
                 .end();
 
-        builder.newRule("DIV").consistsOf()
+        builder.newRule("DIV")
                 .concat(TYPE.DIV).rule("POT").some().match("/").rule("POT").someEnd()
                 .or()
                 .rule("POT")
                 .end();
 
-        builder.newRule("POT").consistsOf()
+        builder.newRule("POT")
                 .concat(TYPE.POT).rule("SUBEXPR").some().match("\\^").rule("SUBEXPR").someEnd()
                 .or()
                 .rule("SUBEXPR")
                 .end();
 
-        builder.newRule("SUBEXPR").consistsOf()
+        builder.newRule("SUBEXPR")
                 .rule("BRAC").or().rule("VAL").end();
 
-        builder.newRule("VAL").consistsOf()
+        builder.newRule("VAL")
                 .rule("NUMBER")
                 .or()
                 .concat(TYPE.FUNC).rule("FUNC_SYMBOL").rule("BRAC")
@@ -97,19 +97,19 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
                 .rule("CONST")
                 .end();
 
-        builder.newRule("BRAC").consistsOf()
+        builder.newRule("BRAC")
                 .concat().match("\\(").rule("EXPR").match("\\)")
                 .end();
 
-        builder.newRule("FUNC_SYMBOL").consistsOf()
+        builder.newRule("FUNC_SYMBOL")
                 .match(TYPE.SIN, "sin").or()
                 .match(TYPE.COS, "cos").or()
                 .match(TYPE.TAN, "tan").end();
 
-        builder.newRule("CONST").consistsOf()
+        builder.newRule("CONST")
                         .match(TYPE.PI, "pi").or().match(TYPE.E, "e").end();
 
-        builder.newRule("EXPR").consistsOf().rule("ADD").end();
+        builder.newRule("EXPR").rule("ADD").end();
 
         return builder.build();
     }

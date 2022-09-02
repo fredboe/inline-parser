@@ -47,11 +47,11 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
     public static <ANNOTATION>ParserPool<TYPE, ANNOTATION> jsonExample() {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 
-        builder.newRule("key_value").consistsOf()
+        builder.newRule("key_value")
                 .concat(TYPE.PROPERTY).rule("string").match("\\:").rule("value")
                 .end();
 
-        builder.newRule("value").consistsOf()
+        builder.newRule("value")
                 .rule("object").or()
                 .rule("array").or()
                 .rule("string").or()
@@ -60,7 +60,7 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
                 .keyword(TYPE.NULL, "null")
                 .end();
 
-        builder.newRule("object").consistsOf()
+        builder.newRule("object")
                 .concat(TYPE.OBJECT)
                     .match("\\{")
                     .rule("key_value").many().match(",").rule("key_value").manyEnd()
@@ -69,7 +69,7 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
                 .concat(TYPE.OBJECT).match("\\{").match("\\}")
                 .end();
 
-        builder.newRule("array").consistsOf()
+        builder.newRule("array")
                 .concat(TYPE.ARRAY)
                     .match("\\[")
                     .rule("value").many().match(",").rule("value").manyEnd()
@@ -79,20 +79,20 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
                 .end();
 
         // first " then any character other than " then ".
-        builder.newRule("string").consistsOf()
+        builder.newRule("string")
                 .match(TYPE.STRING, "\"[^\"]*\"")
                 .end();
 
         // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits
-        builder.newRule("number").consistsOf()
+        builder.newRule("number")
                 .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
                 .end();
 
-        builder.newRule("boolean").consistsOf()
+        builder.newRule("boolean")
                 .keyword(TYPE.TRUE, "true").or().keyword(TYPE.FALSE, "false")
                 .end();
 
-        builder.newRule("json").consistsOf().rule("object").end();
+        builder.newRule("json").rule("object").end();
 
         return builder.build();
     }

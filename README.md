@@ -23,19 +23,19 @@ A rule can be thought of as a line in Backus-Naur form.
 If statement consists of `if`, `(`, `condition`, `)` and then `statements`.
 Such a rule can be constructed like this:
 ```java
-builder.newRule("IF").consistsOf()
-        .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)")).rule("BLOCK")
+builder.newRule("IF")
+        .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
         .end();
 ```
 Now we have to define the rules "CONDITION" and "BLOCK". As an example we show
 how the "CONDITION" rule can be created with the relational operators
 <= and >=:
 ```java
-builder.newRule("COND").consistsOf()
-.concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
-.or()
-.concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
-.end();
+builder.newRule("COND")
+        .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
+        .or()
+        .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
+        .end();
 ```
 If you would now create the rules "BLOCK" and "LITERAL", you could create at the end
 a `ParserPool` for this grammar as follows:
@@ -51,7 +51,7 @@ Also, the backslashes in the match methods are due to the fact that a Regular Ex
 - Left-recursive grammars are not possible because they lead to infinite recursion.
 - If a child of a concat or many parser has a type of null, this AST will not be
   taken over, but the children of the AST are added to the resulting AST at the correct position.
-- As I am not a professional programmer, this library might contain a bunch of bugs.
+- As I am not a professional programmer, this library might contain a some bugs.
 
 ### Author
 Frederik Böcker

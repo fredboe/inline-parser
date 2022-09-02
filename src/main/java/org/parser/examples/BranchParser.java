@@ -28,35 +28,35 @@ public class BranchParser {
     public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> ifExample() {
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 
-        builder.newRule("NUMBER").consistsOf().match(TYPE.NUMBER, "\\d+").end();
+        builder.newRule("NUMBER").match(TYPE.NUMBER, "\\d+").end();
 
-        builder.newRule("IDENTIFIER").consistsOf()
+        builder.newRule("IDENTIFIER")
                 .match(TYPE.IDENTIFIER, "[a-zA-Z]\\w*")
                 .end();
 
-        builder.newRule("LITERAL").consistsOf()
+        builder.newRule("LITERAL")
                 .rule("NUMBER").or().rule("IDENTIFIER")
                 .end();
 
-        builder.newRule("IF").consistsOf()
+        builder.newRule("IF")
                 .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
                 .end();
 
-        builder.newRule("CONDITION").consistsOf()
+        builder.newRule("CONDITION")
                 .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
                 .or()
                 .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
                 .end();
 
-        builder.newRule("BLOCK").consistsOf()
+        builder.newRule("BLOCK")
                 .concat(TYPE.BLOCK).match("\\{").many("ASSIGN").match("\\}")
                 .end();
 
-        builder.newRule("ASSIGN").consistsOf()
+        builder.newRule("ASSIGN")
                 .concat(TYPE.ASSIGN).rule("IDENTIFIER").match("=").rule("EXPR").match(";")
                 .end();
 
-        builder.newRule("EXPR").consistsOf()
+        builder.newRule("EXPR")
                 .concat(TYPE.ADD).rule("LITERAL").some().match("\\+").rule("LITERAL").someEnd()
                 .or()
                 .rule("LITERAL")
