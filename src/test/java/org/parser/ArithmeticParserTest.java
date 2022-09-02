@@ -96,43 +96,39 @@ public class ArithmeticParserTest {
         return new AST<>(TYPE.ADD, null, List.of(subASTl, subASTr));
     }
 
+    private void testExpr(String expr, AST<TYPE, ANNOTATION> result) {
+        var optionalAST = exprParser.applyTo(expr);
+        assertTrue(optionalAST.isPresent());
+        assertEquals(optionalAST.get(), result);
+    }
+
     @Test
     public void Test_expr1_string() {
-        String expr1 = "42 + 11 - 1*20/10-14";
-        var optionalAST = exprParser.applyTo(expr1);
-        assertTrue(optionalAST.isPresent());
-        assertEquals(optionalAST.get(), setupASTofExpr1());
+        String expr = "42 + 11 - 1*20/10-14";
+        testExpr(expr, setupASTofExpr1());
     }
 
     @Test
     public void Test_expr2_string() {
-        String expr2 = "11*2+24/2*3 - 9*2";
-        var optionalAST = exprParser.applyTo(expr2);
-        assertTrue(optionalAST.isPresent());
-        assertEquals(optionalAST.get(), setupASTofExpr2());
+        String expr = "11*2+24/2*3 - 9*2";
+        testExpr(expr, setupASTofExpr2());
     }
 
     @Test
     public void Test_expr3_string() {
-        String expr3 = "sin(14+3)*3^2- 1";
-        var optionalAST = exprParser.applyTo(expr3);
-        assertTrue(optionalAST.isPresent());
-        assertEquals(optionalAST.get(), setupASTofExpr3());
+        String expr = "sin(14+3)*3^2- 1";
+        testExpr(expr, setupASTofExpr3());
     }
 
     @Test
     public void Test_expr4_string() {
-        String expr4 = "12 - 11 - (pi - 2^1*2)";
-        var optionalAST = exprParser.applyTo(expr4);
-        assertTrue(optionalAST.isPresent());
-        assertEquals(optionalAST.get(), setupASTofExpr4());
+        String expr = "12 - 11 - (pi - 2^1*2)";
+        testExpr(expr, setupASTofExpr4());
     }
 
     @Test
     public void Test_expr5_string() {
-        String expr5 = "9 - 5 - 1 + 6 - 5-1";
-        var optionalAST = exprParser.applyTo(expr5);
-        assertTrue(optionalAST.isPresent());
-        assertEquals(optionalAST.get(), setupASTofExpr5());
+        String expr = "9 - 5 - 1 + 6 - 5-1";
+        testExpr(expr, setupASTofExpr5());
     }
 }

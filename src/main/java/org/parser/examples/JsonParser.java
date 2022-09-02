@@ -57,7 +57,7 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
                 .rule("string").or()
                 .rule("number").or()
                 .rule("boolean").or()
-                .match(TYPE.NULL, "null")
+                .keyword(TYPE.NULL, "null")
                 .end();
 
         builder.newRule("object").consistsOf()
@@ -89,7 +89,7 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
                 .end();
 
         builder.newRule("boolean").consistsOf()
-                .match(TYPE.TRUE, "true").or().match(TYPE.FALSE, "false")
+                .keyword(TYPE.TRUE, "true").or().keyword(TYPE.FALSE, "false")
                 .end();
 
         builder.newRule("json").consistsOf().rule("object").end();
