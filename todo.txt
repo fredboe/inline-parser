@@ -1,1 +1,4 @@
-- parser generator
+- making debugging easier
+- extend concat with match and keyword
+- optional parser
+- error msg system

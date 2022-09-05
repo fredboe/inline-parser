@@ -41,7 +41,7 @@ public class BranchParser<ANNOTATION> implements Parser<BranchParser.TYPE, ANNOT
      * literal ::= number | identifier <br>
      * if ::= "if" "(" condition ")" block <br>
      * condition ::= literal "<=" literal | literal ">=" literal <br>
-     * block ::= "{" (block2)* "}" <br>
+     * block ::= "{" (block)* "}" <br>
      * assign ::= identifier "=" expr <br>
      * expr ::= literal ("+" literal)+ | literal <br>
      *
