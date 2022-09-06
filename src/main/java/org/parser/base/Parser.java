@@ -76,6 +76,16 @@ public interface Parser<TYPE, ANNOTATION> {
     }
 
     /**
+     *
+     * @param parser subparser
+     * @return Returns an optional-parser with the passed type and the passed parser as subparser.
+     */
+    static <TYPE, ANNOTATION> OptionalParser<TYPE, ANNOTATION> optional(Parser<TYPE, ANNOTATION> parser) {
+        return new OptionalParser<>(parser);
+    }
+
+
+    /**
      * A basic hide parser. This calls the success method if the pattern passed in was successfully matched.
      * could be successfully matched. The success method simply returns an AST, with type set to the ignore bit.
      * @param pattern Pattern

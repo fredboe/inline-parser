@@ -148,7 +148,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
 
     /**
      * Creates as a new clause a placeholder parser that will map the rule with the passed name.
-     * @param name Rule name
+     * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> rule(String name) {
@@ -156,9 +156,18 @@ public class RuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
+     * Creates as a new clause an optional-parser that will map the rule with the name passed in.
+     * @param name rule name
+     * @return Returns the NextIsOrBuilder.
+     */
+    public NextIsOrBuilder<TYPE, ANNOTATION> optional(String name) {
+        return addSingleClause(Parser.optional(parserBuilder.getPlaceholder(name)));
+    }
+
+    /**
      * Creates as a new clause a many-parser that will map the rule with the name passed in.
      * @param type Type to which the many expression will be mapped.
-     * @param name Rule name
+     * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
@@ -169,7 +178,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * Creates a Some-Rule as a new clause, i.e. a concat of first the Rule with the passed
      * name and then a Many-Rule with the passed name.
      * @param type Type of the resulting AST.
-     * @param name Rule name
+     * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
     public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {

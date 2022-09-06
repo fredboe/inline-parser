@@ -140,6 +140,16 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
+     * Inserts a placeholder parser with the supplied name as a new step to the current subrule.
+     * @param name name of the rule
+     * @return The underlying ConcatRuleBuilder.
+     */
+    public ConcatRuleBuilder<TYPE, ANNOTATION> optional(String name) {
+        return addStep(Parser.optional(parserBuilder.getPlaceholder(name)));
+    }
+
+
+    /**
      * Inserts a many parser with the supplied name as a new step to the current subrule.
      * @param name name of the rule
      * @return The underlying ConcatRuleBuilder.
