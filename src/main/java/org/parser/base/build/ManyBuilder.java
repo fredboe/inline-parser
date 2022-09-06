@@ -55,7 +55,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return The underlying ManyBuilder.
      */
-    public ManyBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
+    public ManyBuilder<TYPE, ANNOTATION> hide(Pattern pattern) {
         return addStep(Parser.hide(pattern));
     }
 
@@ -64,8 +64,8 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying ManyBuilder.
      */
-    public ManyBuilder<TYPE, ANNOTATION> match(String regex) {
-        return match(parserBuilder.getPattern(regex));
+    public ManyBuilder<TYPE, ANNOTATION> hide(String regex) {
+        return hide(parserBuilder.getPattern(regex));
     }
 
     /**

@@ -48,7 +48,7 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
         ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
 
         builder.newRule("key_value")
-                .concat(TYPE.PROPERTY).rule("string").match("\\:").rule("value")
+                .concat(TYPE.PROPERTY).rule("string").hide("\\:").rule("value")
                 .end();
 
         builder.newRule("value")
@@ -62,20 +62,20 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
 
         builder.newRule("object")
                 .concat(TYPE.OBJECT)
-                .match("\\{")
-                .rule("key_value").many().match(",").rule("key_value").manyEnd()
-                .match("\\}")
+                    .hide("\\{")
+                    .rule("key_value").many().hide(",").rule("key_value").manyEnd()
+                    .hide("\\}")
                 .or()
-                .concat(TYPE.OBJECT).match("\\{").match("\\}")
+                .concat(TYPE.OBJECT).hide("\\{").hide("\\}")
                 .end();
 
         builder.newRule("array")
                 .concat(TYPE.ARRAY)
-                    .match("\\[")
-                    .rule("value").many().match(",").rule("value").manyEnd()
-                    .match("\\]")
+                    .hide("\\[")
+                    .rule("value").many().hide(",").rule("value").manyEnd()
+                    .hide("\\]")
                 .or()
-                .concat(TYPE.ARRAY).match("\\[").match("\\]")
+                .concat(TYPE.ARRAY).hide("\\[").hide("\\]")
                 .end();
 
         // first " then any character other than " then ".

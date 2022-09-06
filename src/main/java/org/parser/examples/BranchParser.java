@@ -62,21 +62,21 @@ public class BranchParser<ANNOTATION> implements Parser<BranchParser.TYPE, ANNOT
                 .end();
 
         builder.newRule("IF")
-                .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
+                .concat(TYPE.IF).hide("if").hide("\\(").rule("CONDITION").hide("\\)").rule("BLOCK")
                 .end();
 
         builder.newRule("CONDITION")
-                .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
+                .concat(TYPE.LEQ).rule("LITERAL").hide("<=").rule("LITERAL")
                 .or()
-                .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
+                .concat(TYPE.GEQ).rule("LITERAL").hide(">=").rule("LITERAL")
                 .end();
 
         builder.newRule("BLOCK")
-                .concat(TYPE.BLOCK).match("\\{").many("ASSIGN").match("\\}")
+                .concat(TYPE.BLOCK).hide("\\{").many("ASSIGN").hide("\\}")
                 .end();
 
         builder.newRule("ASSIGN")
-                .concat(TYPE.ASSIGN).rule("IDENTIFIER").match("=").rule("EXPR").match(";")
+                .concat(TYPE.ASSIGN).rule("IDENTIFIER").hide("=").rule("EXPR").hide(";")
                 .end();
 
         builder.newRule("EXPR")

@@ -76,11 +76,48 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
     }
 
     /**
+     * Inserts a many parser as a new step to the current subrule.
+     * @param pattern Pattern
+     * @return The underlying ConcatRuleBuilder.
+     */
+    public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
+        return addStep(Parser.match(type, pattern));
+    }
+
+    /**
+     * Inserts a many parser as a new step to the current subrule.
+     * @param regex RegEx
+     * @return The underlying ConcatRuleBuilder.
+     */
+    public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
+        return match(type, parserBuilder.getPattern(regex));
+    }
+
+
+    /**
+     * Inserts a keyword parser as a new step to the current subrule.
+     * @param pattern Pattern
+     * @return The underlying ConcatRuleBuilder.
+     */
+    public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
+        return addStep(Parser.keyword(type, pattern));
+    }
+
+    /**
+     * Inserts a keyword parser as a new step to the current subrule.
+     * @param regex RegEx
+     * @return The underlying ConcatRuleBuilder.
+     */
+    public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
+        return keyword(type, parserBuilder.getPattern(regex));
+    }
+
+    /**
      * Inserts a hide parser as a new step to the current subrule.
      * @param pattern Pattern
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
+    public ConcatRuleBuilder<TYPE, ANNOTATION> hide(Pattern pattern) {
         return addStep(Parser.hide(pattern));
     }
 
@@ -89,8 +126,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> match(String regex) {
-        return match(parserBuilder.getPattern(regex));
+    public ConcatRuleBuilder<TYPE, ANNOTATION> hide(String regex) {
+        return hide(parserBuilder.getPattern(regex));
     }
 
     /**

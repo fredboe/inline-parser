@@ -93,7 +93,7 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
                 .end();
 
         builder.newRule("BRAC")
-                .concat().match("\\(").rule("EXPR").match("\\)")
+                .concat().hide("\\(").rule("EXPR").hide("\\)")
                 .end();
 
         // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits

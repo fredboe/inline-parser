@@ -71,7 +71,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @return A reset ConcatRuleBuilder whose ConcatParser simply takes as AST the AST of the first child.
      */
     public ConcatRuleBuilder<TYPE, ANNOTATION> concat() {
-        return concat(trees -> trees.size() >= 1 ? trees.get(0) : null);
+        return concat(trees -> trees.size() >= 1 ? trees.get(0) : new AST<TYPE, ANNOTATION>(null).setIgnore(true));
     }
 
     /**
