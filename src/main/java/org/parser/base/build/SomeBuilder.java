@@ -11,31 +11,30 @@ import java.util.regex.Pattern;
  * The SomeBuilder allows to build a some-subrule (i.e. a parser that is executed,
  * until it fails, where this parser must succeed at least once).
  * @param <TYPE> type of AST.
- * @param <ANNOTATION> annotation of the AST.
  */
-public class SomeBuilder<TYPE, ANNOTATION> {
+public class SomeBuilder<TYPE> {
     /**
      * The ParserBuilder is used to get new placeholder parsers.
      */
-    private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
+    private final ParserBuilder<TYPE> parserBuilder;
     /**
      * The ConcatRuleBuilder is used to store the resulting some expression when calling someEnd().
      * in the Concat-Rule.
      */
-    private final ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder;
+    private final ConcatRuleBuilder<TYPE> concatBuilder;
     /**
      * The parser wrapped with some.
      */
-    private ConcatParser<TYPE, ANNOTATION> concatParser;
+    private ConcatParser<TYPE> concatParser;
     /**
      * Indicates whether the SomeBuilder allows any other method calls.
      */
     private boolean frozen;
 
-    public SomeBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder) {
+    public SomeBuilder(ParserBuilder<TYPE> parserBuilder, ConcatRuleBuilder<TYPE> concatBuilder) {
         this.parserBuilder = parserBuilder;
         this.concatBuilder = concatBuilder;
-        this.concatParser = Parser.concat(null, new ArrayList<>());
+        this.concatParser = Parser.concatP(null, new ArrayList<>());
         this.frozen = true;
     }
 
@@ -44,7 +43,7 @@ public class SomeBuilder<TYPE, ANNOTATION> {
      */
     void newSomeRule() {
         if (frozen) {
-            concatParser = Parser.concat(null, new ArrayList<>());
+            concatParser = Parser.concatP(null, new ArrayList<>());
             frozen = false;
         }
     }
@@ -54,8 +53,8 @@ public class SomeBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return The underlying SomeBuilder.
      */
-    public SomeBuilder<TYPE, ANNOTATION> match(Pattern pattern) {
-        return addStep(Parser.hide(pattern));
+    public SomeBuilder<TYPE> match(Pattern pattern) {
+        return addStep(Parser.hideP(pattern));
     }
 
     /**
@@ -63,7 +62,7 @@ public class SomeBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying SomeBuilder.
      */
-    public SomeBuilder<TYPE, ANNOTATION> match(String regex) {
+    public SomeBuilder<TYPE> match(String regex) {
         return match(parserBuilder.getPattern(regex));
     }
 
@@ -73,7 +72,7 @@ public class SomeBuilder<TYPE, ANNOTATION> {
      * @param name Name of the rule
      * @return The underlying SomeBuilder.
      */
-    public SomeBuilder<TYPE, ANNOTATION> rule(String name) {
+    public SomeBuilder<TYPE> rule(String name) {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
@@ -81,7 +80,7 @@ public class SomeBuilder<TYPE, ANNOTATION> {
      * Freezes this SomeBuilder and stores the Some expression in the ConcatRuleBuilder.
      * @return Returns the ConcatRuleBuilder where the some expression was stored.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> someEnd() {
+    public ConcatRuleBuilder<TYPE> someEnd() {
         frozen = true;
         if (!concatParser.isEmpty()) {
             concatBuilder.addStep(concatParser);
@@ -95,7 +94,7 @@ public class SomeBuilder<TYPE, ANNOTATION> {
      * @param parser Parser
      * @return The underlying SomeBuilder.
      */
-    private SomeBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
+    private SomeBuilder<TYPE> addStep(Parser<TYPE> parser) {
         if (parser != null && !frozen) concatParser.addSubparser(parser);
         return this;
     }

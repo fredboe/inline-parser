@@ -11,32 +11,31 @@ import java.util.regex.Pattern;
  * The ManyBuilder allows you to build a many-subrule (i.e. a parser that runs,
  * until it fails).
  * @param <TYPE> type of AST
- * @param <ANNOTATION> annotation of the AST
  */
-public class ManyBuilder<TYPE, ANNOTATION> {
+public class ManyBuilder<TYPE> {
     /**
      * The ParserBuilder is used to get new placeholderParser.
      */
-    private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
+    private final ParserBuilder<TYPE> parserBuilder;
     /**
      * The ConcatRuleBuilder is used to, when manyEnd() is called, add the resulting many-expression
      * in the Concat-Rule
      */
-    private final ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder;
+    private final ConcatRuleBuilder<TYPE> concatBuilder;
     /**
       The parser that is wrapped with many .
      */
-    private ConcatParser<TYPE, ANNOTATION> concatParser;
+    private ConcatParser<TYPE> concatParser;
     /**
      * Indicates whether the ManyBuilder allows any other method calls.
      */
     private boolean frozen;
 
-    public ManyBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder,
-                       ConcatRuleBuilder<TYPE, ANNOTATION> concatBuilder) {
+    public ManyBuilder(ParserBuilder<TYPE> parserBuilder,
+                       ConcatRuleBuilder<TYPE> concatBuilder) {
         this.parserBuilder = parserBuilder;
         this.concatBuilder = concatBuilder;
-        this.concatParser = Parser.concat(null, new ArrayList<>());
+        this.concatParser = Parser.concatP(null, new ArrayList<>());
         this.frozen = true;
     }
 
@@ -45,7 +44,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      */
     void newManyRule() {
         if (frozen) {
-            concatParser = Parser.concat(null, new ArrayList<>());
+            concatParser = Parser.concatP(null, new ArrayList<>());
             frozen = false;
         }
     }
@@ -55,8 +54,8 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return The underlying ManyBuilder.
      */
-    public ManyBuilder<TYPE, ANNOTATION> hide(Pattern pattern) {
-        return addStep(Parser.hide(pattern));
+    public ManyBuilder<TYPE> hide(Pattern pattern) {
+        return addStep(Parser.hideP(pattern));
     }
 
     /**
@@ -64,7 +63,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying ManyBuilder.
      */
-    public ManyBuilder<TYPE, ANNOTATION> hide(String regex) {
+    public ManyBuilder<TYPE> hide(String regex) {
         return hide(parserBuilder.getPattern(regex));
     }
 
@@ -74,7 +73,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * @param name Name of the rule
      * @return The underlying ManyBuilder.
      */
-    public ManyBuilder<TYPE, ANNOTATION> rule(String name) {
+    public ManyBuilder<TYPE> rule(String name) {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
@@ -82,7 +81,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * Freezes this manyBuilder and stores the many expression in the ConcatRuleBuilder.
      * @return Returns the ConcatRuleBuilder where the many expression was stored.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> manyEnd() {
+    public ConcatRuleBuilder<TYPE> manyEnd() {
         frozen = true;
         if (!concatParser.isEmpty()) concatBuilder.addStep(new ManyParser<>(null, concatParser));
         return concatBuilder;
@@ -93,7 +92,7 @@ public class ManyBuilder<TYPE, ANNOTATION> {
      * @param parser Parser
      * @return The underlying ManyBuilder.
      */
-    private ManyBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
+    private ManyBuilder<TYPE> addStep(Parser<TYPE> parser) {
         if (parser != null && !frozen) concatParser.addSubparser(parser);
         return this;
     }

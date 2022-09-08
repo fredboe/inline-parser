@@ -14,9 +14,8 @@ import java.util.regex.Pattern;
 /**
  * The rule builder allows building rules (i.e. a line in the BNF).
  * @param <TYPE> type of the AST
- * @param <ANNOTATION> annotation of the AST
  */
-public class RuleBuilder<TYPE, ANNOTATION> {
+public class RuleBuilder<TYPE> {
     /**
      * Rule name (with this you will be able to access it)
      */
@@ -25,11 +24,11 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * The underlying ParserBuilder. This is used for the rule method, so that a * placeholder can be added to it, and for creating the
      * placeholder can be added to it and for creating the ConcatRuleBuilder and NextIsOrBuilder.
      */
-    private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
+    private final ParserBuilder<TYPE> parserBuilder;
     /**
      * The final rule
      */
-    private final OrParser<TYPE, ANNOTATION> rule;
+    private final OrParser<TYPE> rule;
     /**
      * Indicates whether the RuleBuilder is still modifiable or not.
      */
@@ -39,18 +38,18 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * The nextIsOrBuilder (this can be used over and over again and does not have to be always recreated
      * or be reset)
      */
-    private final NextIsOrBuilder<TYPE, ANNOTATION> nextIsOrBuilder;
+    private final NextIsOr<TYPE> nextIsOrBuilder;
     /**
      * The ConcatRuleBuilder (this can be used over and over again and does not have to be regenerated every time,
      * because it can be easily reset)
      */
-    private final ConcatRuleBuilder<TYPE, ANNOTATION> concatRuleBuilder;
+    private final ConcatRuleBuilder<TYPE> concatRuleBuilder;
 
-    public RuleBuilder(String ruleName, ParserBuilder<TYPE, ANNOTATION> parserBuilder) {
+    public RuleBuilder(String ruleName, ParserBuilder<TYPE> parserBuilder) {
         this.ruleName = ruleName;
         this.parserBuilder = parserBuilder;
-        this.rule = Parser.or(new ArrayList<>());
-        this.nextIsOrBuilder = new NextIsOrBuilder<>(parserBuilder, this);
+        this.rule = Parser.orP(new ArrayList<>());
+        this.nextIsOrBuilder = new NextIsOr<>(parserBuilder, this);
         this.concatRuleBuilder = new ConcatRuleBuilder<>(parserBuilder, this);
         this.frozen = false;
     }
@@ -60,7 +59,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param atSuccess Called when the ConcatParser succeeds.
      * @return A reset ConcatRuleBuilder whose ConcatParser uses the passed atSuccess method.
      */
-    private ConcatRuleBuilder<TYPE, ANNOTATION> concat(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
+    private ConcatRuleBuilder<TYPE> concat(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
         if (!frozen) concatRuleBuilder.newSubrule(atSuccess);
         return concatRuleBuilder;
     }
@@ -70,8 +69,8 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * (Takes as AST the first child, if any).
      * @return A reset ConcatRuleBuilder whose ConcatParser simply takes as AST the AST of the first child.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> concat() {
-        return concat(trees -> trees.size() >= 1 ? trees.get(0) : new AST<TYPE, ANNOTATION>(null).setIgnore(true));
+    public ConcatRuleBuilder<TYPE> concat() {
+        return concat(trees -> trees.size() >= 1 ? trees.get(0) : new AST<TYPE>(null).setIgnore(true));
     }
 
     /**
@@ -80,7 +79,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @return A reset ConcatRuleBuilder whose ConcatParser has as its AST the type passed and
      * simply has as children the ASTs of the elements of the subrule.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> concat(TYPE type) {
+    public ConcatRuleBuilder<TYPE> concat(TYPE type) {
         return concat(Parser.basicConcatAtSuccess(type));
     }
 
@@ -90,8 +89,8 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
-        return addSingleClause(Parser.match(type, pattern));
+    public NextIsOr<TYPE> match(TYPE type, Pattern pattern) {
+        return addSingleClause(Parser.matchP(type, pattern));
     }
 
     /**
@@ -100,7 +99,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
+    public NextIsOr<TYPE> match(TYPE type, String regex) {
         return match(type, parserBuilder.getPattern(regex));
     }
 
@@ -110,8 +109,8 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
-        return addSingleClause(Parser.keyword(type, pattern));
+    public NextIsOr<TYPE> keyword(TYPE type, Pattern pattern) {
+        return addSingleClause(Parser.keywordP(type, pattern));
     }
 
     /**
@@ -120,7 +119,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
+    public NextIsOr<TYPE> keyword(TYPE type, String regex) {
         return keyword(type, parserBuilder.getPattern(regex));
     }
 
@@ -130,8 +129,8 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
-                                                         Pattern pattern) {
+    public NextIsOr<TYPE> customRegEx(Function<Consumable.Match, AST<TYPE>> atSuccess,
+                                                  Pattern pattern) {
         return addSingleClause(new RegExParser<>(pattern, atSuccess));
     }
 
@@ -141,8 +140,8 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> customRegEx(Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess,
-                                                         String regex) {
+    public NextIsOr<TYPE> customRegEx(Function<Consumable.Match, AST<TYPE>> atSuccess,
+                                                  String regex) {
         return customRegEx(atSuccess, parserBuilder.getPattern(regex));
     }
 
@@ -151,7 +150,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> rule(String name) {
+    public NextIsOr<TYPE> rule(String name) {
         return addSingleClause(parserBuilder.getPlaceholder(name));
     }
 
@@ -160,8 +159,8 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> optional(String name) {
-        return addSingleClause(Parser.optional(parserBuilder.getPlaceholder(name)));
+    public NextIsOr<TYPE> optional(String name) {
+        return addSingleClause(Parser.optionalP(parserBuilder.getPlaceholder(name)));
     }
 
     /**
@@ -170,7 +169,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> many(TYPE type, String name) {
+    public NextIsOr<TYPE> many(TYPE type, String name) {
         return addSingleClause(parserBuilder.getMany(type, name));
     }
 
@@ -181,10 +180,10 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param name rule name
      * @return Returns the NextIsOrBuilder.
      */
-    public NextIsOrBuilder<TYPE, ANNOTATION> some(TYPE type, String name) {
+    public NextIsOr<TYPE> some(TYPE type, String name) {
         var placeholder = parserBuilder.getPlaceholder(name);
         var many = parserBuilder.getMany(null, name);
-        return addSingleClause(Parser.concat(type, List.of(placeholder, many)));
+        return addSingleClause(Parser.concatP(type, List.of(placeholder, many)));
     }
 
     /**
@@ -200,7 +199,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * @param singleParser one-element parser
      * @return Returns the NextIsOrBuilder.
      */
-    private NextIsOrBuilder<TYPE, ANNOTATION> addSingleClause(Parser<TYPE, ANNOTATION> singleParser) {
+    private NextIsOr<TYPE> addSingleClause(Parser<TYPE> singleParser) {
         addClause(singleParser);
         return nextIsOrBuilder;
     }
@@ -209,7 +208,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * Inserts the passed parser as a new clause.
      * @param parser Parser
      */
-    void addClause(Parser<TYPE, ANNOTATION> parser) {
+    void addClause(Parser<TYPE> parser) {
         if (!frozen) rule.addSubparser(parser);
     }
 
@@ -218,7 +217,7 @@ public class RuleBuilder<TYPE, ANNOTATION> {
      * parser of the RuleBuilder.
      * @return The parser that emerges from the RuleBuilder.
      */
-    Parser<TYPE, ANNOTATION> freeze() {
+    Parser<TYPE> freeze() {
         frozen = true;
         return rule;
     }

@@ -7,9 +7,8 @@ import java.util.*;
 /**
  * Abstract Syntax Tree
  * @param <TYPE> Type/Token
- * @param <ANNOTATION> Annotation-Class
  */
-public class AST<TYPE, ANNOTATION> {
+public class AST<TYPE> {
     /**
      * The type of the current node
      */
@@ -21,11 +20,7 @@ public class AST<TYPE, ANNOTATION> {
     /**
      * The child nodes
      */
-    private List<AST<TYPE, ANNOTATION>> children;
-    /**
-     * List of annotations, for this node
-     */
-    private final List<ANNOTATION> annotations;
+    private List<AST<TYPE>> children;
     /**
      * Ignore bit. If the bit is set, this AST (with children) should be ignored.
      */
@@ -35,7 +30,6 @@ public class AST<TYPE, ANNOTATION> {
         this.type = type;
         this.match = null;
         this.children = new ArrayList<>();
-        this.annotations = new ArrayList<>();
         this.ignore = false;
     }
 
@@ -44,19 +38,9 @@ public class AST<TYPE, ANNOTATION> {
         this.match = match;
     }
 
-    public AST(TYPE type, Consumable.Match match, List<AST<TYPE, ANNOTATION>> children) {
+    public AST(TYPE type, Consumable.Match match, List<AST<TYPE>> children) {
         this(type, match);
         this.children = children;
-    }
-
-    /**
-     * Inserts an annotation to this node
-     * @param annotation Annotation
-     * @return Returns the AST on which the method was called
-     */
-    public AST<TYPE, ANNOTATION> addAnnotation(ANNOTATION annotation) {
-        annotations.add(annotation);
-        return this;
     }
 
     /**
@@ -64,7 +48,7 @@ public class AST<TYPE, ANNOTATION> {
      * @param ast AST
      * @return Returns the AST on which the method was called
      */
-    public AST<TYPE, ANNOTATION> addChild(AST<TYPE, ANNOTATION> ast) {
+    public AST<TYPE> addChild(AST<TYPE> ast) {
         children.add(ast);
         return this;
     }
@@ -74,7 +58,7 @@ public class AST<TYPE, ANNOTATION> {
      * @param ASTs Collections from ASTs
      * @return Returns the AST on which the method was called
      */
-    public AST<TYPE, ANNOTATION> addChildren(Collection<AST<TYPE, ANNOTATION>> ASTs) {
+    public AST<TYPE> addChildren(Collection<AST<TYPE>> ASTs) {
         children.addAll(ASTs);
         return this;
     }
@@ -83,7 +67,7 @@ public class AST<TYPE, ANNOTATION> {
      * Sets the ignore bit
      * @return Returns the AST on which the method was called
      */
-    public AST<TYPE, ANNOTATION> setIgnore(boolean ignore) {
+    public AST<TYPE> setIgnore(boolean ignore) {
         this.ignore = ignore;
         return this;
     }
@@ -116,7 +100,7 @@ public class AST<TYPE, ANNOTATION> {
      *
      * @return Returns the list of child nodes
      */
-    public List<AST<TYPE, ANNOTATION>> getChildren() {
+    public List<AST<TYPE>> getChildren() {
         return children;
     }
 
@@ -126,7 +110,7 @@ public class AST<TYPE, ANNOTATION> {
      * @return Returns the i-th child node
      * @throws IndexOutOfBoundsException, if the index is too big or too small
      */
-    public AST<TYPE, ANNOTATION> getChild(int i) {
+    public AST<TYPE> getChild(int i) {
         return children.get(i);
     }
 
@@ -136,14 +120,6 @@ public class AST<TYPE, ANNOTATION> {
      */
     public int numChildren(){
         return children.size();
-    }
-
-    /**
-     *
-     * @return Returns the list of annotations
-     */
-    public List<ANNOTATION> getAnnotations() {
-        return annotations;
     }
 
     /**
@@ -169,7 +145,7 @@ public class AST<TYPE, ANNOTATION> {
             builder.append(match.matched());
         }
         builder.append('\n');
-        for (Iterator<AST<TYPE, ANNOTATION>> it = children.iterator(); it.hasNext();) {
+        for (Iterator<AST<TYPE>> it = children.iterator(); it.hasNext();) {
             var next = it.next();
             if (next != null) {
                 if (it.hasNext()) {

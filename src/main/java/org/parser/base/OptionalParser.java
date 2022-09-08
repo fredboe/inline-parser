@@ -5,17 +5,17 @@ import org.parser.tree.AST;
 
 import java.util.Optional;
 
-public class OptionalParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
+public class OptionalParser<TYPE> implements Parser<TYPE> {
     /**
      * Parser to be executed repeatedly
      */
-    private Parser<TYPE, ANNOTATION> parser;
+    private Parser<TYPE> parser;
 
     public OptionalParser() {
         this.parser = null;
     }
 
-    public OptionalParser(Parser<TYPE, ANNOTATION> parser) {
+    public OptionalParser(Parser<TYPE> parser) {
         this.parser = parser;
     }
 
@@ -27,14 +27,14 @@ public class OptionalParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION
      * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
        var optionalAST = parser.applyTo(consumable);
        return Optional.of(
-               optionalAST.orElse(new AST<TYPE, ANNOTATION>(null).setIgnore(true))
+               optionalAST.orElse(new AST<TYPE>(null).setIgnore(true))
        );
     }
 
-    public void setParserIfNull(Parser<TYPE, ANNOTATION> parser) {
+    public void setParserIfNull(Parser<TYPE> parser) {
         if (this.parser == null) this.parser = parser;
     }
 }

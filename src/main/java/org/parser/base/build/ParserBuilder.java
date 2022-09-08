@@ -9,23 +9,22 @@ import java.util.regex.Pattern;
 /**
  * Used to create a ParserPool.
  * @param <TYPE> type for the AST
- * @param <ANNOTATION> annotation for the AST.
  */
-public class ParserBuilder<TYPE, ANNOTATION> {
+public class ParserBuilder<TYPE> {
     /**
      * Stores all rules by name (A rule is one line in the BNF).
      */
-    private Map<String, Parser<TYPE, ANNOTATION>> rules;
+    private Map<String, Parser<TYPE>> rules;
     /**
      * Stores all placeholders with the name of the rule they should represent.
      * This map must be iterated through when building, as the placeholders before build do not represent a parser.
      */
-    private Map<String, PlaceholderParser<TYPE, ANNOTATION>> placeholders;
+    private Map<String, PlaceholderParser<TYPE>> placeholders;
     /**
      * Stores all many calls with the name of which rule they should represent.
      * This map must be iterated through when building, as the manys before build do not represent a parser.
      */
-    private Map<Tuple<String, TYPE>, ManyParser<TYPE, ANNOTATION>> manys;
+    private Map<Tuple<String, TYPE>, ManyParser<TYPE>> manys;
 
 
     public ParserBuilder() {
@@ -38,10 +37,10 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * Builds the ParserPool, which then contains all rules as parsers.
      * @return Returns the ParserPool which contains all rules as parser.
      */
-    public ParserPool<TYPE, ANNOTATION> build() {
+    public ParserPool<TYPE> build() {
         buildPlaceholders();
         buildManys();
-        ParserPool<TYPE, ANNOTATION> pool = new ParserPool<>(rules);
+        ParserPool<TYPE> pool = new ParserPool<>(rules);
         clear();
         return pool;
     }
@@ -83,7 +82,7 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * @param name rule name
      * @param parser parser
      */
-    void addParser(String name, Parser<TYPE, ANNOTATION> parser) {
+    void addParser(String name, Parser<TYPE> parser) {
         if (name != null && parser != null) rules.put(name, parser);
     }
 
@@ -93,11 +92,11 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * @param name Rule name
      * @return A placeholder parser that matches the passed name.
      */
-    PlaceholderParser<TYPE, ANNOTATION> getPlaceholder(String name) {
+    PlaceholderParser<TYPE> getPlaceholder(String name) {
         if (name == null) return null;
         if (placeholders.containsKey(name)) return placeholders.get(name);
 
-        PlaceholderParser<TYPE, ANNOTATION> placeholder = new PlaceholderParser<>();
+        PlaceholderParser<TYPE> placeholder = new PlaceholderParser<>();
         placeholders.put(name, placeholder);
         return placeholder;
     }
@@ -108,12 +107,12 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * @param name Rule name
      * @return A many-parser that matches the passed name.
      */
-    ManyParser<TYPE, ANNOTATION> getMany(TYPE type, String name) {
+    ManyParser<TYPE> getMany(TYPE type, String name) {
         if (name == null) return null;
         var tuple = new Tuple<>(name, type);
         if (manys.containsKey(tuple)) return manys.get(tuple);
 
-        ManyParser<TYPE, ANNOTATION> many = new ManyParser<>(type);
+        ManyParser<TYPE> many = new ManyParser<>(type);
         manys.put(tuple, many);
         return many;
     }
@@ -123,17 +122,8 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      * @param name Rule name
      * @return Returns the call chain of the RuleBuilder.
      */
-    public RuleBuilder<TYPE, ANNOTATION> newRule(String name) {
+    public RuleBuilder<TYPE> newRule(String name) {
         return new RuleBuilder<>(name, this);
-    }
-
-    /**
-     * Puts all the parser in the given pool to the rule map. If there is a name that is already associated
-     * with a rule, this rule will be overridden.
-     * @param pool ParserPool
-     */
-    public void union(ParserPool<TYPE, ANNOTATION> pool) {
-        rules.putAll(pool.getParsers());
     }
 
     /**
@@ -144,5 +134,23 @@ public class ParserBuilder<TYPE, ANNOTATION> {
      */
     Pattern getPattern(String regex) {
         return Pattern.compile(regex);
+    }
+
+    public void union(ParserBuilder<TYPE> other) {
+        rules.putAll(other.rules);
+        placeholders.putAll(other.placeholders);
+        manys.putAll(other.manys);
+    }
+
+    public static <T> ParserBuilder<T> union(ParserBuilder<T> builder1, ParserBuilder<T> builder2) {
+        var resBuilder = new ParserBuilder<T>();
+        resBuilder.rules.putAll(builder1.rules);
+        resBuilder.rules.putAll(builder2.rules);
+        resBuilder.placeholders.putAll(builder1.placeholders);
+        resBuilder.placeholders.putAll(builder2.placeholders);
+        resBuilder.manys.putAll(builder1.manys);
+        resBuilder.manys.putAll(builder2.manys);
+
+        return resBuilder;
     }
 }

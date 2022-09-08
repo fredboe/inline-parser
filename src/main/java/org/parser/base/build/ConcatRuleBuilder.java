@@ -11,41 +11,40 @@ import java.util.regex.Pattern;
 /**
  * ConcatRuleBuilder allows building a concat subrule (i.e. multiple regex or rule parsers in a row).
  * @param <TYPE> type of the AST
- * @param <ANNOTATION> annotation of the AST
  */
-public class ConcatRuleBuilder<TYPE, ANNOTATION> {
+public class ConcatRuleBuilder<TYPE> {
     /**
      * ParserBuilder, in the ConcatRuleBuilder this is used for the rule parser to add a
      * placeholder parser to the placeholder map so that it can be built later and for
      * the end method, so that the underlying rule can be added to the ParserBuilder.
      */
-    private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
+    private final ParserBuilder<TYPE> parserBuilder;
     /**
      * RuleBuilder, in ConcatRuleBuilder this is used to add the subrule as a new clause when using or() or end().
      */
-    private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
+    private final RuleBuilder<TYPE> ruleBuilder;
 
     /**
      * The manyBuilder (this can be used over and over again and does not have to be always recreated
      * or be reset)
      */
-    private final ManyBuilder<TYPE, ANNOTATION> manyBuilder;
+    private final ManyBuilder<TYPE> manyBuilder;
     /**
      * The someBuilder (this can be used over and over again and does not need to be recreated every time,
      * because it can be easily reset)
      */
-    private final SomeBuilder<TYPE, ANNOTATION> someBuilder;
+    private final SomeBuilder<TYPE> someBuilder;
 
     /**
      * Subrule (ConcatParser of the individual RegEx/Placholder parsers. This will be added later as a clause to the RuleBuilder).
      */
-    private ConcatParser<TYPE, ANNOTATION> subrule;
+    private ConcatParser<TYPE> subrule;
     /**
      * Indicates whether the ConcatRuleBuilder allows any other method calls.
      */
     private boolean frozen;
 
-    public ConcatRuleBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, RuleBuilder<TYPE, ANNOTATION> ruleBuilder) {
+    public ConcatRuleBuilder(ParserBuilder<TYPE> parserBuilder, RuleBuilder<TYPE> ruleBuilder) {
         if (parserBuilder == null || ruleBuilder == null)
             throw new RuntimeException("Parser-Builder und Rule-Builder dürfen nicht null sein");
         this.parserBuilder = parserBuilder;
@@ -60,7 +59,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * Creates a new subrule (ConcatParser) with the passed atSuccess method.
      * @param atSuccess Called on ConcatParser success.
      */
-    void newSubrule(Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> atSuccess) {
+    void newSubrule(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
         if (frozen) {
             this.subrule = new ConcatParser<>(atSuccess);
             frozen = false;
@@ -80,8 +79,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
-        return addStep(Parser.match(type, pattern));
+    public ConcatRuleBuilder<TYPE> match(TYPE type, Pattern pattern) {
+        return addStep(Parser.matchP(type, pattern));
     }
 
     /**
@@ -89,7 +88,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> match(TYPE type, String regex) {
+    public ConcatRuleBuilder<TYPE> match(TYPE type, String regex) {
         return match(type, parserBuilder.getPattern(regex));
     }
 
@@ -99,8 +98,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
-        return addStep(Parser.keyword(type, pattern));
+    public ConcatRuleBuilder<TYPE> keyword(TYPE type, Pattern pattern) {
+        return addStep(Parser.keywordP(type, pattern));
     }
 
     /**
@@ -108,7 +107,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
+    public ConcatRuleBuilder<TYPE> keyword(TYPE type, String regex) {
         return keyword(type, parserBuilder.getPattern(regex));
     }
 
@@ -117,8 +116,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> hide(Pattern pattern) {
-        return addStep(Parser.hide(pattern));
+    public ConcatRuleBuilder<TYPE> hide(Pattern pattern) {
+        return addStep(Parser.hideP(pattern));
     }
 
     /**
@@ -126,7 +125,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param regex RegEx
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> hide(String regex) {
+    public ConcatRuleBuilder<TYPE> hide(String regex) {
         return hide(parserBuilder.getPattern(regex));
     }
 
@@ -135,7 +134,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param name name of the rule
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> rule(String name) {
+    public ConcatRuleBuilder<TYPE> rule(String name) {
         return addStep(parserBuilder.getPlaceholder(name));
     }
 
@@ -144,8 +143,8 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param name name of the rule
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> optional(String name) {
-        return addStep(Parser.optional(parserBuilder.getPlaceholder(name)));
+    public ConcatRuleBuilder<TYPE> optional(String name) {
+        return addStep(Parser.optionalP(parserBuilder.getPlaceholder(name)));
     }
 
 
@@ -154,7 +153,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param name name of the rule
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> many(String name) {
+    public ConcatRuleBuilder<TYPE> many(String name) {
         return addStep(parserBuilder.getMany(null, name));
     }
 
@@ -162,7 +161,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * Creates a new ManyBuilder, which is then attached to the subrule.
      * @return A new ManyBuilder
      */
-    public ManyBuilder<TYPE, ANNOTATION> many() {
+    public ManyBuilder<TYPE> many() {
         manyBuilder.newManyRule();
         return manyBuilder;
     }
@@ -173,7 +172,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param name Name of the rule
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> some(String name) {
+    public ConcatRuleBuilder<TYPE> some(String name) {
         this.rule(name);
         return this.many(name);
     }
@@ -182,7 +181,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * Creates a new SomeBuilder, which is then attached to the subrule.
      * @return A new SomeBuilder
      */
-    public SomeBuilder<TYPE, ANNOTATION> some() {
+    public SomeBuilder<TYPE> some() {
         someBuilder.newSomeRule();
         return someBuilder;
     }
@@ -193,7 +192,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * have any effect on this builder.
      * @return The underlying RuleBuilder.
      */
-    public RuleBuilder<TYPE, ANNOTATION> or() {
+    public RuleBuilder<TYPE> or() {
         frozen = true;
         ruleBuilder.addClause(subrule);
         return ruleBuilder;
@@ -217,7 +216,7 @@ public class ConcatRuleBuilder<TYPE, ANNOTATION> {
      * @param parser Parser
      * @return The underlying ConcatRuleBuilder.
      */
-    public ConcatRuleBuilder<TYPE, ANNOTATION> addStep(Parser<TYPE, ANNOTATION> parser) {
+    public ConcatRuleBuilder<TYPE> addStep(Parser<TYPE> parser) {
         if (!frozen && subrule != null) subrule.addSubparser(parser);
         return this;
     }

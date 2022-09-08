@@ -4,21 +4,20 @@ package org.parser.base.build;
  * The NextIsOrBuilder is only used to force the user to call the or method next,
  * or the end method, which terminates the whole rule.
  * @param <TYPE> type of AST
- * @param <ANNOTATION> annotation of the AST
  */
-public class NextIsOrBuilder<TYPE, ANNOTATION> {
+public class NextIsOr<TYPE> {
     /**
      * The underlying ParserBuilder. This is needed in the end method so that the resulting
      * Rule can be added to it.
      */
-    private final ParserBuilder<TYPE, ANNOTATION> parserBuilder;
+    private final ParserBuilder<TYPE> parserBuilder;
     /**
      * The underlying RuleBuilder. This is needed so that when the or method is called the rule
      * can be added.
      */
-    private final RuleBuilder<TYPE, ANNOTATION> ruleBuilder;
+    private final RuleBuilder<TYPE> ruleBuilder;
 
-    public NextIsOrBuilder(ParserBuilder<TYPE, ANNOTATION> parserBuilder, RuleBuilder<TYPE, ANNOTATION> ruleBuilder) {
+    public NextIsOr(ParserBuilder<TYPE> parserBuilder, RuleBuilder<TYPE> ruleBuilder) {
         this.parserBuilder = parserBuilder;
         this.ruleBuilder = ruleBuilder;
     }
@@ -27,7 +26,7 @@ public class NextIsOrBuilder<TYPE, ANNOTATION> {
      *
      * @return Simply returns the underlying RuleBuilder.
      */
-    public RuleBuilder<TYPE, ANNOTATION> or() {
+    public RuleBuilder<TYPE> or() {
         return ruleBuilder;
     }
 

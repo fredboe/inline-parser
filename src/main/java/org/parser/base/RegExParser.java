@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Regular-Expression Parser
  */
-public class RegExParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
+public class RegExParser<TYPE> implements Parser<TYPE> {
     /**
      * RegEx-Pattern
      */
@@ -19,9 +19,9 @@ public class RegExParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      * This function is called when the RegEx pattern has been successfully matched.
      * This method should then eventually return the resulting AST.
      */
-    private final Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess;
+    private final Function<Consumable.Match, AST<TYPE>> atSuccess;
 
-    public RegExParser(Pattern pattern, Function<Consumable.Match, AST<TYPE, ANNOTATION>> atSuccess) {
+    public RegExParser(Pattern pattern, Function<Consumable.Match, AST<TYPE>> atSuccess) {
         this.pattern = pattern != null ? pattern : Pattern.compile("");
         this.atSuccess = atSuccess != null ? atSuccess : Parser.basicHideAtSuccess();
     }
@@ -33,7 +33,7 @@ public class RegExParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      * @return An AST wrapped with Optional (empty if the regex is not matched).
      */
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Optional<Consumable.Match> match = consumable.lookingAt(pattern);
         return match.map(atSuccess);
     }

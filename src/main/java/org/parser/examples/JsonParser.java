@@ -8,24 +8,24 @@ import org.parser.tree.AST;
 
 import java.util.Optional;
 
-public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATION> {
+public class JsonParser implements Parser<JsonParser.TYPE> {
     public enum TYPE {
         ARRAY, OBJECT, PROPERTY, NUMBER, STRING, TRUE, FALSE, NULL
     }
 
-    private final Parser<TYPE, ANNOTATION> jsonParser;
+    private final Parser<TYPE> jsonParser;
 
     public JsonParser() {
-        jsonParser = JsonParser.<ANNOTATION>jsonExample().getParser("json");
+        jsonParser = JsonParser.jsonExample().getParser("json");
     }
 
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         return jsonParser.applyTo(consumable);
     }
 
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
+    public Optional<AST<TYPE>> applyTo(CharSequence sequence) {
         return applyTo(new Consumable(sequence,
                 Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_LINEBREAK, Consumable.Ignore.IGNORE_COMMENT
         ));
@@ -42,10 +42,9 @@ public class JsonParser<ANNOTATION> implements Parser<JsonParser.TYPE, ANNOTATIO
      * number ::= (-)?\d+(\.\d*)?((e|E)(+|-)?\d+)? <br>
      * boolean ::= "true" | "false" <br>
      * @return Returns a ParserPool for json strings.
-     * @param <ANNOTATION> ANNOTATION type of the AST
      */
-    public static <ANNOTATION>ParserPool<TYPE, ANNOTATION> jsonExample() {
-        ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
+    public static ParserPool<TYPE> jsonExample() {
+        ParserBuilder<TYPE> builder = new ParserBuilder<>();
 
         builder.newRule("key_value")
                 .concat(TYPE.PROPERTY).rule("string").hide("\\:").rule("value")

@@ -17,22 +17,21 @@ import java.util.stream.Collectors;
  * where the ignore bit is set
  * - A parsing error should be passed using Optional (empty).
  * @param <TYPE> type
- * @param <ANNOTATION> ANNOTATION-Class at Abstract Syntax Tree
  */
-public interface Parser<TYPE, ANNOTATION> {
+public interface Parser<TYPE> {
     /**
      * Obtains a CharSequence and creates an AST from it.
      * @param consumable Consumable
      * @return An AST wrapped with Optional (empty if parsing error)
      */
-    Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable);
+    Optional<AST<TYPE>> applyTo(Consumable consumable);
 
     /**
      * Receives a CharSequence and creates an AST from it.
      * @param sequence CharSequence
      * @return An AST wrapped with optional (empty if parsing error)
      */
-    default Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
+    default Optional<AST<TYPE>> applyTo(CharSequence sequence) {
         return applyTo(new Consumable(sequence));
     }
 
@@ -41,7 +40,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param parsers Subparser.
      * @return Returns an Or parser with Parser.basicOrAtSuccess() as success method.
      */
-    static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> or(List<Parser<TYPE, ANNOTATION>> parsers) {
+    static <TYPE> OrParser<TYPE> orP(List<Parser<TYPE>> parsers) {
         return new OrParser<>(basicOrAtSuccess(), parsers);
     }
 
@@ -51,7 +50,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param parsers subparser
      * @return Returns an Or parser with Parser.basicOrWithNodeAtSuccess(type) as success method.
      */
-    static <TYPE, ANNOTATION> OrParser<TYPE, ANNOTATION> orWithNode(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
+    static <TYPE> OrParser<TYPE> orWithNodeP(TYPE type, List<Parser<TYPE>> parsers) {
         return new OrParser<>(basicOrWithNodeAtSuccess(type), parsers);
     }
 
@@ -61,7 +60,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param parsers Subparser
      * @return Returns a concat parser with Parser.basicConcatAtSuccess(type) as success method.
      */
-    static <TYPE, ANNOTATION> ConcatParser<TYPE, ANNOTATION> concat(TYPE type, List<Parser<TYPE, ANNOTATION>> parsers) {
+    static <TYPE> ConcatParser<TYPE> concatP(TYPE type, List<Parser<TYPE>> parsers) {
         return new ConcatParser<>(basicConcatAtSuccess(type), parsers);
     }
 
@@ -71,8 +70,12 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param parser subparser
      * @return Returns a many-parser with the passed type and the passed parser as subparser.
      */
-    static <TYPE, ANNOTATION> ManyParser<TYPE, ANNOTATION> many(TYPE type, Parser<TYPE, ANNOTATION> parser) {
+    static <TYPE> ManyParser<TYPE> manyP(TYPE type, Parser<TYPE> parser) {
         return new ManyParser<>(type, parser);
+    }
+
+    static <TYPE> Parser<TYPE> someP(TYPE type, Parser<TYPE> parser) {
+        return Parser.concatP(type, List.of(Parser.manyP(null, parser)));
     }
 
     /**
@@ -80,7 +83,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param parser subparser
      * @return Returns an optional-parser with the passed type and the passed parser as subparser.
      */
-    static <TYPE, ANNOTATION> OptionalParser<TYPE, ANNOTATION> optional(Parser<TYPE, ANNOTATION> parser) {
+    static <TYPE> OptionalParser<TYPE> optionalP(Parser<TYPE> parser) {
         return new OptionalParser<>(parser);
     }
 
@@ -91,7 +94,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return A basic hide parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(Pattern pattern) {
+    static <TYPE> RegExParser<TYPE> hideP(Pattern pattern) {
         return new RegExParser<>(pattern, basicHideAtSuccess());
     }
 
@@ -101,8 +104,8 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param regex Regular-Expression
      * @return A basic hide parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> hide(String regex) {
-        return hide(Pattern.compile(regex));
+    static <TYPE> RegExParser<TYPE> hideP(String regex) {
+        return hideP(Pattern.compile(regex));
     }
 
     /**
@@ -112,7 +115,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return A basic keyword parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, Pattern pattern) {
+    static <TYPE> RegExParser<TYPE> keywordP(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicKeywordAtSuccess(type));
     }
 
@@ -123,8 +126,8 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param regex Regular-Expression
      * @return A basic keyword parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> keyword(TYPE type, String regex) {
-        return keyword(type, Pattern.compile(regex));
+    static <TYPE> RegExParser<TYPE> keywordP(TYPE type, String regex) {
+        return keywordP(type, Pattern.compile(regex));
     }
 
     /**
@@ -134,7 +137,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param pattern Pattern
      * @return A basic match parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, Pattern pattern) {
+    static <TYPE> RegExParser<TYPE> matchP(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicMatchAtSuccess(type));
     }
 
@@ -145,8 +148,8 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param regex regular expression
      * @return A basic match parser
      */
-    static <TYPE, ANNOTATION> RegExParser<TYPE, ANNOTATION> match(TYPE type, String regex) {
-        return match(type, Pattern.compile(regex));
+    static <TYPE> RegExParser<TYPE> matchP(TYPE type, String regex) {
+        return matchP(type, Pattern.compile(regex));
     }
 
 
@@ -155,7 +158,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Returns the identity function, because a normal Or parser does not have a type but
      * takes the type of the successful subparser.
      */
-    static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrAtSuccess() {
+    static <TYPE> Function<AST<TYPE>, AST<TYPE>> basicOrAtSuccess() {
         return ast -> ast;
     }
 
@@ -164,8 +167,8 @@ public interface Parser<TYPE, ANNOTATION> {
      * @param type Type of the resulting AST.
      * @return Returns a function that turns an AST A into an AST B with the passed type and A as child.
      */
-    static <TYPE, ANNOTATION> Function<AST<TYPE, ANNOTATION>, AST<TYPE, ANNOTATION>> basicOrWithNodeAtSuccess(TYPE type) {
-        return ast -> new AST<TYPE, ANNOTATION>(type, null).addChild(ast);
+    static <TYPE> Function<AST<TYPE>, AST<TYPE>> basicOrWithNodeAtSuccess(TYPE type) {
+        return ast -> new AST<>(type, null).addChild(ast);
     }
 
     /**
@@ -174,7 +177,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Returns a function that creates an AST B from multiple ASTs with the passed type and the
      * ASTs as children.
      */
-    static <TYPE, ANNOTATION> Function<List<AST<TYPE, ANNOTATION>>, AST<TYPE, ANNOTATION>> basicConcatAtSuccess(TYPE type) {
+    static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> basicConcatAtSuccess(TYPE type) {
         return trees -> {
             var children = trees.stream().map(tree -> tree.getType() == null ? tree.getChildren() : List.of(tree))
                   .flatMap(Collection::stream).collect(Collectors.toList());
@@ -188,7 +191,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Returns a function that creates an AST from a match that has the passed type, and
      * the match as "match".
      */
-    static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicMatchAtSuccess(TYPE type) {
+    static <TYPE> Function<Consumable.Match, AST<TYPE>> basicMatchAtSuccess(TYPE type) {
         return match -> new AST<>(type, match);
     }
 
@@ -196,8 +199,8 @@ public interface Parser<TYPE, ANNOTATION> {
      *
      * @return Returns a function that creates an AST from a match with the ignore bit set.
      */
-    static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicHideAtSuccess() {
-        return match -> new AST<TYPE, ANNOTATION>(null).setIgnore(true);
+    static <TYPE> Function<Consumable.Match, AST<TYPE>> basicHideAtSuccess() {
+        return match -> new AST<TYPE>(null).setIgnore(true);
     }
 
     /**
@@ -206,7 +209,7 @@ public interface Parser<TYPE, ANNOTATION> {
      * @return Returns a function which creates an AST from a match which has the passed type
      * but the match of the AST is null.
      */
-    static <TYPE, ANNOTATION> Function<Consumable.Match, AST<TYPE, ANNOTATION>> basicKeywordAtSuccess(TYPE type) {
+    static <TYPE> Function<Consumable.Match, AST<TYPE>> basicKeywordAtSuccess(TYPE type) {
         return match -> new AST<>(type, null);
     }
 }

@@ -11,9 +11,8 @@ import java.util.Optional;
  * A many-parser holds a parser and executes it until it fails.
  * A many-parser is always successful, so it always returns an AST.
  * @param <TYPE> Type class of the AST.
- * @param <ANNOTATION> annotation class of the AST.
  */
-public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
+public class ManyParser<TYPE> implements Parser<TYPE> {
     /**
      * Type of an AST created with Many
      */
@@ -21,14 +20,14 @@ public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
     /**
      * Parser to be executed repeatedly
      */
-    private Parser<TYPE, ANNOTATION> parser;
+    private Parser<TYPE> parser;
 
     public ManyParser(TYPE type) {
         this.type = type;
         this.parser = null;
     }
 
-    public ManyParser(TYPE type, Parser<TYPE, ANNOTATION> parser) {
+    public ManyParser(TYPE type, Parser<TYPE> parser) {
         this.type = type;
         this.parser = parser;
     }
@@ -43,9 +42,9 @@ public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
      * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
-        Optional<AST<TYPE, ANNOTATION>> optionalAST;
-        List<AST<TYPE, ANNOTATION>> ASTs = new ArrayList<>();
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
+        Optional<AST<TYPE>> optionalAST;
+        List<AST<TYPE>> ASTs = new ArrayList<>();
 
         while ((optionalAST = parser.applyTo(consumable)).isPresent()) {
             var ast = optionalAST.get();
@@ -60,7 +59,7 @@ public class ManyParser<TYPE, ANNOTATION> implements Parser<TYPE, ANNOTATION> {
         return Optional.of(new AST<>(type, null, ASTs));
     }
 
-    public void setParserIfNull(Parser<TYPE, ANNOTATION> parser) {
+    public void setParserIfNull(Parser<TYPE> parser) {
         if (this.parser == null) this.parser = parser;
     }
 }

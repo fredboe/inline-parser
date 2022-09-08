@@ -8,26 +8,26 @@ import org.parser.tree.AST;
 
 import java.util.Optional;
 
-public class BranchParser<ANNOTATION> implements Parser<BranchParser.TYPE, ANNOTATION> {
+public class BranchParser implements Parser<BranchParser.TYPE> {
     public enum TYPE {
         IF, LEQ, GEQ,
         NUMBER, ADD,
         IDENTIFIER, ASSIGN, BLOCK
     }
 
-    private final Parser<TYPE, ANNOTATION> branchParser;
+    private final Parser<TYPE> branchParser;
 
     public BranchParser() {
-        branchParser = BranchParser.<ANNOTATION>ifExample().getParser("BRANCH");
+        branchParser = BranchParser.ifExample().getParser("BRANCH");
     }
 
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         return branchParser.applyTo(consumable);
     }
 
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
+    public Optional<AST<TYPE>> applyTo(CharSequence sequence) {
         return applyTo(new Consumable(sequence,
                 Consumable.Ignore.IGNORE_LINEBREAK, Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_COMMENT)
         );
@@ -46,10 +46,9 @@ public class BranchParser<ANNOTATION> implements Parser<BranchParser.TYPE, ANNOT
      * expr ::= literal ("+" literal)+ | literal <br>
      *
      * @return Returns a ParserPool for simplified If expressions.
-     * @param <ANNOTATION> ANNOTATION type of the AST
      */
-    public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> ifExample() {
-        ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
+    public static ParserPool<TYPE> ifExample() {
+        ParserBuilder<TYPE> builder = new ParserBuilder<>();
 
         builder.newRule("NUMBER").match(TYPE.NUMBER, "\\d+").end();
 

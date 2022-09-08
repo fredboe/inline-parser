@@ -8,24 +8,24 @@ import org.parser.tree.AST;
 
 import java.util.Optional;
 
-public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYPE, ANNOTATION> {
+public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
     public enum TYPE {
         NUMBER, ADD, SUB, MUL, DIV, POT, FUNC, SIN, COS, TAN, PI, E
     }
 
-    private final Parser<TYPE, ANNOTATION> aritParser;
+    private final Parser<TYPE> aritParser;
 
     public ArithmeticParser() {
-        aritParser = ArithmeticParser.<ANNOTATION>arithmeticExample().getParser("EXPR");
+        aritParser = ArithmeticParser.arithmeticExample().getParser("EXPR");
     }
 
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         return aritParser.applyTo(consumable);
     }
 
     @Override
-    public Optional<AST<TYPE, ANNOTATION>> applyTo(CharSequence sequence) {
+    public Optional<AST<TYPE>> applyTo(CharSequence sequence) {
         return applyTo(new Consumable(sequence,
                 Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_LINEBREAK)
         );
@@ -48,8 +48,8 @@ public class ArithmeticParser<ANNOTATION> implements Parser<ArithmeticParser.TYP
      * @return Returns a ParserPool for arithmetic expressions.
      * @param <ANNOTATION> ANNOTATION type of the AST
      */
-    public static <ANNOTATION> ParserPool<TYPE, ANNOTATION> arithmeticExample() {
-        ParserBuilder<TYPE, ANNOTATION> builder = new ParserBuilder<>();
+    public static <ANNOTATION> ParserPool<TYPE> arithmeticExample() {
+        ParserBuilder<TYPE> builder = new ParserBuilder<>();
 
         builder.newRule("ADD")
                 .concat(TYPE.ADD).rule("SUB").some().match("\\+").rule("SUB").someEnd()
