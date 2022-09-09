@@ -20,7 +20,6 @@ public class ParserBuilder<TYPE> {
      */
     private Map<String, PlaceholderParser<TYPE>> placeholders;
 
-
     public ParserBuilder() {
         this.rules = new HashMap<>();
         this.placeholders = new HashMap<>();

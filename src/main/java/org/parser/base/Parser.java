@@ -74,6 +74,12 @@ public interface Parser<TYPE> {
         return new ManyParser<>(type, parser);
     }
 
+    /**
+     *
+     * @param type Type of the created AST.
+     * @param parser subparser
+     * @return Returns a some-parser with the passed type and the passed parser as subparser
+     */
     static <TYPE> Parser<TYPE> some(TYPE type, Parser<TYPE> parser) {
         return new ConcatParser<>(Mode.childrenIfNoType(type), List.of(parser, Parser.many(null, parser)));
     }
