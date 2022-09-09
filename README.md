@@ -24,7 +24,7 @@ If statement consists of `if`, `(`, `condition`, `)` and then `statements`.
 Such a rule can be constructed like this:
 ```java
 builder.newRule("IF")
-        .concat(TYPE.IF).match("if").match("\\(").rule("CONDITION").match("\\)").rule("BLOCK")
+        .type(TYPE.IF).hide("if").hide("\\(").rule("CONDITION").hide("\\)").rule("BLOCK")
         .end();
 ```
 Now we have to define the rules "CONDITION" and "BLOCK". As an example we show
@@ -32,9 +32,9 @@ how the "CONDITION" rule can be created with the relational operators
 <= and >=:
 ```java
 builder.newRule("COND")
-        .concat(TYPE.LEQ).rule("LITERAL").match("<=").rule("LITERAL")
+        .type(TYPE.LEQ).rule("LITERAL").hide("<=").rule("LITERAL")
         .or()
-        .concat(TYPE.GEQ).rule("LITERAL").match(">=").rule("LITERAL")
+        .type(TYPE.GEQ).rule("LITERAL").hide(">=").rule("LITERAL")
         .end();
 ```
 If you would now create the rules "BLOCK" and "LITERAL", you could create at the end
