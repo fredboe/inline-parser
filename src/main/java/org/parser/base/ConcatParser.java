@@ -23,7 +23,7 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
      * have been delivered. The list of supplied ASTs (without the ignored ASTs) is then passed to this method.
      *. This method should then eventually return the resulting AST.
      */
-    private final Function<List<AST<TYPE>>, AST<TYPE>> atSuccess;
+    private Function<List<AST<TYPE>>, AST<TYPE>> atSuccess;
 
     public ConcatParser(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
         this.atSuccess = atSuccess != null ? atSuccess : Parser.basicConcatAtSuccess(null);
@@ -34,6 +34,10 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
                         List<Parser<TYPE>> parsers) {
         this(atSuccess);
         if (parsers != null) this.parsers = parsers;
+    }
+
+    public void setAtSuccess(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
+        this.atSuccess = atSuccess;
     }
 
     /**
@@ -65,5 +69,10 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
     @Override
     public boolean isEmpty() {
         return parsers.isEmpty();
+    }
+
+    @Override
+    public int size() {
+        return parsers.size();
     }
 }

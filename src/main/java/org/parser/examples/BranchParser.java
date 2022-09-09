@@ -4,6 +4,7 @@ import org.parser.Consumable;
 import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
+import org.parser.base.build.Simplerule;
 import org.parser.tree.AST;
 
 import java.util.Optional;
@@ -52,6 +53,39 @@ public class BranchParser implements Parser<BranchParser.TYPE> {
 
         builder.newRule("NUMBER").match(TYPE.NUMBER, "\\d+").end();
 
+        builder.newRule("IDENTIFIER").match(TYPE.IDENTIFIER, "[a-zA-Z]\\w*").end();
+
+        builder.newRule("LITERAL").rule("NUMBER").or().rule("IDENTIFIER").end();
+
+        builder.newRule("IF")
+                .type(TYPE.IF).hide("if").hide("\\(").rule("CONDITION").hide("\\)").rule("BLOCK")
+                .end();
+
+        builder.newRule("CONDITION")
+                .type(TYPE.LEQ).rule("LITERAL").hide("<=").rule("LITERAL")
+                .or()
+                .type(TYPE.GEQ).rule("LITERAL").hide(">=").rule("LITERAL")
+                .end();
+
+        builder.newRule("BLOCK")
+                .type(TYPE.BLOCK).hide("\\{").many("ASSIGN").hide("\\}")
+                .end();
+
+        builder.newRule("ASSIGN")
+                .type(TYPE.ASSIGN).rule("IDENTIFIER").hide("=").rule("EXPR").hide(";")
+                .end();
+
+        builder.newRule("EXPR")
+                .type(TYPE.ADD).rule("LITERAL").some(new Simplerule<TYPE>().hide("\\+").rule("LITERAL"))
+                .or()
+                .rule("LITERAL")
+                .end();
+
+        builder.newRule("BRANCH").rule("IF").end();
+
+
+        /*builder.newRule("NUMBER").match(TYPE.NUMBER, "\\d+").end();
+
         builder.newRule("IDENTIFIER")
                 .match(TYPE.IDENTIFIER, "[a-zA-Z]\\w*")
                 .end();
@@ -84,7 +118,7 @@ public class BranchParser implements Parser<BranchParser.TYPE> {
                 .rule("LITERAL")
                 .end();
 
-        builder.newRule("BRANCH").rule("IF").end();
+        builder.newRule("BRANCH").rule("IF").end();*/
 
         return builder.build();
     }

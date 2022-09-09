@@ -12,4 +12,6 @@ public interface DepthParser<TYPE> extends Parser<TYPE> {
      * @return true if the parser has subparsers, false otherwise.
      */
     boolean isEmpty();
+
+    int size();
 }

@@ -4,6 +4,7 @@ import org.parser.Consumable;
 import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
+import org.parser.base.build.Simplerule;
 import org.parser.tree.AST;
 
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class JsonParser implements Parser<JsonParser.TYPE> {
         ParserBuilder<TYPE> builder = new ParserBuilder<>();
 
         builder.newRule("key_value")
-                .concat(TYPE.PROPERTY).rule("string").hide("\\:").rule("value")
+                .type(TYPE.PROPERTY).rule("string").hide("\\:").rule("value")
                 .end();
 
         builder.newRule("value")
@@ -60,21 +61,21 @@ public class JsonParser implements Parser<JsonParser.TYPE> {
                 .end();
 
         builder.newRule("object")
-                .concat(TYPE.OBJECT)
+                .type(TYPE.OBJECT)
                     .hide("\\{")
-                    .rule("key_value").many().hide(",").rule("key_value").manyEnd()
+                    .rule("key_value").many(new Simplerule<TYPE>().hide(",").rule("key_value"))
                     .hide("\\}")
                 .or()
-                .concat(TYPE.OBJECT).hide("\\{").hide("\\}")
+                .type(TYPE.OBJECT).hide("\\{").hide("\\}")
                 .end();
 
         builder.newRule("array")
-                .concat(TYPE.ARRAY)
+                .type(TYPE.ARRAY)
                     .hide("\\[")
-                    .rule("value").many().hide(",").rule("value").manyEnd()
+                    .rule("value").many(new Simplerule<TYPE>().hide(",").rule("value"))
                     .hide("\\]")
                 .or()
-                .concat(TYPE.ARRAY).hide("\\[").hide("\\]")
+                .type(TYPE.ARRAY).hide("\\[").hide("\\]")
                 .end();
 
         // first " then any character other than " then ".

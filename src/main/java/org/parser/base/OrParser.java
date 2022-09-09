@@ -56,4 +56,9 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
     public boolean isEmpty() {
         return parsers.isEmpty();
     }
+
+    @Override
+    public int size() {
+        return parsers.size();
+    }
 }

@@ -1,6 +1,7 @@
 package org.parser.base;
 
 import org.parser.Consumable;
+import org.parser.base.build.Mode;
 import org.parser.tree.AST;
 
 import java.util.Collection;
@@ -40,7 +41,7 @@ public interface Parser<TYPE> {
      * @param parsers Subparser.
      * @return Returns an Or parser with Parser.basicOrAtSuccess() as success method.
      */
-    static <TYPE> OrParser<TYPE> orP(List<Parser<TYPE>> parsers) {
+    static <TYPE> OrParser<TYPE> or(List<Parser<TYPE>> parsers) {
         return new OrParser<>(basicOrAtSuccess(), parsers);
     }
 
@@ -50,7 +51,7 @@ public interface Parser<TYPE> {
      * @param parsers subparser
      * @return Returns an Or parser with Parser.basicOrWithNodeAtSuccess(type) as success method.
      */
-    static <TYPE> OrParser<TYPE> orWithNodeP(TYPE type, List<Parser<TYPE>> parsers) {
+    static <TYPE> OrParser<TYPE> orWithNode(TYPE type, List<Parser<TYPE>> parsers) {
         return new OrParser<>(basicOrWithNodeAtSuccess(type), parsers);
     }
 
@@ -60,7 +61,7 @@ public interface Parser<TYPE> {
      * @param parsers Subparser
      * @return Returns a concat parser with Parser.basicConcatAtSuccess(type) as success method.
      */
-    static <TYPE> ConcatParser<TYPE> concatP(TYPE type, List<Parser<TYPE>> parsers) {
+    static <TYPE> ConcatParser<TYPE> concat(TYPE type, List<Parser<TYPE>> parsers) {
         return new ConcatParser<>(basicConcatAtSuccess(type), parsers);
     }
 
@@ -70,12 +71,12 @@ public interface Parser<TYPE> {
      * @param parser subparser
      * @return Returns a many-parser with the passed type and the passed parser as subparser.
      */
-    static <TYPE> ManyParser<TYPE> manyP(TYPE type, Parser<TYPE> parser) {
+    static <TYPE> ManyParser<TYPE> many(TYPE type, Parser<TYPE> parser) {
         return new ManyParser<>(type, parser);
     }
 
-    static <TYPE> Parser<TYPE> someP(TYPE type, Parser<TYPE> parser) {
-        return Parser.concatP(type, List.of(Parser.manyP(null, parser)));
+    static <TYPE> Parser<TYPE> some(TYPE type, Parser<TYPE> parser) {
+        return new ConcatParser<>(Mode.childrenIfNoType(type), List.of(parser, Parser.many(null, parser)));
     }
 
     /**
@@ -83,7 +84,7 @@ public interface Parser<TYPE> {
      * @param parser subparser
      * @return Returns an optional-parser with the passed type and the passed parser as subparser.
      */
-    static <TYPE> OptionalParser<TYPE> optionalP(Parser<TYPE> parser) {
+    static <TYPE> OptionalParser<TYPE> optional(Parser<TYPE> parser) {
         return new OptionalParser<>(parser);
     }
 
@@ -94,7 +95,7 @@ public interface Parser<TYPE> {
      * @param pattern Pattern
      * @return A basic hide parser
      */
-    static <TYPE> RegExParser<TYPE> hideP(Pattern pattern) {
+    static <TYPE> RegExParser<TYPE> hide(Pattern pattern) {
         return new RegExParser<>(pattern, basicHideAtSuccess());
     }
 
@@ -104,8 +105,8 @@ public interface Parser<TYPE> {
      * @param regex Regular-Expression
      * @return A basic hide parser
      */
-    static <TYPE> RegExParser<TYPE> hideP(String regex) {
-        return hideP(Pattern.compile(regex));
+    static <TYPE> RegExParser<TYPE> hide(String regex) {
+        return hide(Pattern.compile(regex));
     }
 
     /**
@@ -115,7 +116,7 @@ public interface Parser<TYPE> {
      * @param pattern Pattern
      * @return A basic keyword parser
      */
-    static <TYPE> RegExParser<TYPE> keywordP(TYPE type, Pattern pattern) {
+    static <TYPE> RegExParser<TYPE> keyword(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicKeywordAtSuccess(type));
     }
 
@@ -126,8 +127,8 @@ public interface Parser<TYPE> {
      * @param regex Regular-Expression
      * @return A basic keyword parser
      */
-    static <TYPE> RegExParser<TYPE> keywordP(TYPE type, String regex) {
-        return keywordP(type, Pattern.compile(regex));
+    static <TYPE> RegExParser<TYPE> keyword(TYPE type, String regex) {
+        return keyword(type, Pattern.compile(regex));
     }
 
     /**
@@ -137,7 +138,7 @@ public interface Parser<TYPE> {
      * @param pattern Pattern
      * @return A basic match parser
      */
-    static <TYPE> RegExParser<TYPE> matchP(TYPE type, Pattern pattern) {
+    static <TYPE> RegExParser<TYPE> match(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicMatchAtSuccess(type));
     }
 
@@ -148,8 +149,8 @@ public interface Parser<TYPE> {
      * @param regex regular expression
      * @return A basic match parser
      */
-    static <TYPE> RegExParser<TYPE> matchP(TYPE type, String regex) {
-        return matchP(type, Pattern.compile(regex));
+    static <TYPE> RegExParser<TYPE> match(TYPE type, String regex) {
+        return match(type, Pattern.compile(regex));
     }
 
 
@@ -180,7 +181,7 @@ public interface Parser<TYPE> {
     static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> basicConcatAtSuccess(TYPE type) {
         return trees -> {
             var children = trees.stream().map(tree -> tree.getType() == null ? tree.getChildren() : List.of(tree))
-                  .flatMap(Collection::stream).collect(Collectors.toList());
+                    .flatMap(Collection::stream).toList();
             return new AST<>(type, null, children);
         };
     }
