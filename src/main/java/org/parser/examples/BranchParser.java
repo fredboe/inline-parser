@@ -83,43 +83,6 @@ public class BranchParser implements Parser<BranchParser.TYPE> {
 
         builder.newRule("BRANCH").rule("IF").end();
 
-
-        /*builder.newRule("NUMBER").match(TYPE.NUMBER, "\\d+").end();
-
-        builder.newRule("IDENTIFIER")
-                .match(TYPE.IDENTIFIER, "[a-zA-Z]\\w*")
-                .end();
-
-        builder.newRule("LITERAL")
-                .rule("NUMBER").or().rule("IDENTIFIER")
-                .end();
-
-        builder.newRule("IF")
-                .concat(TYPE.IF).hide("if").hide("\\(").rule("CONDITION").hide("\\)").rule("BLOCK")
-                .end();
-
-        builder.newRule("CONDITION")
-                .concat(TYPE.LEQ).rule("LITERAL").hide("<=").rule("LITERAL")
-                .or()
-                .concat(TYPE.GEQ).rule("LITERAL").hide(">=").rule("LITERAL")
-                .end();
-
-        builder.newRule("BLOCK")
-                .concat(TYPE.BLOCK).hide("\\{").many("ASSIGN").hide("\\}")
-                .end();
-
-        builder.newRule("ASSIGN")
-                .concat(TYPE.ASSIGN).rule("IDENTIFIER").hide("=").rule("EXPR").hide(";")
-                .end();
-
-        builder.newRule("EXPR")
-                .concat(TYPE.ADD).rule("LITERAL").some().match("\\+").rule("LITERAL").someEnd()
-                .or()
-                .rule("LITERAL")
-                .end();
-
-        builder.newRule("BRANCH").rule("IF").end();*/
-
         return builder.build();
     }
 }

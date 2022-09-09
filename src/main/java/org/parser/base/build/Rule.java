@@ -75,12 +75,12 @@ public class Rule<TYPE> {
         return many(null, ruleName);
     }
 
-    public Rule<TYPE> many(TYPE type, Simplerule<TYPE> subsubrule) {
-        return addToCurrentSubruleWithSubsubrule(rule -> Parser.many(type, rule), subsubrule);
+    public Rule<TYPE> many(TYPE type, Simplerule<TYPE> simplerule) {
+        return addToCurrentSubruleWithSubsubrule(rule -> Parser.many(type, rule), simplerule);
     }
 
-    public Rule<TYPE> many(Simplerule<TYPE> subsubrule) {
-        return many(null, subsubrule);
+    public Rule<TYPE> many(Simplerule<TYPE> simplerule) {
+        return many(null, simplerule);
     }
 
     public Rule<TYPE> some(TYPE type, String ruleName) {
@@ -91,24 +91,24 @@ public class Rule<TYPE> {
         return some(null, ruleName);
     }
 
-    public Rule<TYPE> some(TYPE type, Simplerule<TYPE> subsubrule) {
-        return addToCurrentSubruleWithSubsubrule(rule -> Parser.some(type, rule), subsubrule);
+    public Rule<TYPE> some(TYPE type, Simplerule<TYPE> simplerule) {
+        return addToCurrentSubruleWithSubsubrule(rule -> Parser.some(type, rule), simplerule);
     }
 
-    public Rule<TYPE> some(Simplerule<TYPE> subsubrule) {
-        return some(null, subsubrule);
+    public Rule<TYPE> some(Simplerule<TYPE> simplerule) {
+        return some(null, simplerule);
     }
 
     public Rule<TYPE> optional(String ruleName) {
         return addToCurrentSubrule(Parser.optional(parserBuilder.getPlaceholder(ruleName)));
     }
 
-    public Rule<TYPE> optional(Simplerule<TYPE> subsubrule) {
-        return addToCurrentSubruleWithSubsubrule(Parser::optional, subsubrule);
+    public Rule<TYPE> optional(Simplerule<TYPE> simplerule) {
+        return addToCurrentSubruleWithSubsubrule(Parser::optional, simplerule);
     }
 
-    public Rule<TYPE> subrule(Simplerule<TYPE> subrule) {
-        return addToCurrentSubruleWithSubsubrule(rule -> rule, subrule);
+    public Rule<TYPE> subrule(Simplerule<TYPE> simplerule) {
+        return addToCurrentSubruleWithSubsubrule(rule -> rule, simplerule);
     }
 
     private Rule<TYPE> addToCurrentSubruleWithSubsubrule(Function<ConcatParser<TYPE>, Parser<TYPE>> subruleMapper,

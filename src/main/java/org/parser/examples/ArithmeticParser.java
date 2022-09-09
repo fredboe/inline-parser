@@ -108,66 +108,6 @@ public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
 
         builder.newRule("EXPR").rule("ADD").end();
 
-        /*builder.newRule("ADD")
-                .concat(TYPE.ADD).rule("SUB").some().match("\\+").rule("SUB").someEnd()
-                .or()
-                .rule("SUB")
-                .end();
-
-        builder.newRule("SUB")
-                .concat(TYPE.SUB).rule("MUL").some().match("\\-").rule("MUL").someEnd()
-                .or()
-                .rule("MUL")
-                .end();
-
-        builder.newRule("MUL")
-                .concat(TYPE.MUL).rule("DIV").some().match("\\*").rule("DIV").someEnd()
-                .or()
-                .rule("DIV")
-                .end();
-
-        builder.newRule("DIV")
-                .concat(TYPE.DIV).rule("POT").some().match("/").rule("POT").someEnd()
-                .or()
-                .rule("POT")
-                .end();
-
-        builder.newRule("POT")
-                .concat(TYPE.POT).rule("SUBEXPR").some().match("\\^").rule("SUBEXPR").someEnd()
-                .or()
-                .rule("SUBEXPR")
-                .end();
-
-        builder.newRule("SUBEXPR")
-                .rule("BRAC").or().rule("VAL").end();
-
-        builder.newRule("VAL")
-                .rule("NUMBER")
-                .or()
-                .concat(TYPE.FUNC).rule("FUNC_SYMBOL").rule("BRAC")
-                .or()
-                .rule("CONST")
-                .end();
-
-        builder.newRule("BRAC")
-                .concat().hide("\\(").rule("EXPR").hide("\\)")
-                .end();
-
-        // optional - then some digits, then optional . with digits and then optional exponent starting with e or E, optional +/- and then some digits
-        builder.newRule("NUMBER")
-                .match(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
-                .end();
-
-        builder.newRule("FUNC_SYMBOL")
-                .match(TYPE.SIN, "sin").or()
-                .match(TYPE.COS, "cos").or()
-                .match(TYPE.TAN, "tan").end();
-
-        builder.newRule("CONST")
-                        .match(TYPE.PI, "pi").or().match(TYPE.E, "e").end();
-
-        builder.newRule("EXPR").rule("ADD").end();*/
-
         return builder.build();
     }
 }

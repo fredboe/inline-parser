@@ -6,29 +6,11 @@ import java.util.Map;
 
 /**
  * Contains multiple parsers that can be accessed with one name (created by ParserBuilder).
- * @param <TYPE> type for the AST
+ * @param <TYPE>  type for the AST
+ * @param parsers Map with names of parsers as key and the parser as value
  */
-public class ParserPool<TYPE> {
+public record ParserPool<TYPE>(Map<String, Parser<TYPE>> parsers) {
     /**
-     * Map with names of parsers as key and the parser as value
-     */
-    private final Map<String, Parser<TYPE>> parsers;
-
-    public ParserPool(Map<String, Parser<TYPE>> parsers) {
-        this.parsers = parsers;
-    }
-
-
-    /**
-     *
-     * @return Returns all named parsers.
-     */
-    public Map<String, Parser<TYPE>> getParsers() {
-        return parsers;
-    }
-
-    /**
-     *
      * @param name Parser name
      * @return Returns a parser with the name. If there is no parser with that name, null
      * is returned.
