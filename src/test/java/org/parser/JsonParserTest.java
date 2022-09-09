@@ -25,13 +25,13 @@ public class JsonParserTest {
             "age": 20
         }
          */
-        AST<TYPE> name = new AST<>(TYPE.STRING, new Consumable.Match("\"name\""));
-        AST<TYPE> fred = new AST<>(TYPE.STRING, new Consumable.Match("\"Fred\""));
-        AST<TYPE> age = new AST<>(TYPE.STRING, new Consumable.Match("\"age\""));
-        AST<TYPE> num20 = new AST<>(TYPE.NUMBER, new Consumable.Match("20"));
+        var name = new AST<>(TYPE.STRING, new Consumable.Match("\"name\""));
+        var fred = new AST<>(TYPE.STRING, new Consumable.Match("\"Fred\""));
+        var age = new AST<>(TYPE.STRING, new Consumable.Match("\"age\""));
+        var num20 = new AST<>(TYPE.NUMBER, new Consumable.Match("20"));
 
-        AST<TYPE> property1 = new AST<>(TYPE.PROPERTY, null, List.of(name, fred));
-        AST<TYPE> property2 = new AST<>(TYPE.PROPERTY, null, List.of(age, num20));
+        var property1 = new AST<>(TYPE.PROPERTY, null, List.of(name, fred));
+        var property2 = new AST<>(TYPE.PROPERTY, null, List.of(age, num20));
 
         return new AST<>(TYPE.OBJECT, null, List.of(property1, property2));
     }
@@ -46,22 +46,22 @@ public class JsonParserTest {
             "something": ["name", "num_lines", "on_github"]
         }
          */
-        AST<TYPE> name = new AST<>(TYPE.STRING, new Consumable.Match("\"name\""));
-        AST<TYPE> inline_parser = new AST<>(TYPE.STRING, new Consumable.Match("\"inline-parser\""));
-        AST<TYPE> lines = new AST<>(TYPE.STRING, new Consumable.Match("\"num_lines\""));
-        AST<TYPE> numLines = new AST<>(TYPE.NUMBER, new Consumable.Match("1183.1234e-10"));
-        AST<TYPE> github = new AST<>(TYPE.STRING, new Consumable.Match("\"on_github\""));
-        AST<TYPE> trueK = new AST<>(TYPE.TRUE, null);
-        AST<TYPE> test = new AST<>(TYPE.STRING, new Consumable.Match("\"test\""));
-        AST<TYPE> nullK = new AST<>(TYPE.NULL, null);
-        AST<TYPE> something = new AST<>(TYPE.STRING, new Consumable.Match("\"something\""));
+        var name = new AST<>(TYPE.STRING, new Consumable.Match("\"name\""));
+        var inline_parser = new AST<>(TYPE.STRING, new Consumable.Match("\"inline-parser\""));
+        var lines = new AST<>(TYPE.STRING, new Consumable.Match("\"num_lines\""));
+        var numLines = new AST<>(TYPE.NUMBER, new Consumable.Match("1183.1234e-10"));
+        var github = new AST<>(TYPE.STRING, new Consumable.Match("\"on_github\""));
+        var trueK = new AST<>(TYPE.TRUE, null);
+        var test = new AST<>(TYPE.STRING, new Consumable.Match("\"test\""));
+        var nullK = new AST<>(TYPE.NULL, null);
+        var something = new AST<>(TYPE.STRING, new Consumable.Match("\"something\""));
 
-        AST<TYPE> somethingArray = new AST<>(TYPE.ARRAY, null, List.of(name, lines, github));
-        AST<TYPE> nameProperty = new AST<>(TYPE.PROPERTY, null, List.of(name, inline_parser));
-        AST<TYPE> numLinesProperty = new AST<>(TYPE.PROPERTY, null, List.of(lines, numLines));
-        AST<TYPE> onGithubProperty = new AST<>(TYPE.PROPERTY, null, List.of(github, trueK));
-        AST<TYPE> testProperty = new AST<>(TYPE.PROPERTY, null, List.of(test, nullK));
-        AST<TYPE> somethingProperty = new AST<>(TYPE.PROPERTY, null, List.of(something, somethingArray));
+        var somethingArray = new AST<>(TYPE.ARRAY, null, List.of(name, lines, github));
+        var nameProperty = new AST<>(TYPE.PROPERTY, null, List.of(name, inline_parser));
+        var numLinesProperty = new AST<>(TYPE.PROPERTY, null, List.of(lines, numLines));
+        var onGithubProperty = new AST<>(TYPE.PROPERTY, null, List.of(github, trueK));
+        var testProperty = new AST<>(TYPE.PROPERTY, null, List.of(test, nullK));
+        var somethingProperty = new AST<>(TYPE.PROPERTY, null, List.of(something, somethingArray));
 
         return new AST<>(TYPE.OBJECT, null,
                 List.of(nameProperty, numLinesProperty, onGithubProperty, testProperty, somethingProperty)
@@ -80,32 +80,32 @@ public class JsonParserTest {
                     {"name": "The Godfather", "release": 1972}
          }
          */
-        AST<TYPE> name = new AST<>(TYPE.STRING, new Consumable.Match("\"name\""));
-        AST<TYPE> release = new AST<>(TYPE.STRING, new Consumable.Match("\"release\""));
-        AST<TYPE> dknight = new AST<>(TYPE.STRING, new Consumable.Match("\"The dark knight\""));
-        AST<TYPE> redemp = new AST<>(TYPE.STRING, new Consumable.Match("\"The Shawshank Redemption\""));
-        AST<TYPE> godfather = new AST<>(TYPE.STRING, new Consumable.Match("\"The Godfather\""));
-        AST<TYPE> num2008 = new AST<>(TYPE.NUMBER, new Consumable.Match("2008"));
-        AST<TYPE> num1994 = new AST<>(TYPE.NUMBER, new Consumable.Match("1994"));
-        AST<TYPE> num1972 = new AST<>(TYPE.NUMBER, new Consumable.Match("1972"));
-        AST<TYPE> good = new AST<>(TYPE.STRING, new Consumable.Match("\"good_movies\""));
-        AST<TYPE> best = new AST<>(TYPE.STRING, new Consumable.Match("\"best_movie\""));
+        var name = new AST<>(TYPE.STRING, new Consumable.Match("\"name\""));
+        var release = new AST<>(TYPE.STRING, new Consumable.Match("\"release\""));
+        var dknight = new AST<>(TYPE.STRING, new Consumable.Match("\"The dark knight\""));
+        var redemp = new AST<>(TYPE.STRING, new Consumable.Match("\"The Shawshank Redemption\""));
+        var godfather = new AST<>(TYPE.STRING, new Consumable.Match("\"The Godfather\""));
+        var num2008 = new AST<>(TYPE.NUMBER, new Consumable.Match("2008"));
+        var num1994 = new AST<>(TYPE.NUMBER, new Consumable.Match("1994"));
+        var num1972 = new AST<>(TYPE.NUMBER, new Consumable.Match("1972"));
+        var good = new AST<>(TYPE.STRING, new Consumable.Match("\"good_movies\""));
+        var best = new AST<>(TYPE.STRING, new Consumable.Match("\"best_movie\""));
 
-        AST<TYPE> dknightName = new AST<>(TYPE.PROPERTY, null, List.of(name, dknight));
-        AST<TYPE> dknightRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num2008));
-        AST<TYPE> dknightMovie = new AST<>(TYPE.OBJECT, null, List.of(dknightName, dknightRel));
+        var dknightName = new AST<>(TYPE.PROPERTY, null, List.of(name, dknight));
+        var dknightRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num2008));
+        var dknightMovie = new AST<>(TYPE.OBJECT, null, List.of(dknightName, dknightRel));
 
-        AST<TYPE> redemptionName = new AST<>(TYPE.PROPERTY, null, List.of(name, redemp));
-        AST<TYPE> redemptionRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num1994));
-        AST<TYPE> redemptionMovie = new AST<>(TYPE.OBJECT, null, List.of(redemptionName, redemptionRel));
+        var redemptionName = new AST<>(TYPE.PROPERTY, null, List.of(name, redemp));
+        var redemptionRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num1994));
+        var redemptionMovie = new AST<>(TYPE.OBJECT, null, List.of(redemptionName, redemptionRel));
 
-        AST<TYPE> godfatherName = new AST<>(TYPE.PROPERTY, null, List.of(name, godfather));
-        AST<TYPE> godfatherRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num1972));
-        AST<TYPE> godfatherMovie = new AST<>(TYPE.OBJECT, null, List.of(godfatherName, godfatherRel));
+        var godfatherName = new AST<>(TYPE.PROPERTY, null, List.of(name, godfather));
+        var godfatherRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num1972));
+        var godfatherMovie = new AST<>(TYPE.OBJECT, null, List.of(godfatherName, godfatherRel));
 
-        AST<TYPE> arrayGood = new AST<>(TYPE.ARRAY, null, List.of(dknightMovie, redemptionMovie));
-        AST<TYPE> goodMovies = new AST<>(TYPE.PROPERTY, null, List.of(good, arrayGood));
-        AST<TYPE> bestMovie = new AST<>(TYPE.PROPERTY, null, List.of(best, godfatherMovie));
+        var arrayGood = new AST<>(TYPE.ARRAY, null, List.of(dknightMovie, redemptionMovie));
+        var goodMovies = new AST<>(TYPE.PROPERTY, null, List.of(good, arrayGood));
+        var bestMovie = new AST<>(TYPE.PROPERTY, null, List.of(best, godfatherMovie));
 
         return new AST<>(TYPE.OBJECT, null, List.of(goodMovies, bestMovie));
     }
