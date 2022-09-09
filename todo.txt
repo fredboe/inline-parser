@@ -1,3 +1,1 @@
-- making debugging easier
-- optional parser
-- restructure the build system
+- parser generator
