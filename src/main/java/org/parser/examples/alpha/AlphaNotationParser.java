@@ -2,6 +2,7 @@ package org.parser.examples.alpha;
 
 import org.parser.Consumable;
 import org.parser.base.Parser;
+import org.parser.base.build.Mode;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
 import org.parser.tree.AST;
@@ -32,17 +33,16 @@ public class AlphaNotationParser implements Parser<Type> {
     /**
      * Grammar: <br>
      * PROGRAM ::= UNIT* <br>
-     * UNIT ::= LINE ":" LABEL | LINE <br>
+     * UNIT ::= LINE ":" LABEL ";" | LINE ";" <br>
      * LINE ::= BRANCH | GOTO | ASSIGN | FUNC | STACK <br>
      * BRANCH ::= "if" "(" CONDITION ")" GOTO <br>
      * CONDITION ::= VALUE COMP_OPERATOR VALUE <br>
-     * GOTO ::= "goto" LINE_NUM <br>
-     * LINE_NUM ::= LABEL | NUMBER <br>
+     * GOTO ::= "goto" VALUE <br>
      * VALUE ::= NUMBER | ACCUMULATOR | ADDRESS <br>
      * ASSIGNABLE ::= ACCUMULATOR | ADDRESS <br>
      * ASSIGN ::= ASSIGNABLE ":=" EXPR <br>
      * EXPR ::= VALUE OPERATOR VALUE <br>
-     * FUNC ::= "call" LINE_NUM | "return" <br>
+     * FUNC ::= "call" VALUE | "return" <br>
      * STACK ::= "push" VALUE | "pop" VALUE | "stack_op" OPERATOR <br>
      * ACCUMULATOR ::= a_\d+ <br>
      * ADDRESS ::= "p" "(" VALUE ")" <br>
@@ -50,18 +50,18 @@ public class AlphaNotationParser implements Parser<Type> {
      * LABEL ::= [a-zA-Z]\w* <br>
      * OPERATOR ::= "+" | "-" | "*" | "/" | "%" <br>
      * COMP_OPERATOR ::= "<=" | ">=" | "<" | ">" | "=" <br>
-     *
+     * ENDL ::= "\n" <br>
      * @return Returns a ParserPool for the alpha notation.
      */
     public static ParserPool<Type> alphaPool() {
         ParserBuilder<Type> builder = new ParserBuilder<>();
 
-        builder.newRule("PROGRAM").many("UNIT").end();
+        builder.newRule("PROGRAM").many(Type.PROGRAM, "UNIT").end();
 
         builder.newRule("UNIT")
-                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL")
+                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL").hide(";")
                 .or()
-                .rule("LINE")
+                .type(Mode.justFst()).rule("LINE").hide(";")
                 .end();
 
         builder.newRule("LINE")
@@ -70,21 +70,18 @@ public class AlphaNotationParser implements Parser<Type> {
                 .rule("STACK").end();
 
         builder.newRule("BRANCH")
-                .type(Type.BRANCH).hide("if").hide("\\(").rule("CONDITION").hide("\\)").rule("GOTO")
+                .type(Type.BRANCH).hide("if").rule("CONDITION").hide("then").rule("GOTO")
                 .end();
 
         builder.newRule("CONDITION")
-                .type(Type.LEQ).rule("VALUE").rule("COMP_OPERATOR").rule("VALUE")
+                .type(Type.CONDITION).rule("VALUE").rule("COMP_OPERATOR").rule("VALUE")
                 .end();
 
         builder.newRule("GOTO")
-                .type(Type.GOTO).hide("goto").rule("LINE_NUM").end();
-
-        builder.newRule("LINE_NUM")
-                .rule("NUMBER").or().rule("LABEL").end();
+                .type(Type.GOTO).hide("goto").rule("VALUE").end();
 
         builder.newRule("VALUE")
-                .rule("NUMBER").or().rule("ACCUMULATOR").or().rule("ADDRESS")
+                .rule("NUMBER").or().rule("ACCUMULATOR").or().rule("ADDRESS").or().rule("LABEL")
                 .end();
 
         builder.newRule("ASSIGNABLE")
@@ -95,13 +92,13 @@ public class AlphaNotationParser implements Parser<Type> {
                 .end();
 
         builder.newRule("EXPR")
-                .type(Type.ADD).rule("VALUE").rule("OPERATOR").rule("VALUE")
+                .type(Type.EXPR).rule("VALUE").rule("OPERATOR").rule("VALUE")
                 .or()
                 .rule("VALUE")
                 .end();
 
         builder.newRule("FUNC")
-                .type(Type.CALL).hide("call").rule("LINE_NUM")
+                .type(Type.CALL).hide("call").rule("VALUE")
                 .or()
                 .keyword(Type.RETURN, "return")
                 .end();
@@ -115,7 +112,7 @@ public class AlphaNotationParser implements Parser<Type> {
                 .end();
 
         builder.newRule("ACCUMULATOR")
-                .match(Type.ACCUMULATOR,"a_\\d+").end();
+                .type(Mode.justFst()).hide("a_").match(Type.ACCUMULATOR,"\\d+").end();
 
         builder.newRule("ADDRESS")
                 .type(Type.ADDRESS).hide("p").hide("\\(").rule("VALUE").hide("\\)")

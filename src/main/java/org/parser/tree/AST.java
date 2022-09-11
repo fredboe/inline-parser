@@ -122,6 +122,10 @@ public class AST<TYPE> {
         return children.size();
     }
 
+    public boolean isType(TYPE type) {
+        return this.type == type;
+    }
+
     /**
      *
      * @return Returns the AST as string
