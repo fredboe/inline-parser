@@ -1,4 +1,4 @@
-package org.parser.examples.alpha;
+package org.parser;
 
 @FunctionalInterface
 public interface ThrowableBiConsumer<T, U, Ex extends Exception> {

@@ -1,5 +1,6 @@
 package org.parser.examples.alpha;
 
+import org.parser.ThrowableBiConsumer;
 import org.parser.tree.AST;
 
 

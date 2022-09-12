@@ -32,6 +32,10 @@ public class World {
         return program.getLineOfLabel(label);
     }
 
+    public int getPC() {
+        return pc;
+    }
+
     public void load(Value value) {
         push(value);
     }
