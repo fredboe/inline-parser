@@ -113,35 +113,47 @@ public class World {
     private static class StringifyWorld {
         private static final int colWidth = 30;
         private static final int writableColWidth = 28;
+        private static final String v_sep = "│"; // vertical separator
+        private static final String h_sep = "┄"; // horizontal separator
 
         public static String stringify(World world) {
             StringBuilder tableBuilder = new StringBuilder();
-            char v_sep = '|'; // vertical separator
-            char h_sep = '_'; // horizontal separator
 
-            var regIt = world.registers.entrySet().iterator();
-            var memIt = world.memory.entrySet().iterator();
-            var stackIt = world.stack.iterator();
+            createTableHeader(tableBuilder);
+            fillTable(world, tableBuilder);
 
+            return tableBuilder.toString();
+        }
+
+        private static void createTableHeader(StringBuilder tableBuilder) {
             tableBuilder.append(v_sep).append(center("Register")).append(v_sep).append(center("Memory")).append(v_sep)
                     .append(center("Stack")).append(v_sep).append('\n');
 
             // horizontal line
             tableBuilder.append(v_sep).append(repeat(h_sep)).append(v_sep).append(repeat(h_sep)).append(v_sep)
                     .append(repeat(h_sep)).append(v_sep).append('\n');
+        }
+
+        private static void fillTable(World world, StringBuilder tableBuilder) {
+            var regIt = world.registers.entrySet().iterator();
+            var memIt = world.memory.entrySet().iterator();
+            var stackIt = world.stack.iterator();
 
             while (regIt.hasNext() || memIt.hasNext() || stackIt.hasNext()) {
-                tableBuilder.append(v_sep);
-                tableBuilder.append(nextReg(regIt));
-                tableBuilder.append(v_sep);
-                tableBuilder.append(nextMem(memIt));
-                tableBuilder.append(v_sep);
-                tableBuilder.append(nextStack(stackIt));
-                tableBuilder.append(v_sep);
-                tableBuilder.append('\n');
+                filleOneRow(regIt, memIt, stackIt, tableBuilder);
             }
+        }
 
-            return tableBuilder.toString();
+        private static void filleOneRow(Iterator<Map.Entry<Register, Value>> regIt, Iterator<Map.Entry<Address, Value>> memIt,
+                                        Iterator<Value> staIt, StringBuilder tableBuilder) {
+            tableBuilder.append(v_sep);
+            tableBuilder.append(nextReg(regIt));
+            tableBuilder.append(v_sep);
+            tableBuilder.append(nextMem(memIt));
+            tableBuilder.append(v_sep);
+            tableBuilder.append(nextStack(staIt));
+            tableBuilder.append(v_sep);
+            tableBuilder.append('\n');
         }
 
         private static String nextReg(Iterator<Map.Entry<Register, Value>> regIt) {
@@ -172,8 +184,8 @@ public class World {
             return StringUtils.rightPad(" " + s, colWidth);
         }
 
-        public static String repeat(char c) {
-            return StringUtils.repeat(c, colWidth);
+        public static String repeat(String s) {
+            return StringUtils.repeat(s, colWidth);
         }
     }
 }
