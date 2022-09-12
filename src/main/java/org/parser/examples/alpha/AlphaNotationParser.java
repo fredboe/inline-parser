@@ -5,6 +5,7 @@ import org.parser.base.Parser;
 import org.parser.base.build.Mode;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
+import org.parser.base.build.Simplerule;
 import org.parser.tree.AST;
 
 import java.util.Optional;
@@ -29,10 +30,15 @@ public class AlphaNotationParser implements Parser<Type> {
         );
     }
 
+    @Override
+    public Consumable consumableOf(CharSequence sequence) {
+        return new Consumable(sequence, Consumable.Ignore.IGNORE_H_SPACE, Consumable.Ignore.IGNORE_COMMENT);
+    }
+
     /**
      * Grammar: <br>
-     * PROGRAM ::= UNIT* <br>
-     * UNIT ::= LINE ":" LABEL ";" | LINE ";" <br>
+     * PROGRAM ::= (UNIT ENDL)* <br>
+     * UNIT ::= LINE ":" LABEL | LINE <br>
      * LINE ::= BRANCH | GOTO | ASSIGN | FUNC | STACK <br>
      * BRANCH ::= "if" "(" CONDITION ")" GOTO <br>
      * CONDITION ::= VALUE COMP_OPERATOR VALUE <br>
@@ -49,18 +55,20 @@ public class AlphaNotationParser implements Parser<Type> {
      * LABEL ::= [a-zA-Z]\w* <br>
      * OPERATOR ::= "+" | "-" | "*" | "/" | "%" <br>
      * COMP_OPERATOR ::= "<=" | ">=" | "<" | ">" | "=" <br>
-     * ENDL ::= "\n" <br>
+     * ENDL ::= "\R" <br>
      * @return Returns a ParserPool for the alpha notation.
      */
     public static ParserPool<Type> alphaPool() {
         ParserBuilder<Type> builder = new ParserBuilder<>();
 
-        builder.newRule("PROGRAM").many(Type.PROGRAM, "UNIT").end();
+        builder.newRule("PROGRAM")
+                .many(Type.PROGRAM, new Simplerule<Type>().rule("UNIT").hide("\\R"))
+                .end();
 
         builder.newRule("UNIT")
-                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL").hide("\\R")
+                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL")
                 .or()
-                .type(Mode.justFst()).optional("LINE").hide("\\R") // optional for blank lines
+                .optional("LINE") // optional for blank lines
                 .end();
 
         builder.newRule("LINE")

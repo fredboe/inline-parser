@@ -32,7 +32,11 @@ public interface Parser<TYPE> {
      * @return An AST wrapped with optional (empty if parsing error)
      */
     default Optional<AST<TYPE>> applyTo(CharSequence sequence) {
-        return applyTo(new Consumable(sequence));
+        return applyTo(consumableOf(sequence));
+    }
+
+    default Consumable consumableOf(CharSequence sequence) {
+        return new Consumable(sequence);
     }
 
     /**

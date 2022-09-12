@@ -24,10 +24,8 @@ public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(CharSequence sequence) {
-        return applyTo(new Consumable(sequence,
-                Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_LINEBREAK)
-        );
+    public Consumable consumableOf(CharSequence sequence) {
+        return new Consumable(sequence, Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_COMMENT);
     }
 
     /**

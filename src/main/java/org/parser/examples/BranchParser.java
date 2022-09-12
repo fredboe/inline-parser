@@ -28,10 +28,8 @@ public class BranchParser implements Parser<BranchParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(CharSequence sequence) {
-        return applyTo(new Consumable(sequence,
-                Consumable.Ignore.IGNORE_LINEBREAK, Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_COMMENT)
-        );
+    public Consumable consumableOf(CharSequence sequence) {
+        return new Consumable(sequence, Consumable.Ignore.IGNORE_WHITESPACE, Consumable.Ignore.IGNORE_COMMENT);
     }
 
     /**
