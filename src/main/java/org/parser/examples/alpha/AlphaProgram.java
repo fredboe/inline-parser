@@ -8,7 +8,7 @@ import java.util.*;
 
 public class AlphaProgram {
     private List<String> lines;
-    private List<AST<Type>> parsedLines; // every ast should have a type of line
+    private List<AST<Type>> parsedLines;
     private Map<String, Integer> labels;
 
     private static final Parser<Type> alphaParser = AlphaNotationParser.alphaPool().getParser("UNIT");
@@ -24,26 +24,6 @@ public class AlphaProgram {
 
         for (String line : lines) {
             addLine(line);
-        }
-    }
-
-    public AlphaProgram(AST<Type> ast) {
-        parsedLines = new ArrayList<>();
-        labels = new HashMap<>();
-        if (ast.getType() == Type.PROGRAM) {
-            parsedLines = ast.getChildren().stream()
-                    .map(child -> child.isType(Type.LABELED) ? child.getChild(0) : child)
-                    .toList();
-
-            int lineNum = 0;
-            for (var line : ast.getChildren()) {
-                if (line.isType(Type.LABELED)) {
-                    var optionalMatch = line.getChild(1).getMatch();
-                    int finalLineNum = lineNum;
-                    optionalMatch.ifPresent(match -> labels.put(match.matched(), finalLineNum));
-                }
-                lineNum++;
-            }
         }
     }
 
@@ -88,7 +68,7 @@ public class AlphaProgram {
         } else {
             parsedLines.add(parsedLine.getChild(0));
             var optionalLabel = parsedLine.getChild(1).getMatch();
-            optionalLabel.ifPresent(match -> labels.put(match.matched(), lineNum));
+            optionalLabel.ifPresent(label -> labels.put(label.matched(), lineNum));
         }
     }
 
