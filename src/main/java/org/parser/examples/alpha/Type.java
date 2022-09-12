@@ -33,27 +33,19 @@ public enum Type {
         world.evalAST(ast.getChild(1)); // stack op (comp)
     }),
     CALL((ast, world) -> {
+        world.push(new Value(world.getPc()));
         world.evalAST(ast.getChild(0)); // push line_to_go
         world.goto_(); // goto top of stack
     }),
     RETURN((ast, world) -> world.goto_()),
-    ACCUMULATOR((ast, world) -> {
-        var optionalMatch = ast.getMatch();
-        optionalMatch.ifPresent(match -> world.load(new Register(Integer.parseInt(match.matched()))));
-    }),
+    ACCUMULATOR((ast, world) -> world.load(new Register(Integer.parseInt(matched(ast))))),
     ADDRESS((ast, world) -> {
         world.evalAST(ast.getChild(0));
         var address = new Address(world.pop());
         world.load(address);
     }),
-    NUMBER((ast, world) -> {
-        var optionalMatch = ast.getMatch();
-        optionalMatch.ifPresent(match -> world.load(new Value(Integer.parseInt(match.matched()))));
-    }),
-    LABEL((ast, world) -> {
-        var optionalMatch = ast.getMatch();
-        optionalMatch.ifPresent(label -> world.load(new Value(world.getLineOfLabel(label.matched()))));
-    }),
+    NUMBER((ast, world) -> world.load(new Value(Integer.parseInt(matched(ast))))),
+    LABEL((ast, world) -> world.load(new Value(world.getLineOfLabel(matched(ast))))),
     PUSH((ast, world) -> world.evalAST(ast.getChild(0))),
     POP((ast, world) -> {
         world.evalAST(ast.getChild(0));
@@ -82,5 +74,11 @@ public enum Type {
 
     public void eval(AST<Type> ast, World world) throws AlphaError {
         transformer.accept(ast, world);
+    }
+
+    private static String matched(AST<Type> ast) throws AlphaError {
+        var match = ast.getMatch();
+        if (match == null) AlphaError.throwNullOccurred(ast);
+        return match.matched();
     }
 }

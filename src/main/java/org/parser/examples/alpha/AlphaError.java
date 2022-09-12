@@ -1,6 +1,7 @@
 package org.parser.examples.alpha;
 
 import org.parser.Consumable;
+import org.parser.tree.AST;
 
 public class AlphaError extends Exception {
     public AlphaError(String error, String where) {
@@ -20,6 +21,10 @@ public class AlphaError extends Exception {
 
     public static void throwWrongFilename(String filename) throws AlphaError {
         throw new AlphaError("The system was given a wrong filename " +
-                "(the file must exist and the filename must end with 'alph')", filename);
+                "(the file must exist and the filename must end with 'alph').", filename);
+    }
+
+    public static void throwNullOccurred(AST<Type> ast) throws AlphaError {
+        throw new AlphaError("The system tried to process 'null' (fatal error).", ast.toString());
     }
 }

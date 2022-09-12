@@ -129,7 +129,7 @@ public class AlphaNotationParser implements Parser<Type> {
                 .match(Type.NUMBER, "(\\-)?\\d+").end();
 
         builder.newRule("LABEL")
-                .keyword(Type.END, "end")
+                .keyword(Type.END, "(?!end\\w)end") // "end" without another letter after it
                 .or()
                 .match(Type.LABEL, "[a-zA-Z]\\w*")
                 .end();

@@ -67,8 +67,8 @@ public class AlphaProgram {
             parsedLines.add(parsedLine);
         } else {
             parsedLines.add(parsedLine.getChild(0));
-            var optionalLabel = parsedLine.getChild(1).getMatch();
-            optionalLabel.ifPresent(label -> labels.put(label.matched(), lineNum));
+            var label = parsedLine.getChild(1).getMatch();
+            labels.put(label.matched(), lineNum);
         }
     }
 

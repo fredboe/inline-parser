@@ -92,8 +92,8 @@ public class AST<TYPE> {
      *
      * @return Returns the match as optional (empty if match is null)
      */
-    public Optional<Consumable.Match> getMatch() {
-        return Optional.ofNullable(match);
+    public Consumable.Match getMatch() {
+        return match;
     }
 
     /**
