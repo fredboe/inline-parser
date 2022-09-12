@@ -122,7 +122,10 @@ public class AlphaNotationParser implements Parser<Type> {
                 .match(Type.NUMBER, "(\\-)?\\d+").end();
 
         builder.newRule("LABEL")
-                .match(Type.LABEL, "[a-zA-Z]\\w*").end();
+                .match(Type.END, "end")
+                .or()
+                .match(Type.LABEL, "[a-zA-Z]\\w*")
+                .end();
 
         builder.newRule("OPERATOR")
                 .match(Type.ADD, "\\+").or().match(Type.SUB, "\\-").or()

@@ -71,7 +71,8 @@ public enum Type {
     GEQ((ast, world) -> world.stackOp(Value::geq)),
     LE((ast, world) -> world.stackOp(Value::le)),
     GE((ast, world) -> world.stackOp(Value::ge)),
-    EQ((ast, world) -> world.stackOp(Value::eq));
+    EQ((ast, world) -> world.stackOp(Value::eq)),
+    END((ast, world) -> world.load(new Value(-1))); // push -1 onto the stack
 
     // operations funktionieren mit push und stack_op
 
