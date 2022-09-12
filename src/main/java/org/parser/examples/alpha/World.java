@@ -29,7 +29,7 @@ public class World {
     }
 
     public int getLineOfLabel(String label) {
-        return program().getLineOfLabel(label);
+        return program.getLineOfLabel(label);
     }
 
     public void load(Value value) {
@@ -58,46 +58,44 @@ public class World {
         stack.push(value);
     }
 
-    public Value pop() {
-        return !stack.isEmpty() ? stack.pop() : null;
+    public Value pop() throws ErrorMsg {
+        if (stack.isEmpty()) ErrorMsg.throwEmptyStack(pc);
+        return stack.pop();
     }
 
-    public void stackOp(BiFunction<Value, Value, Value> operation) {
+    public void stackOp(BiFunction<Value, Value, Value> operation) throws ErrorMsg {
         Value top = pop();
         Value bot = pop();
         push(operation.apply(bot, top));
     }
 
-    public void ifNeq0eval(AST<Type> todo) {
+    public void ifNeq0eval(AST<Type> todo) throws ErrorMsg {
         Value top = pop();
         if (top.value() != 0) {
             eval(todo);
         }
     }
 
-    public void goto_() {
+    public void goto_() throws ErrorMsg {
         Value top = pop();
         pc = top.value();
     }
 
-    public void eval(AST<Type> ast) {
+    public void eval(AST<Type> ast) throws ErrorMsg {
         ast.getType().eval(ast, this);
     }
 
-    public void eval() {
-        while (executeNextLine()) {
-            System.out.println("PC:" + pc);
-        }
+    public void evalProgram() throws ErrorMsg {
+        while (executeNextLine()) {}
     }
 
-    public boolean executeNextLine() {
-        if (pc >= 0 && pc < program.size()) {
-            AST<Type> line = program.getLine(pc);
-            pc++;
-            eval(line);
-            return true;
-        }
-        return false;
+    public boolean executeNextLine() throws ErrorMsg {
+        if (pc < 0 || pc >= program.size()) return false;
+
+        AST<Type> line = program.getLine(pc);
+        pc++;
+        eval(line);
+        return true;
     }
 
     public String toString() {

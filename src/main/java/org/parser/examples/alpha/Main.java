@@ -9,15 +9,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+// adding an \n at the end of the loaded programStr
 public class Main {
     public static void main(String[] args) throws IOException {
         if (args.length > 0) {
             System.out.println(args[0]);
-            String programStr = loadFile(args[0]);
-            Program program = parse(programStr);
-            World world = instantiateWorld(program);
-            goThroughNormal(world);
-            printResult(world);
+            try {
+                String programStr = loadFile(args[0]);
+                Program program = parse(programStr);
+                World world = instantiateWorld(program);
+                goThroughNormal(world);
+                printResult(world);
+            } catch (ErrorMsg e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 
@@ -25,7 +30,7 @@ public class Main {
         System.out.println(world);
     }
 
-    private static void goThroughNormal(World world) {
+    private static void goThroughNormal(World world) throws ErrorMsg {
         world.evalProgram();
     }
 
@@ -33,15 +38,17 @@ public class Main {
         return new World(program);
     }
 
-    private static Program parse(String program) { // exception
+    private static Program parse(String program) throws ErrorMsg { // exception
         var alphaParser = new AlphaNotationParser();
-        // \s ist falsch
         Consumable consProgram = new Consumable(program,
                 Consumable.Ignore.IGNORE_H_SPACE,
                 Consumable.Ignore.IGNORE_COMMENT
         );
         var optionalAST = alphaParser.applyTo(consProgram);
-        System.out.println(optionalAST);
+        if (!consProgram.isEmpty()) {
+            // System.out.println(consProgram);
+            ErrorMsg.throwParsingError(consProgram);
+        }
         return new Program(optionalAST.orElseGet(() -> new AST<>(Type.PROGRAM)));
     }
 

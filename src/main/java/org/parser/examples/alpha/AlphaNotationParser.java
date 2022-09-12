@@ -8,7 +8,6 @@ import org.parser.base.build.ParserPool;
 import org.parser.tree.AST;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 public class AlphaNotationParser implements Parser<Type> {
     private final Parser<Type> alphaParser;
@@ -122,21 +121,21 @@ public class AlphaNotationParser implements Parser<Type> {
                 .match(Type.NUMBER, "(\\-)?\\d+").end();
 
         builder.newRule("LABEL")
-                .match(Type.END, "end")
+                .keyword(Type.END, "end")
                 .or()
                 .match(Type.LABEL, "[a-zA-Z]\\w*")
                 .end();
 
         builder.newRule("OPERATOR")
-                .match(Type.ADD, "\\+").or().match(Type.SUB, "\\-").or()
-                .match(Type.MUL, "\\*").or().match(Type.DIV, "/").or()
-                .match(Type.MOD, "%")
+                .keyword(Type.ADD, "\\+").or().keyword(Type.SUB, "\\-").or()
+                .keyword(Type.MUL, "\\*").or().keyword(Type.DIV, "/").or()
+                .keyword(Type.MOD, "%")
                 .end();
 
         builder.newRule("COMP_OPERATOR")
-                .match(Type.LEQ, "<=").or().match(Type.GEQ, ">=").or()
-                .match(Type.LE, "<").or().match(Type.GE, ">").or()
-                .match(Type.EQ, "=")
+                .keyword(Type.LEQ, "<=").or().keyword(Type.GEQ, ">=").or()
+                .keyword(Type.LE, "<").or().keyword(Type.GE, ">").or()
+                .keyword(Type.EQ, "=")
                 .end();
 
         return builder.build();

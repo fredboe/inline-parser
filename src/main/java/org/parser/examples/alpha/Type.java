@@ -2,7 +2,6 @@ package org.parser.examples.alpha;
 
 import org.parser.tree.AST;
 
-import java.util.function.BiConsumer;
 
 public enum Type {
     PROGRAM((ast, world) -> {}),
@@ -74,15 +73,13 @@ public enum Type {
     EQ((ast, world) -> world.stackOp(Value::eq)),
     END((ast, world) -> world.load(new Value(-1))); // push -1 onto the stack
 
-    // operations funktionieren mit push und stack_op
+    private final ThrowableBiConsumer<AST<Type>, World, ErrorMsg> transformer;
 
-    private final BiConsumer<AST<Type>, World> transformer;
-
-    Type(BiConsumer<AST<Type>, World> transformer) {
+    Type(ThrowableBiConsumer<AST<Type>, World, ErrorMsg> transformer) {
         this.transformer = transformer;
     }
 
-    public void eval(AST<Type> ast, World world) {
+    public void eval(AST<Type> ast, World world) throws ErrorMsg {
         transformer.accept(ast, world);
     }
 }
