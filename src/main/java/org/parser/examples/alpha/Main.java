@@ -26,7 +26,7 @@ public class Main {
     }
 
     private static void goThroughNormal(World world) {
-        world.eval();
+        world.evalProgram();
     }
 
     private static World instantiateWorld(Program program) {
@@ -35,12 +35,13 @@ public class Main {
 
     private static Program parse(String program) { // exception
         var alphaParser = new AlphaNotationParser();
+        // \s ist falsch
         Consumable consProgram = new Consumable(program,
-                Consumable.Ignore.IGNORE_COMMENT,
-                Consumable.Ignore.IGNORE_WHITESPACE,
-                Consumable.Ignore.IGNORE_LINEBREAK
+                Consumable.Ignore.IGNORE_H_SPACE,
+                Consumable.Ignore.IGNORE_COMMENT
         );
         var optionalAST = alphaParser.applyTo(consProgram);
+        System.out.println(optionalAST);
         return new Program(optionalAST.orElseGet(() -> new AST<>(Type.PROGRAM)));
     }
 

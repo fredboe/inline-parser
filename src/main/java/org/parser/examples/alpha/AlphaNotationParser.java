@@ -8,6 +8,7 @@ import org.parser.base.build.ParserPool;
 import org.parser.tree.AST;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class AlphaNotationParser implements Parser<Type> {
     private final Parser<Type> alphaParser;
@@ -24,8 +25,7 @@ public class AlphaNotationParser implements Parser<Type> {
     @Override
     public Optional<AST<Type>> applyTo(CharSequence sequence) {
         return alphaParser.applyTo(new Consumable(sequence,
-                Consumable.Ignore.IGNORE_LINEBREAK,
-                Consumable.Ignore.IGNORE_WHITESPACE,
+                Consumable.Ignore.IGNORE_H_SPACE,
                 Consumable.Ignore.IGNORE_COMMENT)
         );
     }
@@ -59,9 +59,9 @@ public class AlphaNotationParser implements Parser<Type> {
         builder.newRule("PROGRAM").many(Type.PROGRAM, "UNIT").end();
 
         builder.newRule("UNIT")
-                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL").hide(";")
+                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL").hide("\\R")
                 .or()
-                .type(Mode.justFst()).rule("LINE").hide(";")
+                .type(Mode.justFst()).optional("LINE").hide("\\R") // optional for blank lines
                 .end();
 
         builder.newRule("LINE")
@@ -81,7 +81,7 @@ public class AlphaNotationParser implements Parser<Type> {
                 .type(Type.GOTO).hide("goto").rule("VALUE").end();
 
         builder.newRule("VALUE")
-                .rule("NUMBER").or().rule("ACCUMULATOR").or().rule("ADDRESS").or().rule("LABEL")
+                .rule("ACCUMULATOR").or().rule("ADDRESS").or().rule("NUMBER").or().rule("LABEL")
                 .end();
 
         builder.newRule("ASSIGNABLE")

@@ -19,9 +19,11 @@ public class Consumable {
      * Flags that specify which strings to ignore.
      */
     public enum Ignore {
+        IGNORE_H_SPACE("\\h"),
+        IGNORE_V_SPACE("\\v"),
         IGNORE_WHITESPACE("\\s"),
-        IGNORE_LINEBREAK("\n"),
-        IGNORE_COMMENT("//.*\n"); // multiline: ((?s)/\*.*\*/)
+        IGNORE_LINEBREAK("\\R"),
+        IGNORE_COMMENT("//.*"); // multiline: ((?s)/\*.*\*/)
 
         private final String value;
 
