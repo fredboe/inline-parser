@@ -8,32 +8,32 @@ public enum Type {
     PROGRAM((ast, world) -> {}),
     LABELED((ast, world) -> {}),
     BRANCH((ast, world) -> {
-        world.eval(ast.getChild(0)); // evaluate condition
+        world.evalAST(ast.getChild(0)); // evaluate condition
         world.ifNeq0eval(ast.getChild(1)); // if condition is not 0 evaluate goto
     }),
     GOTO((ast, world) -> {
-        world.eval(ast.getChild(0)); // push line_to_go
+        world.evalAST(ast.getChild(0)); // push line_to_go
         world.goto_(); // goto top of stack
     }),
     ASSIGN((ast, world) -> {
-        world.eval(ast.getChild(0)); // evaluate assignable
-        world.eval(ast.getChild(1)); // evaluate expr
+        world.evalAST(ast.getChild(0)); // evaluate assignable
+        world.evalAST(ast.getChild(1)); // evaluate expr
         var to_store = world.pop();
         var where_to_store = world.pop();
         where_to_store.setValue(to_store.value());
     }),
     EXPR((ast, world) -> {
-        world.eval(ast.getChild(0)); // evaluate op_left
-        world.eval(ast.getChild(2)); // evaluate op_right
-        world.eval(ast.getChild(1)); // stack op
+        world.evalAST(ast.getChild(0)); // evaluate op_left
+        world.evalAST(ast.getChild(2)); // evaluate op_right
+        world.evalAST(ast.getChild(1)); // stack op
     }),
     CONDITION((ast, world) -> {
-        world.eval(ast.getChild(0)); // evaluate op_left
-        world.eval(ast.getChild(2)); // evaluate op_right
-        world.eval(ast.getChild(1)); // stack op (comp)
+        world.evalAST(ast.getChild(0)); // evaluate op_left
+        world.evalAST(ast.getChild(2)); // evaluate op_right
+        world.evalAST(ast.getChild(1)); // stack op (comp)
     }),
     CALL((ast, world) -> {
-        world.eval(ast.getChild(0)); // push line_to_go
+        world.evalAST(ast.getChild(0)); // push line_to_go
         world.goto_(); // goto top of stack
     }),
     RETURN((ast, world) -> world.goto_()),
@@ -42,7 +42,7 @@ public enum Type {
         optionalMatch.ifPresent(match -> world.load(new Register(Integer.parseInt(match.matched()))));
     }),
     ADDRESS((ast, world) -> {
-        world.eval(ast.getChild(0));
+        world.evalAST(ast.getChild(0));
         var address = new Address(world.pop());
         world.load(address);
     }),
@@ -54,14 +54,14 @@ public enum Type {
         var optionalMatch = ast.getMatch();
         optionalMatch.ifPresent(label -> world.load(new Value(world.getLineOfLabel(label.matched()))));
     }),
-    PUSH((ast, world) -> world.eval(ast.getChild(0))),
+    PUSH((ast, world) -> world.evalAST(ast.getChild(0))),
     POP((ast, world) -> {
-        world.eval(ast.getChild(0));
+        world.evalAST(ast.getChild(0));
         var where_to_store = world.pop();
         var top_value = world.pop();
         where_to_store.setValue(top_value);
     }),
-    STACK_OP((ast, world) -> world.eval(ast.getChild(0))),
+    STACK_OP((ast, world) -> world.evalAST(ast.getChild(0))),
     ADD((ast, world) -> world.stackOp(Value::add)),
     SUB((ast, world) -> world.stackOp(Value::sub)),
     MUL((ast, world) -> world.stackOp(Value::mul)),
@@ -74,13 +74,13 @@ public enum Type {
     EQ((ast, world) -> world.stackOp(Value::eq)),
     END((ast, world) -> world.load(new Value(-1))); // push -1 onto the stack
 
-    private final ThrowableBiConsumer<AST<Type>, World, ErrorMsg> transformer;
+    private final ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer;
 
-    Type(ThrowableBiConsumer<AST<Type>, World, ErrorMsg> transformer) {
+    Type(ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer) {
         this.transformer = transformer;
     }
 
-    public void eval(AST<Type> ast, World world) throws ErrorMsg {
+    public void eval(AST<Type> ast, World world) throws AlphaError {
         transformer.accept(ast, world);
     }
 }

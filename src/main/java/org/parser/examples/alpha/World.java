@@ -11,12 +11,12 @@ public class World {
     private final Map<Address, Value> memory;
     private final Map<Register, Value> registers;
     private final Stack<Value> stack;
-    private final Program program;
+    private final AlphaProgram program;
     private int pc;
 
     private static final Value defaultValue = new Value(0);
 
-    public World(Program program) {
+    public World(AlphaProgram program) {
         this.memory = new HashMap<>();
         this.registers = new HashMap<>();
         this.stack = new Stack<>();
@@ -24,15 +24,15 @@ public class World {
         this.pc = 0;
     }
 
-    public Program program() {
-        return program;
-    }
-
     public int getLineOfLabel(String label) {
         return program.getLineOfLabel(label);
     }
 
-    public int getPC() {
+    public String getCurrentLine() {
+        return program.getLine(pc);
+    }
+
+    public int getPc() {
         return pc;
     }
 
@@ -62,44 +62,48 @@ public class World {
         stack.push(value);
     }
 
-    public Value pop() throws ErrorMsg {
-        if (stack.isEmpty()) ErrorMsg.throwEmptyStack(pc);
+    public Value pop() throws AlphaError {
+        if (stack.isEmpty()) AlphaError.throwEmptyStack(pc);
         return stack.pop();
     }
 
-    public void stackOp(BiFunction<Value, Value, Value> operation) throws ErrorMsg {
+    public void stackOp(BiFunction<Value, Value, Value> operation) throws AlphaError {
         Value top = pop();
         Value bot = pop();
         push(operation.apply(bot, top));
     }
 
-    public void ifNeq0eval(AST<Type> todo) throws ErrorMsg {
+    public void ifNeq0eval(AST<Type> todo) throws AlphaError {
         Value top = pop();
         if (top.value() != 0) {
-            eval(todo);
+            evalAST(todo);
         }
     }
 
-    public void goto_() throws ErrorMsg {
+    public void goto_() throws AlphaError {
         Value top = pop();
         pc = top.value();
     }
 
-    public void eval(AST<Type> ast) throws ErrorMsg {
+    public void evalAST(AST<Type> ast) throws AlphaError {
         ast.getType().eval(ast, this);
     }
 
-    public void evalProgram() throws ErrorMsg {
+    public void evalProgram() throws AlphaError {
         while (executeNextLine()) {}
     }
 
-    public boolean executeNextLine() throws ErrorMsg {
-        if (pc < 0 || pc >= program.size()) return false;
+    public boolean executeNextLine() throws AlphaError {
+        if (!pcInBounds()) return false;
 
-        AST<Type> line = program.getLine(pc);
+        AST<Type> line = program.getParsedLine(pc);
         pc++;
-        eval(line);
+        evalAST(line);
         return true;
+    }
+
+    public boolean pcInBounds() {
+        return pc >= 0 && pc < program.size();
     }
 
     public String toString() {

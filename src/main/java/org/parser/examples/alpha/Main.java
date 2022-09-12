@@ -2,24 +2,23 @@ package org.parser.examples.alpha;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.parser.Consumable;
-import org.parser.tree.AST;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         try {
             process(args);
-        } catch (ErrorMsg e) {
+        } catch (AlphaError e) {
             System.err.println(e.getMessage());
         }
     }
 
-    public static void process(String[] args) throws ErrorMsg, IOException {
+    public static void process(String[] args) throws AlphaError, IOException {
         if (args.length == 0) {
             cli();
         } else {
@@ -36,25 +35,22 @@ public class Main {
 
     }
 
-    private static World prepareProgram(String filename) throws IOException, ErrorMsg {
-        String programStr = loadFile(filename);
-        Program program = parse(programStr);
-        return instantiateWorld(program);
-    }
-
-    private static void goThroughLineByLine(World world) throws ErrorMsg {
+    private static void goThroughLineByLine(World world) throws AlphaError {
         Scanner input = new Scanner(System.in);
         boolean shouldExecute = true;
+
+        // some prior explanation
+
         System.out.println("Press enter to execute the next line!");
-        while (shouldExecute) {
-            System.out.print(world.getPC());
+        while (shouldExecute && world.pcInBounds()) {
+            System.out.print(">>> " + world.getPc() + "   " + world.getCurrentLine());
             shouldExecute = world.executeNextLine();
             input.nextLine();
         }
         printResult(world);
     }
 
-    private static void goThroughNormal(World world) throws ErrorMsg {
+    private static void goThroughNormal(World world) throws AlphaError {
         world.evalProgram();
         printResult(world);
     }
@@ -63,31 +59,26 @@ public class Main {
         System.out.println(world);
     }
 
-    private static World instantiateWorld(Program program) {
+    private static World prepareProgram(String filename) throws IOException, AlphaError {
+        List<String> programLines = loadFile(filename);
+        AlphaProgram program = new AlphaProgram(programLines);
+        return instantiateWorld(program);
+    }
+
+    private static World instantiateWorld(AlphaProgram program) {
         return new World(program);
     }
 
-    private static Program parse(String program) throws ErrorMsg {
-        var alphaParser = new AlphaNotationParser();
-        Consumable consProgram = new Consumable(program,
-                Consumable.Ignore.IGNORE_H_SPACE,
-                Consumable.Ignore.IGNORE_COMMENT
-        );
-        var optionalAST = alphaParser.applyTo(consProgram);
-        if (!consProgram.isEmpty()) ErrorMsg.throwParsingError(consProgram);
-        return new Program(optionalAST.orElseGet(() -> new AST<>(Type.PROGRAM)));
-    }
-
-    private static String loadFile(String filename) throws IOException, ErrorMsg {
+    private static List<String> loadFile(String filename) throws IOException, AlphaError {
         checkFilename(filename);
-        return FileUtils.readFileToString(new File(filename), StandardCharsets.UTF_8);
+        return FileUtils.readLines(new File(filename), StandardCharsets.UTF_8);
     }
 
-    private static void checkFilename(String filename) throws ErrorMsg {
+    private static void checkFilename(String filename) throws AlphaError {
         File to_interpret = new File(filename);
         if (!FilenameUtils.isExtension(filename, "alph") || !to_interpret.exists()
                 || to_interpret.isDirectory()) {
-            ErrorMsg.throwWrongFilename(filename);
+            AlphaError.throwWrongFilename(filename);
         }
     }
 
