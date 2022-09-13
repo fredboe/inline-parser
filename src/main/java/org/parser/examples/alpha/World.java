@@ -99,8 +99,15 @@ public class World {
         ast.getType().eval(ast, this);
     }
 
-    public void evalProgram() throws AlphaError {
-        while (executeNextLine()) {}
+    public void executeProgram(boolean print) throws AlphaError {
+        while (pcInBounds()) {
+            if (print) System.out.println(getCurrentLine());
+            executeNextLine();
+        }
+    }
+
+    public void executeProgram() throws AlphaError {
+        executeProgram(false);
     }
 
     public boolean executeNextLine() throws AlphaError {
@@ -112,6 +119,9 @@ public class World {
         return true;
     }
 
+    public boolean addLine(String line) {
+        return program.addLineNoException(line);
+    }
     public boolean pcInBounds() {
         return pc >= 0 && pc < program.size();
     }
@@ -119,6 +129,7 @@ public class World {
     public String toString() {
         return StringifyWorld.stringify(this);
     }
+
 
     private static class StringifyWorld {
         private static final int colWidth = 30;

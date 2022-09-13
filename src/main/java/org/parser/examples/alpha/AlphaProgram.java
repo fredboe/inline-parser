@@ -55,6 +55,15 @@ public class AlphaProgram {
         lines.add(line);
     }
 
+    public boolean addLineNoException(String line) {
+        try {
+            addLine(line);
+            return true;
+        } catch (AlphaError e) {
+            return false;
+        }
+    }
+
     public void clear() {
         lines = new ArrayList<>();
         parsedLines = new ArrayList<>();
