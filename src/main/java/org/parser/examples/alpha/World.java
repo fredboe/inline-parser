@@ -46,6 +46,10 @@ public class World {
         return pc;
     }
 
+    public void incPc() {
+        pc++;
+    }
+
     public void load(Value value) {
         push(value);
     }

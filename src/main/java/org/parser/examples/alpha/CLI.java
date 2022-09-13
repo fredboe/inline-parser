@@ -41,31 +41,30 @@ public class CLI implements Runnable {
     public void run() {
         try {
             mode.accept(world);
+            repeatedMemoryInfo(world);
         } catch (AlphaError e) {
             System.err.println(e.getMessage());
         }
     }
 
     private static void immediateProcess(World world) throws AlphaError {
-        collapsingProcess(World::executeProgram, world);
+        world.executeProgram();
     }
 
     private static void lblProcess(World world) throws AlphaError {
-        collapsingProcess(w -> {
-            // some prior explanation
-            System.out.println("Press enter to execute the next line!");
-            while (world.pcInBounds()) {
-                nextLine(String.format("%1$3d", w.getPc()) + "     " + w.getCurrentLine());
-                world.executeNextLine();
-            }
-        }, world);
+        // some prior explanation
+        System.out.println("Press enter to execute the next line!");
+        while (world.pcInBounds()) {
+            nextLine(String.format("%1$3d", world.getPc()) + "     " + world.getCurrentLine());
+            world.executeNextLine();
+        }
     }
 
     private static void interfaceProcess(World world) throws AlphaError {
         String input;
         while (!(input = nextLine()).equals("end")) {
             if (input.equalsIgnoreCase("program")) {
-                // allow the user to input an entire program (blank line end this mode)
+                inputProgram(world);
             } else {
                 if (!addLineAndExecute(world, input)) {
                     System.out.println(memoryInfo(world, input));
@@ -74,17 +73,23 @@ public class CLI implements Runnable {
         }
     }
 
-    private static void collapsingProcess(ThrowableConsumer<World, AlphaError> process, World world) throws AlphaError {
-        process.accept(world);
-        repeatedMemoryInfo(world);
-    }
-
     private static boolean addLineAndExecute(World world, String line) throws AlphaError {
         if (world.addLine(line)) {
-            world.executeProgram(true);
+            world.executeProgram();
             return true;
         }
         return false;
+    }
+
+    private static void inputProgram(World world) {
+        String input;
+        while (!(input = nextLine("prog   ")).equals("")) {
+            if (world.addLine(input)) {
+                world.incPc();
+            } else {
+                System.out.println("Parsing failed");
+            }
+        }
     }
 
     private static void repeatedMemoryInfo(World world) throws AlphaError {
