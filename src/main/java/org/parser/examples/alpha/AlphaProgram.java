@@ -12,8 +12,9 @@ public class AlphaProgram {
     private List<AST<Type>> parsedLines;
     private Map<String, Integer> labels;
 
-    public static final ParserPool<Type> alphaPool = AlphaNotationParser.alphaPool();
-    private static final Parser<Type> alphaParser = alphaPool.getParser("UNIT");
+    private static final ParserPool<Type> alphaPool = AlphaNotationParser.alphaPool();
+    public static final Parser<Type> alphaParser = alphaPool.getParser("UNIT");
+    public static final Parser<Type> valueParser = alphaPool.getParser("VALUE");
 
     public AlphaProgram() throws AlphaError {
         this(new ArrayList<>());
@@ -48,7 +49,7 @@ public class AlphaProgram {
 
     public void addLine(String line) throws AlphaError {
         int lineNum = lines.size();
-        var parsedLine = parseLine(line);
+        var parsedLine = parseLine(alphaParser, line);
         // changes to this object should be made after this line
         processParsedLine(parsedLine, lineNum);
         lines.add(line);
@@ -58,10 +59,6 @@ public class AlphaProgram {
         lines = new ArrayList<>();
         parsedLines = new ArrayList<>();
         labels = new HashMap<>();
-    }
-
-    private Consumable consumableOf(String line) {
-        return new Consumable(line, Consumable.Ignore.IGNORE_H_SPACE, Consumable.Ignore.IGNORE_COMMENT);
     }
 
     private void processParsedLine(AST<Type> parsedLine, int lineNum) {
@@ -74,12 +71,18 @@ public class AlphaProgram {
         }
     }
 
-    private AST<Type> parseLine(String line) throws AlphaError {
+    public static AST<Type> parseLine(Parser<Type> parser, String line) throws AlphaError {
         Consumable consLine = consumableOf(line);
-        var optionalParsedLine = alphaParser.applyTo(consLine);
-        if (optionalParsedLine.isEmpty() || !consLine.isEmpty()) AlphaError.throwParsingError(consLine);
+        var optionalParsedLine = parser.applyTo(consLine);
+        if (optionalParsedLine.isEmpty() || !consLine.isEmpty())
+            throw new AlphaError.ParsingException(consLine);
 
         return optionalParsedLine.map(ast ->
                 ast.isType(null) ? new AST<>(Type.PROGRAM) : ast).get(); // empty program (does nothing)
     }
+
+    private static Consumable consumableOf(String line) {
+        return new Consumable(line, Consumable.Ignore.IGNORE_H_SPACE, Consumable.Ignore.IGNORE_COMMENT);
+    }
+
 }

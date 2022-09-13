@@ -78,7 +78,7 @@ public enum Type {
 
     private static String matched(AST<Type> ast) throws AlphaError {
         var match = ast.getMatch();
-        if (match == null) AlphaError.throwNullOccurred(ast);
+        if (match == null) throw new AlphaError.NullOccurredException(ast);
         return match.matched();
     }
 }

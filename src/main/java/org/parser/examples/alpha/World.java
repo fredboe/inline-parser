@@ -24,8 +24,10 @@ public class World {
         this.pc = 0;
     }
 
-    public int getLineOfLabel(String label) {
-        return program.getLineOfLabel(label);
+    public int getLineOfLabel(String label) throws AlphaError {
+        Integer lineNum = program.getLineOfLabel(label);
+        if (lineNum == null) throw new AlphaError.NullOccurredException(label);
+        return lineNum;
     }
 
     public void clear() {
@@ -71,7 +73,7 @@ public class World {
     }
 
     public Value pop() throws AlphaError {
-        if (stack.isEmpty()) AlphaError.throwEmptyStack(pc);
+        if (stack.isEmpty()) throw new AlphaError.EmptyStackException(pc);
         return stack.pop();
     }
 

@@ -2,8 +2,6 @@ package org.parser.examples.alpha;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.parser.Consumable;
-import org.parser.tree.AST;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +27,8 @@ public class Main {
     }
 
     private static void processWithArgs(String[] args) throws AlphaError, IOException {
-        World world = prepareProgram(args[0]);
+        List<String> lines = loadFile(args[0]);
+        World world = prepareProgram(lines);
         if (args.length >= 2 && isLbl(args[1])) {
             goThroughLineByLine(world);
         } else {
@@ -60,58 +59,56 @@ public class Main {
         world.evalProgram();
     }
 
-    private static void repeatedMemoryInfo(World world) throws AlphaError {
+    private static void repeatedMemoryInfo(World world) {
         Scanner scanner = new Scanner(System.in);
         String input;
         System.out.println("Please enter 'mem' to see the whole memory, 'clear' to clear the memory," +
                 "'end' to end the whole process or some VALUE (accumulator, address, constant or label).");
         do {
-            System.out.print(" >>> ");
+            System.out.print(">>> ");
             input = scanner.nextLine();
-            Value value = memoryInfo(input, world);
-            if (value != null) System.out.println(value);
+            try {
+                String info = memoryInfo(input, world);
+                System.out.println(info);
+            } catch (AlphaError e) {
+                System.err.println(e.getMessage());
+                System.out.println();
+            }
         } while (!input.equals("end"));
     }
 
-    private static Value memoryInfo(String input, World world) throws AlphaError {
-        if (!memKeys(input, world)) {
-            return valueInfo(input, world);
-        }
-        return null;
+    private static String memoryInfo(String input, World world) throws AlphaError {
+        return memKeys(input, world).equals("")
+                ? valueInfo(input, world)
+                : memKeys(input, world);
     }
 
-    private static Value valueInfo(String input, World world) throws AlphaError {
-        var valueParser = AlphaProgram.alphaPool.getParser("VALUE");
-        Consumable consInput = new Consumable(input);
-        var optionalParsedValue = valueParser.applyTo(consInput);
-        if (optionalParsedValue.isEmpty() || !consInput.isEmpty()) AlphaError.throwParsingError(consInput);
-        world.evalAST(optionalParsedValue.orElseGet(() -> new AST<>(Type.PROGRAM)));
-        return world.pop();
+    private static String valueInfo(String input, World world) throws AlphaError {
+        var parsedValue = AlphaProgram.parseLine(AlphaProgram.valueParser, input);
+        world.evalAST(parsedValue);
+        return world.pop().toString();
     }
 
-    private static boolean memKeys(String input, World world) {
+    private static String memKeys(String input, World world) {
         String low_input = input.toLowerCase();
         switch (low_input) {
             case "mem" -> {
-                printResult(world);
-                return true;
+                return world.toString();
             }
             case "clear" -> {
                 world.clear();
-                System.out.println("World has been cleared!");
-                return true;
+                return "Memory has been cleared!";
             }
         }
-        return false;
+        return "";
     }
 
     private static void printResult(World world) {
         System.out.println(world);
     }
 
-    private static World prepareProgram(String filename) throws IOException, AlphaError {
-        List<String> programLines = loadFile(filename);
-        AlphaProgram program = new AlphaProgram(programLines);
+    private static World prepareProgram(List<String> lines) throws AlphaError {
+        AlphaProgram program = new AlphaProgram(lines);
         return instantiateWorld(program);
     }
 
@@ -128,7 +125,7 @@ public class Main {
         File to_interpret = new File(filename);
         if (!FilenameUtils.isExtension(filename, "alph") || !to_interpret.exists()
                 || to_interpret.isDirectory()) {
-            AlphaError.throwWrongFilename(filename);
+            throw new AlphaError.WrongFilenameException(filename);
         }
     }
 
