@@ -2,6 +2,7 @@ package org.parser.examples.alpha;
 
 import org.parser.Consumable;
 import org.parser.base.Parser;
+import org.parser.base.build.ParserPool;
 import org.parser.tree.AST;
 
 import java.util.*;
@@ -11,7 +12,8 @@ public class AlphaProgram {
     private List<AST<Type>> parsedLines;
     private Map<String, Integer> labels;
 
-    private static final Parser<Type> alphaParser = AlphaNotationParser.alphaPool().getParser("UNIT");
+    public static final ParserPool<Type> alphaPool = AlphaNotationParser.alphaPool();
+    private static final Parser<Type> alphaParser = alphaPool.getParser("UNIT");
 
     public AlphaProgram() throws AlphaError {
         this(new ArrayList<>());
@@ -76,6 +78,8 @@ public class AlphaProgram {
         Consumable consLine = consumableOf(line);
         var optionalParsedLine = alphaParser.applyTo(consLine);
         if (optionalParsedLine.isEmpty() || !consLine.isEmpty()) AlphaError.throwParsingError(consLine);
-        return optionalParsedLine.orElseGet(() -> new AST<>(Type.PROGRAM)); // empty program (does nothing)
+
+        return optionalParsedLine.map(ast ->
+                ast.isType(null) ? new AST<>(Type.PROGRAM) : ast).get(); // empty program (does nothing)
     }
 }

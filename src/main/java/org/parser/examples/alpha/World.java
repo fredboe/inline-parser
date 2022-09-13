@@ -10,9 +10,9 @@ import java.util.Stack;
 import java.util.function.BiFunction;
 
 public class World {
-    private final Map<Address, Value> memory;
-    private final Map<Register, Value> registers;
-    private final Stack<Value> stack;
+    private Map<Address, Value> memory;
+    private Map<Register, Value> registers;
+    private Stack<Value> stack;
     private final AlphaProgram program;
     private int pc;
 
@@ -26,6 +26,14 @@ public class World {
 
     public int getLineOfLabel(String label) {
         return program.getLineOfLabel(label);
+    }
+
+    public void clear() {
+        memory = new HashMap<>();
+        registers = new HashMap<>();
+        stack = new Stack<>();
+        program.clear();
+        pc = 0;
     }
 
     public String getCurrentLine() {
