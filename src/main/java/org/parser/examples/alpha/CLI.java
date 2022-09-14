@@ -1,140 +1,35 @@
 package org.parser.examples.alpha;
 
-import org.parser.ThrowableConsumer;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 public class CLI implements Runnable {
-    public enum Mode {
-        IMMEDIATE(CLI::immediateProcess), LINE_BY_LINE(CLI::lblProcess), INTERFACE(CLI::interfaceProcess);
-
-        private final ThrowableConsumer<World, AlphaError> process;
-
-        Mode(ThrowableConsumer<World, AlphaError> process) {
-            this.process = process;
-        }
-
-        public void accept(World world) throws AlphaError {
-            process.accept(world);
-        }
-    }
-
-    private static final String lineBegin = ">>> ";
-
-    private final Mode mode;
     private final World world;
-    private final static Scanner inputScanner = new Scanner(System.in);
 
-
-    public CLI(Mode mode) throws AlphaError {
-        this(new ArrayList<>(), mode);
+    public CLI() throws AlphaError {
+        world = new World(new AlphaProgram());
     }
 
-    public CLI(List<String> lines, Mode mode) throws AlphaError {
-        this.mode = mode;
-        this.world = new World(new AlphaProgram(lines));
+    public CLI(String filename) throws AlphaError {
+        this();
+        String executionLine = "exe " + filename;
+        IO.info(executionLine);
+        world.addLine(executionLine);
+        world.executeNextLine();
     }
 
     @Override
     public void run() {
-        try {
-            mode.accept(world);
-            repeatedMemoryInfo(world);
-        } catch (AlphaError e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    private static void immediateProcess(World world) throws AlphaError {
-        world.executeProgram();
-    }
-
-    private static void lblProcess(World world) throws AlphaError {
-        // some prior explanation
-        System.out.println("Press enter to execute the next line!");
-        while (world.pcInBounds()) {
-            nextLine(String.format("%1$3d", world.getPc()) + "     " + world.getCurrentLine());
-            world.executeNextLine();
-        }
-    }
-
-    private static void interfaceProcess(World world) throws AlphaError {
-        String input;
-        while (!(input = nextLine()).equals("end")) {
-            if (input.equalsIgnoreCase("program")) {
-                inputProgram(world);
-            } else {
-                if (!addLineAndExecute(world, input)) {
-                    System.out.println(memoryInfo(world, input));
-                }
+        description();
+        while (world.getPc() >= 0) {
+            try {
+                String input = IO.enterLine();
+                world.addLine(input);
+                world.executeNextLine();
+            } catch (AlphaError e) {
+                IO.error(e);
             }
         }
     }
 
-    private static boolean addLineAndExecute(World world, String line) throws AlphaError {
-        if (world.addLine(line)) {
-            world.executeProgram();
-            return true;
-        }
-        return false;
-    }
-
-    private static void inputProgram(World world) {
-        String input;
-        while (!(input = nextLine("prog   ")).equals("")) {
-            if (world.addLine(input)) {
-                world.incPc();
-            } else {
-                System.out.println("Parsing failed");
-            }
-        }
-    }
-
-    private static void repeatedMemoryInfo(World world) throws AlphaError {
-        System.out.println("Please enter 'mem' to see the whole memory, 'clear' to clear the memory," +
-                "'end' to end the whole process or some VALUE (accumulator, address, constant or label).");
-        String input;
-        while (!(input = nextLine()).equals("end")) {
-            String info  = memoryInfo(world, input);
-            System.out.println(info);
-        }
-    }
-
-    private static String memoryInfo(World world, String input) throws AlphaError {
-        return "".equals(memKeys(world, input))
-                ? valueInfo(world, input)
-                : memKeys(world, input);
-    }
-
-    private static String valueInfo(World world, String input) throws AlphaError {
-        var parsedValue = AlphaProgram.parseLine(AlphaProgram.valueParser, input);
-        world.evalAST(parsedValue);
-        return world.pop().toString();
-    }
-
-    private static String memKeys(World world, String input) {
-        String low_input = input.toLowerCase();
-        switch (low_input) {
-            case "mem" -> {
-                return world.toString();
-            }
-            case "clear" -> {
-                world.clear();
-                return "Memory has been cleared!";
-            }
-        }
-        return "";
-    }
-
-    private static String nextLine() {
-        return nextLine("");
-    }
-
-    private static String nextLine(String to_print) {
-        System.out.print(lineBegin);
-        System.out.print(to_print);
-        return inputScanner.nextLine();
+    private void description() {
+        IO.info("Start");
     }
 }

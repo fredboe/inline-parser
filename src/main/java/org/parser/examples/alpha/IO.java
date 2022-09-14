@@ -1,7 +1,6 @@
 package org.parser.examples.alpha;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,19 +11,19 @@ import java.util.Scanner;
 
 public class IO {
     private static final Scanner input = new Scanner(System.in);
-    private static final String startOfLine = ">>> ";
+    private static final String startOfInputLine = ">>> ";
 
     public static String enterLine() {
-        System.out.print(startOfLine);
+        System.out.print(startOfInputLine);
         return input.nextLine();
+    }
+
+    public static void info(Value value) {
+        info(value.toString());
     }
 
     public static void info(String msg) {
         System.out.println(msg);
-    }
-
-    public static void info(Value value) {
-        System.out.println(value);
     }
 
     public static void error(Exception e) {
@@ -33,6 +32,7 @@ public class IO {
 
     public static void error(String error) {
         System.err.println(error);
+        System.err.println();
     }
 
     public static World loadProgram(String filename) throws AlphaError {

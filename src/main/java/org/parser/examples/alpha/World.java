@@ -10,8 +10,8 @@ import java.util.Stack;
 import java.util.function.BiFunction;
 
 public class World {
-    private Map<Address, Value> memory;
     private Map<Register, Value> registers;
+    private Map<Address, Value> memory;
     private Stack<Value> stack;
     private final AlphaProgram program;
     private int pc;
@@ -103,15 +103,10 @@ public class World {
         ast.getType().eval(ast, this);
     }
 
-    public void executeProgram(boolean print) throws AlphaError {
+    public void executeProgram() throws AlphaError {
         while (pcInBounds()) {
-            if (print) System.out.println(getCurrentLine());
             executeNextLine();
         }
-    }
-
-    public void executeProgram() throws AlphaError {
-        executeProgram(false);
     }
 
     public boolean executeNextLine() throws AlphaError {
@@ -123,11 +118,19 @@ public class World {
         return true;
     }
 
-    public boolean addLine(String line) {
-        return program.addLineNoException(line);
+    public void addLine(String line) throws AlphaError {
+        program.addLine(line);
     }
     public boolean pcInBounds() {
         return pc >= 0 && pc < program.size();
+    }
+
+    public void unite(World other) {
+        registers.putAll(other.registers);
+        memory.putAll(other.memory);
+        for (Value elem : other.stack) {
+            stack.push(elem);
+        }
     }
 
     public String toString() {
@@ -165,11 +168,11 @@ public class World {
             var stackIt = world.stack.iterator();
 
             while (regIt.hasNext() || memIt.hasNext() || stackIt.hasNext()) {
-                filleOneRow(regIt, memIt, stackIt, tableBuilder);
+                fillOneRow(regIt, memIt, stackIt, tableBuilder);
             }
         }
 
-        private static void filleOneRow(Iterator<Map.Entry<Register, Value>> regIt, Iterator<Map.Entry<Address, Value>> memIt,
+        private static void fillOneRow(Iterator<Map.Entry<Register, Value>> regIt, Iterator<Map.Entry<Address, Value>> memIt,
                                         Iterator<Value> staIt, StringBuilder tableBuilder) {
             tableBuilder.append(v_sep);
             tableBuilder.append(nextReg(regIt));

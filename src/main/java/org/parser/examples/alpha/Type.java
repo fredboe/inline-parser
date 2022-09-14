@@ -76,11 +76,8 @@ public enum Type {
     PRINT((ast, world) -> {
         world.evalAST(ast.getChild(0));
         IO.info(world.pop());
-        System.out.println(world.pop());
     }),
     EXE((ast, world) -> {
-        // load the given program and execute it (in a new world) -> then merge both memories together
-        // with priority of the executed program
         World programWorld = IO.loadProgram(ast.getMatch().matched());
         programWorld.executeProgram();
         world.unite(programWorld);
