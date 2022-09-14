@@ -15,7 +15,7 @@ public class AlphaError extends Exception {
         private static final int maxWidth = 100;
 
         public ParsingException(Consumable consumable) {
-            super(errorMsg, StringUtils.abbreviate(consumable.getSequenceLeft().toString(), maxWidth));
+            this(StringUtils.abbreviate(consumable.getSequenceLeft().toString(), maxWidth));
         }
 
         public ParsingException(String where) {
@@ -27,7 +27,7 @@ public class AlphaError extends Exception {
         private static final String errorMsg = "The system tried to call pop on an empty stack.";
 
         public EmptyStackException(int line) {
-            super(errorMsg, String.valueOf(line));
+            this(String.valueOf(line));
         }
 
         public EmptyStackException(String where) {
@@ -48,7 +48,7 @@ public class AlphaError extends Exception {
         private static final String errorMsg = "The system tried to process 'null' (fatal error).";
 
         public NullOccurredException(AST<Type> ast) {
-            super(errorMsg, ast.toString());
+            this(ast.toString());
         }
 
         public NullOccurredException(String where) {

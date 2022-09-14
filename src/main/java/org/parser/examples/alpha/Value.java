@@ -1,5 +1,8 @@
 package org.parser.examples.alpha;
 
+/**
+ * Value class contains an int as value (this may be changed in the future).
+ */
 public class Value {
     private int value;
 

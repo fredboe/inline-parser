@@ -33,7 +33,7 @@ public enum Type {
         world.evalAST(ast.getChild(1)); // stack op (comparison)
     }),
     CALL((ast, world) -> {
-        world.push(new Value(world.getPc())); // push return address
+        world.push(new Value(world.getPc())); // push return address (pc has already been incremented)
         world.evalAST(ast.getChild(0)); // push first line of subroutine
         world.goto_(); // goto top of stack
     }),
@@ -65,9 +65,8 @@ public enum Type {
     GE((ast, world) -> world.stackOp(Value::ge)),
     EQ((ast, world) -> world.stackOp(Value::eq)),
     END((ast, world) -> {
-        // goto -1
         world.push(new Value(-1));
-        world.goto_();
+        world.goto_(); // goto -1
     }),
     MEM((ast, world) -> IO.info(world.toString())),
     CLEAR((ast, world) -> {

@@ -39,7 +39,7 @@ public class AlphaNotationParser implements Parser<Type> {
      * Grammar: <br>
      * PROGRAM ::= (UNIT ENDL)* <br>
      * UNIT ::= LINE ":" LABEL | LINE <br>
-     * LINE ::= BRANCH | GOTO | ASSIGN | FUNC | STACK <br>
+     * LINE ::= BRANCH | GOTO | ASSIGN | FUNC | STACK | OUTPUT <br>
      * BRANCH ::= "if" "(" CONDITION ")" GOTO <br>
      * CONDITION ::= VALUE COMP_OPERATOR VALUE <br>
      * GOTO ::= "goto" VALUE <br>
@@ -55,6 +55,9 @@ public class AlphaNotationParser implements Parser<Type> {
      * LABEL ::= [a-zA-Z]\w* <br>
      * OPERATOR ::= "+" | "-" | "*" | "/" | "%" <br>
      * COMP_OPERATOR ::= "<=" | ">=" | "<" | ">" | "=" <br>
+     * OUTPUT ::= "mem" | "clear" | EXE | PRINT <br>
+     * EXE ::= "exe" filename <br>
+     * PRINT ::= VALUE
      * ENDL ::= "\R" <br>
      * @return Returns a ParserPool for the alpha notation.
      */
@@ -147,16 +150,16 @@ public class AlphaNotationParser implements Parser<Type> {
                 .end();
 
         builder.newRule("OUTPUT")
-                .keyword(Type.CLEAR, "clear").or()
                 .keyword(Type.MEM, "mem").or()
+                .keyword(Type.CLEAR, "clear").or()
                 .rule("EXE").or()
-                .rule("PRINT").end();
-
-        builder.newRule("PRINT")
-                .type(Type.PRINT).rule("VALUE").end(); // maybe add .hide("print")
+                .rule("PRINT").end(); // print must be the last since it consumes clear, mem and exe as labels.
 
         builder.newRule("EXE")
                 .type(Mode.justFst()).hide("exe").match(Type.EXE, ".+").end(); // no line terminators
+
+        builder.newRule("PRINT")
+                .type(Type.PRINT).rule("VALUE").end(); // maybe add .hide("print")
 
         return builder.build();
     }
