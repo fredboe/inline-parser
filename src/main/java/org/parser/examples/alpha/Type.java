@@ -16,45 +16,45 @@ public enum Type {
         world.goto_(); // goto top of stack
     }),
     ASSIGN((ast, world) -> {
-        world.evalAST(ast.getChild(0)); // evaluate assignable
-        world.evalAST(ast.getChild(1)); // evaluate expr
-        var to_store = world.pop();
-        var where_to_store = world.pop();
-        where_to_store.setValue(to_store.value());
+        world.evalAST(ast.getChild(0)); // push assignable
+        world.evalAST(ast.getChild(1)); // push expr
+        var exprValue = world.pop();
+        var assignableValue = world.pop();
+        store(assignableValue, exprValue); // store exprValue in assignableValue
     }),
     EXPR((ast, world) -> {
-        world.evalAST(ast.getChild(0)); // evaluate op_left
-        world.evalAST(ast.getChild(2)); // evaluate op_right
+        world.evalAST(ast.getChild(0)); // push op_left
+        world.evalAST(ast.getChild(2)); // push op_right
         world.evalAST(ast.getChild(1)); // stack op
     }),
     CONDITION((ast, world) -> {
-        world.evalAST(ast.getChild(0)); // evaluate op_left
-        world.evalAST(ast.getChild(2)); // evaluate op_right
-        world.evalAST(ast.getChild(1)); // stack op (comp)
+        world.evalAST(ast.getChild(0)); // push op_left
+        world.evalAST(ast.getChild(2)); // push op_right
+        world.evalAST(ast.getChild(1)); // stack op (comparison)
     }),
     CALL((ast, world) -> {
-        world.push(new Value(world.getPc()));
-        world.evalAST(ast.getChild(0)); // push line_to_go
+        world.push(new Value(world.getPc())); // push return address
+        world.evalAST(ast.getChild(0)); // push first line of subroutine
         world.goto_(); // goto top of stack
     }),
-    RETURN((ast, world) -> world.goto_()),
-    ACCUMULATOR((ast, world) -> world.load(new Register(Integer.parseInt(matched(ast))))),
+    RETURN((ast, world) -> world.goto_()), // goto top of stack (return address)
+    ACCUMULATOR((ast, world) -> world.load(new Register(Integer.parseInt(matchOf(ast))))), // push value of accumulator onto the stack
     ADDRESS((ast, world) -> {
-        world.evalAST(ast.getChild(0));
+        world.evalAST(ast.getChild(0)); // push address
         var address = new Address(world.pop());
-        world.load(address);
+        world.load(address); // push value of address
     }),
-    NUMBER((ast, world) -> world.load(new Value(Integer.parseInt(matched(ast))))),
-    LABEL((ast, world) -> world.load(new Value(world.getLineOfLabel(matched(ast))))),
+    NUMBER((ast, world) -> world.load(new Value(Integer.parseInt(matchOf(ast))))), // push number
+    LABEL((ast, world) -> world.load(new Value(world.getLineOfLabel(matchOf(ast))))), // push line number of label
     PUSH((ast, world) -> world.evalAST(ast.getChild(0))),
     POP((ast, world) -> {
-        world.evalAST(ast.getChild(0));
+        world.evalAST(ast.getChild(0)); // push where_to_store
         var where_to_store = world.pop();
         var top_value = world.pop();
-        where_to_store.setValue(top_value);
+        store(where_to_store, top_value); // store top of the stack in where_to_store
     }),
-    STACK_OP((ast, world) -> world.evalAST(ast.getChild(0))),
-    ADD((ast, world) -> world.stackOp(Value::add)),
+    STACK_OP((ast, world) -> world.evalAST(ast.getChild(0))), // evaluate given operator
+    ADD((ast, world) -> world.stackOp(Value::add)), // op_left and op_right must have been pushed before
     SUB((ast, world) -> world.stackOp(Value::sub)),
     MUL((ast, world) -> world.stackOp(Value::mul)),
     DIV((ast, world) -> world.stackOp(Value::div)),
@@ -65,6 +65,7 @@ public enum Type {
     GE((ast, world) -> world.stackOp(Value::ge)),
     EQ((ast, world) -> world.stackOp(Value::eq)),
     END((ast, world) -> {
+        // goto -1
         world.push(new Value(-1));
         world.goto_();
     }),
@@ -74,13 +75,13 @@ public enum Type {
         IO.info("Memory has been cleared!");
     }),
     PRINT((ast, world) -> {
-        world.evalAST(ast.getChild(0));
+        world.evalAST(ast.getChild(0)); // push what_to_print
         IO.info(world.pop());
     }),
     EXE((ast, world) -> {
-        World programWorld = IO.loadProgram(ast.getMatch().matched());
+        World programWorld = IO.loadProgram(matchOf(ast));
         programWorld.executeProgram();
-        world.unite(programWorld);
+        world.unite(programWorld); // store the memory of the executed program in the current world
     });
 
     private final ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer;
@@ -89,13 +90,33 @@ public enum Type {
         this.transformer = transformer;
     }
 
+    /**
+     * Evaluates the given AST (transforms the world).
+     * @param ast AST
+     * @param world World to transform
+     */
     public void eval(AST<Type> ast, World world) throws AlphaError {
         transformer.accept(ast, world);
     }
 
-    private static String matched(AST<Type> ast) throws AlphaError {
+    /**
+     *
+     * @param ast AST
+     * @return Returns the match-string of the AST.
+     * @throws AlphaError Throws NullOccurredException if the match-string is null.
+     */
+    private static String matchOf(AST<Type> ast) throws AlphaError {
         var match = ast.getMatch();
         if (match == null) throw new AlphaError.NullOccurredException(ast);
         return match.matched();
+    }
+
+    /**
+     * Stores the value of to_store in to_assign.
+     * @param to_assign Updated this value
+     * @param to_store Value to store in to_assign
+     */
+    private static void store(Value to_assign, Value to_store) {
+        to_assign.setValue(to_store);
     }
 }
