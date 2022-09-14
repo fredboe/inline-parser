@@ -64,7 +64,27 @@ public enum Type {
     LE((ast, world) -> world.stackOp(Value::le)),
     GE((ast, world) -> world.stackOp(Value::ge)),
     EQ((ast, world) -> world.stackOp(Value::eq)),
-    END((ast, world) -> world.load(new Value(-1))); // push -1 onto the stack
+    END((ast, world) -> {
+        world.push(new Value(-1));
+        world.goto_();
+    }),
+    MEM((ast, world) -> IO.info(world.toString())),
+    CLEAR((ast, world) -> {
+        world.clear();
+        IO.info("Memory has been cleared!");
+    }),
+    PRINT((ast, world) -> {
+        world.evalAST(ast.getChild(0));
+        IO.info(world.pop());
+        System.out.println(world.pop());
+    }),
+    EXE((ast, world) -> {
+        // load the given program and execute it (in a new world) -> then merge both memories together
+        // with priority of the executed program
+        World programWorld = IO.loadProgram(ast.getMatch().matched());
+        programWorld.executeProgram();
+        world.unite(programWorld);
+    });
 
     private final ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer;
 

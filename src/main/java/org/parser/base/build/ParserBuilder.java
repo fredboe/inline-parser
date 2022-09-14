@@ -98,7 +98,7 @@ public class ParserBuilder<TYPE> {
         return Pattern.compile(regex);
     }
 
-    public void union(ParserBuilder<TYPE> other) {
+    public void unite(ParserBuilder<TYPE> other) {
         rules.putAll(other.rules);
         other.placeholders.forEach((name, placeholder) -> {
             if (this.placeholders.containsKey(name)) {
@@ -109,10 +109,10 @@ public class ParserBuilder<TYPE> {
         });
     }
 
-    public static <T> ParserBuilder<T> union(ParserBuilder<T> builder1, ParserBuilder<T> builder2) {
+    public static <T> ParserBuilder<T> unite(ParserBuilder<T> builder1, ParserBuilder<T> builder2) {
         var resBuilder = new ParserBuilder<T>();
-        resBuilder.union(builder1);
-        resBuilder.union(builder2);
+        resBuilder.unite(builder1);
+        resBuilder.unite(builder2);
         return resBuilder;
     }
 }

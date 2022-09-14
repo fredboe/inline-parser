@@ -268,7 +268,7 @@ public class Rule<TYPE> {
     private Rule<TYPE> addToCurrentSubruleWithSubsubrule(Function<ConcatParser<TYPE>, Parser<TYPE>> subruleMapper,
                                                          Simplerule<TYPE> subsubrule) {
         subsubrule.freeze();
-        if (!frozen) parserBuilder.union(subsubrule.parserBuilder());
+        if (!frozen) parserBuilder.unite(subsubrule.parserBuilder());
         return addToCurrentSubrule(subruleMapper.apply(subsubrule.parser()));
     }
 

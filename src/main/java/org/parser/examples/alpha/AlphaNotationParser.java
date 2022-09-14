@@ -74,7 +74,7 @@ public class AlphaNotationParser implements Parser<Type> {
         builder.newRule("LINE")
                 .rule("BRANCH").or().rule("GOTO").or()
                 .rule("ASSIGN").or().rule("FUNC").or()
-                .rule("STACK").end();
+                .rule("OUTPUT").or().rule("STACK").end();
 
         builder.newRule("BRANCH")
                 .type(Type.BRANCH).hide("if").rule("CONDITION").hide("then").rule("GOTO")
@@ -85,7 +85,10 @@ public class AlphaNotationParser implements Parser<Type> {
                 .end();
 
         builder.newRule("GOTO")
-                .type(Type.GOTO).hide("goto").rule("VALUE").end();
+                .type(Type.END).hide("goto").hide("(?!end\\w)end") // "end" without another letter after it
+                .or()
+                .type(Type.GOTO).hide("goto").rule("VALUE")
+                .end();
 
         builder.newRule("VALUE")
                 .rule("ACCUMULATOR").or().rule("ADDRESS").or().rule("NUMBER").or().rule("LABEL")
@@ -129,10 +132,7 @@ public class AlphaNotationParser implements Parser<Type> {
                 .match(Type.NUMBER, "(\\-)?\\d+").end();
 
         builder.newRule("LABEL")
-                .keyword(Type.END, "(?!end\\w)end") // "end" without another letter after it
-                .or()
-                .match(Type.LABEL, "[a-zA-Z]\\w*")
-                .end();
+                .match(Type.LABEL, "[a-zA-Z]\\w*").end();
 
         builder.newRule("OPERATOR")
                 .keyword(Type.ADD, "\\+").or().keyword(Type.SUB, "\\-").or()
@@ -145,6 +145,18 @@ public class AlphaNotationParser implements Parser<Type> {
                 .keyword(Type.LE, "<").or().keyword(Type.GE, ">").or()
                 .keyword(Type.EQ, "=")
                 .end();
+
+        builder.newRule("OUTPUT")
+                .keyword(Type.CLEAR, "clear").or()
+                .keyword(Type.MEM, "mem").or()
+                .rule("EXE").or()
+                .rule("PRINT").end();
+
+        builder.newRule("PRINT")
+                .type(Type.PRINT).rule("VALUE").end(); // maybe add .hide("print")
+
+        builder.newRule("EXE")
+                .type(Mode.justFst()).hide("exe").match(Type.EXE, ".+").end(); // no line terminators
 
         return builder.build();
     }
