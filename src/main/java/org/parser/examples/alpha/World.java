@@ -139,10 +139,10 @@ public class World {
 
 
     private static class StringifyWorld {
-        private static final int colWidth = 30;
-        private static final int writableColWidth = 28;
-        private static final String v_sep = "│"; // vertical separator
-        private static final String h_sep = "┄"; // horizontal separator
+        private static final int colWidth = 24;
+        private static final int writableColWidth = 22;
+        private static final String v_sep = "|"; // vertical separator
+        private static final String h_sep = "-"; // horizontal separator
 
         public static String stringify(World world) {
             StringBuilder tableBuilder = new StringBuilder();

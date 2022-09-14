@@ -1,8 +1,6 @@
 package org.parser.examples.alpha;
 
-import java.io.IOException;
-
-public class Main {
+public class AlphaNotation {
     public static void main(String[] args) {
         try {
             CLI cli = getCLI(args);
