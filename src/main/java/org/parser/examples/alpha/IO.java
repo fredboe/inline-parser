@@ -12,13 +12,20 @@ import java.util.Scanner;
 public class IO {
     private static final Scanner input = new Scanner(System.in);
     private static final String startOfInputLine = ">>> ";
+    private static final String red = "\u001B[31m";
+    private static final String resetColor = "\u001B[0m";
+
 
     /**
      *
      * @return Waits for the user to enter a new line and returns the input.
      */
     public static String enterLine() {
-        System.out.print(startOfInputLine);
+        return enterLine("");
+    }
+
+    public static String enterLine(String printBefore) {
+        System.out.print(startOfInputLine + printBefore);
         return input.nextLine();
     }
 
@@ -51,7 +58,7 @@ public class IO {
      * @param error Error-message
      */
     public static void error(String error) {
-        System.err.println(error);
+        System.out.println(red + error + resetColor);
         System.out.println();
     }
 

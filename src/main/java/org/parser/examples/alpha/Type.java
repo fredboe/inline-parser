@@ -81,7 +81,8 @@ public enum Type {
         World programWorld = IO.loadProgram(matchOf(ast));
         programWorld.executeProgram();
         world.unite(programWorld); // store the memory of the executed program in the current world
-    });
+    }),
+    LOAD((ast, world) -> {});
 
     private final ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer;
 

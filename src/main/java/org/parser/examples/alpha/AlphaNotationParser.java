@@ -153,10 +153,14 @@ public class AlphaNotationParser implements Parser<Type> {
                 .keyword(Type.MEM, "mem").or()
                 .keyword(Type.CLEAR, "clear").or()
                 .rule("EXE").or()
+                .rule("LOAD").or()
                 .rule("PRINT").end(); // print must be the last since it consumes clear, mem and exe as labels.
 
         builder.newRule("EXE")
                 .type(Mode.justFst()).hide("exe").match(Type.EXE, ".+").end(); // no line terminators
+
+        builder.newRule("LOAD")
+                .type(Mode.justFst()).hide("load").match(Type.LOAD, ".+").end(); // no line terminators
 
         builder.newRule("PRINT")
                 .type(Type.PRINT).rule("VALUE").end(); // maybe add .hide("print")

@@ -153,6 +153,10 @@ public class World {
         pc = top.value();
     }
 
+    public void gotoLastLine() {
+        pc = program.size() - 1;
+    }
+
     /**
      * Evaluates the given AST by calling its evaluation function.
      * @param ast AST
