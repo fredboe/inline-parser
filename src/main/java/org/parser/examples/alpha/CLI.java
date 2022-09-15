@@ -46,14 +46,15 @@ public class CLI implements Runnable {
     @Override
     public void run() {
         description();
-        while (world.getPc() >= 0) {
-            newLine();
+        String input = enterLine();
+        while (shouldRun(input)) {
+            processLine(input);
+            input = enterLine();
         }
     }
 
-    private void newLine() {
+    private void processLine(String input) {
         try {
-            String input = IO.enterLine(mode.getPrintBefore());
             if (!changeMode(input)) {
                 world.addLine(input);
                 mode.accept(world);
@@ -65,6 +66,14 @@ public class CLI implements Runnable {
 
     private void description() {
         IO.info("CLI");
+    }
+
+    private boolean shouldRun(String input) {
+        return !input.equalsIgnoreCase("end") && world.getPc() >= 0;
+    }
+
+    private String enterLine() {
+        return IO.enterLine(mode.getPrintBefore());
     }
 
     private boolean changeMode(String input) {
