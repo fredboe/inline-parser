@@ -23,16 +23,8 @@ public class AlphaNotationParser implements Parser<Type> {
     }
 
     @Override
-    public Optional<AST<Type>> applyTo(CharSequence sequence) {
-        return alphaParser.applyTo(new Consumable(sequence,
-                Consumable.Ignore.IGNORE_H_SPACE,
-                Consumable.Ignore.IGNORE_COMMENT)
-        );
-    }
-
-    @Override
     public Consumable consumableOf(CharSequence sequence) {
-        return new Consumable(sequence, Consumable.Ignore.IGNORE_H_SPACE, Consumable.Ignore.IGNORE_COMMENT);
+        return new Consumable(sequence, Consumable.Ignore.IGNORE_COMMENT, Consumable.Ignore.IGNORE_H_SPACE);
     }
 
     /**
@@ -77,7 +69,7 @@ public class AlphaNotationParser implements Parser<Type> {
         builder.newRule("LINE")
                 .rule("BRANCH").or().rule("GOTO").or()
                 .rule("ASSIGN").or().rule("FUNC").or()
-                .rule("OUTPUT").or().rule("STACK").end();
+                .rule("STACK").or().rule("OUTPUT").end();
 
         builder.newRule("BRANCH")
                 .type(Type.BRANCH).hide("if").rule("CONDITION").hide("then").rule("GOTO")
@@ -121,7 +113,7 @@ public class AlphaNotationParser implements Parser<Type> {
                 .or()
                 .type(Type.POP).hide("pop").rule("ASSIGNABLE")
                 .or()
-                .type(Type.STACK_OP).hide("stack_op").rule("OPERATOR")
+                .type(Type.STACK_OP).hide("stack").rule("OPERATOR")
                 .end();
 
         builder.newRule("ACCUMULATOR")
@@ -140,8 +132,7 @@ public class AlphaNotationParser implements Parser<Type> {
         builder.newRule("OPERATOR")
                 .keyword(Type.ADD, "\\+").or().keyword(Type.SUB, "\\-").or()
                 .keyword(Type.MUL, "\\*").or().keyword(Type.DIV, "/").or()
-                .keyword(Type.MOD, "%")
-                .end();
+                .keyword(Type.MOD, "%").end();
 
         builder.newRule("COMP_OPERATOR")
                 .keyword(Type.LEQ, "<=").or().keyword(Type.GEQ, ">=").or()
