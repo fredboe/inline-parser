@@ -51,6 +51,22 @@ a_1 := a_1 - 1
 goto loop
 return : end_fac
 ```
+
+### Factorial recursive
+```
+a_1 := 7
+call fac
+goto end
+          
+// factorial - recursive
+a_0 := 1 : fac
+if a_1 = 0 then goto ret : fac_rec
+a_0 := a_0 * a_1
+a_1 := a_1 - 1
+call fac_rec
+return : ret
+```
+
 ### Digit sum subroutine
 ```
 p(1) := 5313294

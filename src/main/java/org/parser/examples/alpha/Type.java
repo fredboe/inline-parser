@@ -20,7 +20,7 @@ public enum Type {
         world.evalAST(ast.getChild(1)); // push expr
         var exprValue = world.pop();
         var assignableValue = world.pop();
-        store(assignableValue, exprValue); // store exprValue in assignableValue
+        store(assignableValue, exprValue); // stores a copy of exprValue in assignableValue
     }),
     EXPR((ast, world) -> {
         world.evalAST(ast.getChild(0)); // push op_left
@@ -51,7 +51,7 @@ public enum Type {
         world.evalAST(ast.getChild(0)); // push where_to_store
         var where_to_store = world.pop();
         var top_value = world.pop();
-        store(where_to_store, top_value); // store top of the stack in where_to_store
+        store(where_to_store, top_value); // stores a copy of the top stack element in where_to_store
     }),
     STACK_OP((ast, world) -> world.evalAST(ast.getChild(0))), // evaluate given operator
     ADD((ast, world) -> world.stackOp(Value::add)), // op_left and op_right must have been pushed before
@@ -112,11 +112,11 @@ public enum Type {
     }
 
     /**
-     * Stores the value of to_store in to_assign.
+     * Stores a copy of to_store in to_assign.
      * @param to_assign Updated this value
      * @param to_store Value to store in to_assign
      */
     private static void store(Value to_assign, Value to_store) {
-        to_assign.setValue(to_store);
+        to_assign.setValue(new Value(to_store));
     }
 }
