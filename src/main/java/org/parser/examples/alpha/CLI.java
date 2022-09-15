@@ -65,7 +65,14 @@ public class CLI implements Runnable {
     }
 
     private void description() {
-        IO.info("CLI");
+        IO.info("""
+                This is a command line for the pseudo assembler 'alpha notation'.
+                To see how alpha notation works please read the README.
+
+                Keywords:
+                This command line can be stopped with 'end'.
+                To create a new subroutine you need to go into subroutine-mode (enter code without executing it).
+                To go into subroutine-mode enter 'subroutine' and to leave subroutine-mode just enter a blank line.""");
     }
 
     private boolean shouldRun(String input) {
