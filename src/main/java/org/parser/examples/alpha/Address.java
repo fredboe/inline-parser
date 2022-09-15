@@ -10,6 +10,6 @@ public record Address(int address) {
     }
 
     public String toString() {
-        return String.valueOf(address);
+        return "adr=" + address;
     }
 }

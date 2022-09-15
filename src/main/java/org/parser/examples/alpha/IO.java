@@ -59,7 +59,6 @@ public class IO {
      */
     public static void error(String error) {
         System.out.println(red + error + resetColor);
-        System.out.println();
     }
 
     /**

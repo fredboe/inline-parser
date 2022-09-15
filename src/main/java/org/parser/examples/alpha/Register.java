@@ -10,6 +10,6 @@ public record Register(int register) {
     }
 
     public String toString() {
-        return String.valueOf(register);
+        return "reg=" + register;
     }
 }
