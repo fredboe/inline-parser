@@ -3,10 +3,7 @@ package org.parser.examples.alpha;
 import org.apache.commons.lang3.StringUtils;
 import org.parser.tree.AST;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.BiFunction;
 
 /**
@@ -25,6 +22,20 @@ public class World {
         this.stack = new Stack<>();
         this.program = program;
         this.pc = 0;
+    }
+
+    /**
+     * Use this just for equality checks (the pc is set to -1).
+     * @param registers registers
+     * @param memory memory
+     * @param stack stack
+     */
+    public World(Map<Register, Value> registers, Map<Address, Value> memory, Stack<Value> stack) throws AlphaError {
+        this.registers = registers;
+        this.memory = memory;
+        this.stack = stack;
+        this.program = new Program();
+        this.pc = -1;
     }
 
     /**
@@ -215,6 +226,17 @@ public class World {
         for (Value elem : other.stack) {
             stack.push(elem);
         }
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (this == obj) return true;
+
+        if (obj instanceof World other) {
+            return Objects.equals(registers, other.registers) && Objects.equals(memory, other.memory)
+                    && Objects.equals(stack, other.stack);
+        }
+        return false;
     }
 
     /**

@@ -22,6 +22,16 @@ public class Value {
         this.value = value.value();
     }
 
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (this == other) return true;
+
+        if (other instanceof Value value) {
+            return this.value == value.value;
+        }
+        return false;
+    }
+
     public String toString() {
         return Integer.toString(value);
     }
