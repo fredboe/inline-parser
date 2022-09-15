@@ -103,7 +103,7 @@ public class Program {
      * @return Returns the fitting AST of the given line.
      * @throws AlphaError at parsing failure.
      */
-    private AST<Type> parseLine(String line) throws AlphaError {
+    private static AST<Type> parseLine(String line) throws AlphaError {
         Consumable consLine = consumableOf(line);
         var optionalParsedLine = alphaLineParser.applyTo(consLine);
         if (optionalParsedLine.isEmpty() || !consLine.isEmpty())
@@ -118,8 +118,8 @@ public class Program {
      * @param program Program/Line-string
      * @return Returns a consumable object for the given string.
      */
-    private Consumable consumableOf(String program) {
-        return new Consumable(program, Consumable.Ignore.IGNORE_H_SPACE, Consumable.Ignore.IGNORE_COMMENT);
+    private static Consumable consumableOf(String program) {
+        return new Consumable(program, Consumable.Ignore.IGNORE_COMMENT, Consumable.Ignore.IGNORE_H_SPACE);
     }
 
 }

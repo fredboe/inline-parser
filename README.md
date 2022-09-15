@@ -8,6 +8,8 @@ a recursive parser is created from it.
 The library tries above all to make a simple readability and implementability possible;
 less in the foreground is the possibility to create high-performance parsers.
 
+For a detailed explanation of the parsers see the README in `src/main/java/org/parser/base`.
+
 ### Example
 In this section, I would like to very briefly introduce the functionality of this
 library. If you want to see detailed examples, just have a look at the
@@ -55,6 +57,7 @@ Also, the backslashes in the match methods are due to the fact that a Regular Ex
 ---
 
 ## Alpha notation interpreter
+For details have a look at the README in `src/main/java/org/parser/examples/alpha`.
 
 ---
 ### Author

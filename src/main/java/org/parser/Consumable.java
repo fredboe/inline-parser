@@ -33,7 +33,7 @@ public class Consumable {
 
         /**
          *
-         * @return Returns the Regular Expression to the Ignore.
+         * @return Returns the Regular Expression to ignore.
          */
         private String getValue() {
             return value;
@@ -178,7 +178,7 @@ public class Consumable {
     }
 
     /**
-     * Generates a Matcher object based on the passed pattern and the current sequebce.
+     * Generates a Matcher object based on the passed pattern and the current sequence.
      * @param pattern Pattern
      * @return Returns a Matcher object
      */
@@ -191,7 +191,7 @@ public class Consumable {
      * @return Returns the current sequence (with consumption)
      */
     public CharSequence getSequenceLeft() {
-        if (isEmpty()) return "";
+        if (isEmptyWithoutIgnore()) return "";
         return sequence.subSequence(startIndex, sequence.length());
     }
 
@@ -209,7 +209,12 @@ public class Consumable {
      * @return Returns whether the consumable object still has a (non-consumed) character.
      */
     public boolean isEmpty() {
-        return sequence == null || sequence.isEmpty() || startIndex >= sequence.length();
+        if (sequence != null) ignore();
+        return isEmptyWithoutIgnore();
+    }
+
+    public boolean isEmptyWithoutIgnore() {
+        return sequence == null || startIndex >= sequence.length();
     }
 
     /**

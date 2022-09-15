@@ -35,3 +35,36 @@ In addition to the normal alpha notation instruction we have provided the follow
    PRINT ::= VALUE
    ENDL ::= "\R" <br>
 ```
+
+## Examples
+### Factorial subroutine
+```
+a_1 := 6 
+call fac 
+goto end
+
+// a_0 = a_1!
+a_0 := 1 : fac
+if a_1 = 0 then goto end_fac : loop
+a_0 := a_0 * a_1
+a_1 := a_1 - 1
+goto loop
+return : end_fac
+```
+### Digit sum subroutine
+```
+p(1) := 5313294
+call digit_sum
+goto end
+
+// p(2) = digit_sum(p(1))
+a_2 := p(1) : digit_sum
+a_0 := 0
+if a_2 = 0 then goto end_digit_sum : loop
+a_1 := a_2 % 10
+a_2 := a_2 / 10
+a_0 := a_0 + a_1
+goto loop
+p(2) := a_0 : end_digit_sum
+return
+```
