@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class JsonParserTest {
 
-    private final Parser<TYPE> jsonParser = new JsonParser();
+    private static final Parser<TYPE> jsonParser = new JsonParser();
 
     private AST<TYPE> setupASTOfJsonString1() {
         /*
@@ -51,19 +51,19 @@ public class JsonParserTest {
         var lines = new AST<>(TYPE.STRING, new Consumable.Match("\"num_lines\""));
         var numLines = new AST<>(TYPE.NUMBER, new Consumable.Match("1183.1234e-10"));
         var github = new AST<>(TYPE.STRING, new Consumable.Match("\"on_github\""));
-        var trueK = new AST<>(TYPE.TRUE, null);
+        var trueK = new AST<>(TYPE.TRUE);
         var test = new AST<>(TYPE.STRING, new Consumable.Match("\"test\""));
-        var nullK = new AST<>(TYPE.NULL, null);
+        var nullK = new AST<>(TYPE.NULL);
         var something = new AST<>(TYPE.STRING, new Consumable.Match("\"something\""));
 
-        var somethingArray = new AST<>(TYPE.ARRAY, null, List.of(name, lines, github));
-        var nameProperty = new AST<>(TYPE.PROPERTY, null, List.of(name, inline_parser));
-        var numLinesProperty = new AST<>(TYPE.PROPERTY, null, List.of(lines, numLines));
-        var onGithubProperty = new AST<>(TYPE.PROPERTY, null, List.of(github, trueK));
-        var testProperty = new AST<>(TYPE.PROPERTY, null, List.of(test, nullK));
-        var somethingProperty = new AST<>(TYPE.PROPERTY, null, List.of(something, somethingArray));
+        var somethingArray = new AST<>(TYPE.ARRAY, List.of(name, lines, github));
+        var nameProperty = new AST<>(TYPE.PROPERTY, List.of(name, inline_parser));
+        var numLinesProperty = new AST<>(TYPE.PROPERTY, List.of(lines, numLines));
+        var onGithubProperty = new AST<>(TYPE.PROPERTY, List.of(github, trueK));
+        var testProperty = new AST<>(TYPE.PROPERTY, List.of(test, nullK));
+        var somethingProperty = new AST<>(TYPE.PROPERTY, List.of(something, somethingArray));
 
-        return new AST<>(TYPE.OBJECT, null,
+        return new AST<>(TYPE.OBJECT,
                 List.of(nameProperty, numLinesProperty, onGithubProperty, testProperty, somethingProperty)
         );
     }
@@ -91,23 +91,23 @@ public class JsonParserTest {
         var good = new AST<>(TYPE.STRING, new Consumable.Match("\"good_movies\""));
         var best = new AST<>(TYPE.STRING, new Consumable.Match("\"best_movie\""));
 
-        var dknightName = new AST<>(TYPE.PROPERTY, null, List.of(name, dknight));
-        var dknightRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num2008));
-        var dknightMovie = new AST<>(TYPE.OBJECT, null, List.of(dknightName, dknightRel));
+        var dknightName = new AST<>(TYPE.PROPERTY, List.of(name, dknight));
+        var dknightRel  = new AST<>(TYPE.PROPERTY, List.of(release, num2008));
+        var dknightMovie = new AST<>(TYPE.OBJECT, List.of(dknightName, dknightRel));
 
-        var redemptionName = new AST<>(TYPE.PROPERTY, null, List.of(name, redemp));
-        var redemptionRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num1994));
-        var redemptionMovie = new AST<>(TYPE.OBJECT, null, List.of(redemptionName, redemptionRel));
+        var redemptionName = new AST<>(TYPE.PROPERTY, List.of(name, redemp));
+        var redemptionRel  = new AST<>(TYPE.PROPERTY, List.of(release, num1994));
+        var redemptionMovie = new AST<>(TYPE.OBJECT, List.of(redemptionName, redemptionRel));
 
-        var godfatherName = new AST<>(TYPE.PROPERTY, null, List.of(name, godfather));
-        var godfatherRel  = new AST<>(TYPE.PROPERTY, null, List.of(release, num1972));
-        var godfatherMovie = new AST<>(TYPE.OBJECT, null, List.of(godfatherName, godfatherRel));
+        var godfatherName = new AST<>(TYPE.PROPERTY, List.of(name, godfather));
+        var godfatherRel  = new AST<>(TYPE.PROPERTY, List.of(release, num1972));
+        var godfatherMovie = new AST<>(TYPE.OBJECT, List.of(godfatherName, godfatherRel));
 
-        var arrayGood = new AST<>(TYPE.ARRAY, null, List.of(dknightMovie, redemptionMovie));
-        var goodMovies = new AST<>(TYPE.PROPERTY, null, List.of(good, arrayGood));
-        var bestMovie = new AST<>(TYPE.PROPERTY, null, List.of(best, godfatherMovie));
+        var arrayGood = new AST<>(TYPE.ARRAY, List.of(dknightMovie, redemptionMovie));
+        var goodMovies = new AST<>(TYPE.PROPERTY, List.of(good, arrayGood));
+        var bestMovie = new AST<>(TYPE.PROPERTY, List.of(best, godfatherMovie));
 
-        return new AST<>(TYPE.OBJECT, null, List.of(goodMovies, bestMovie));
+        return new AST<>(TYPE.OBJECT, List.of(goodMovies, bestMovie));
     }
 
 
@@ -120,34 +120,45 @@ public class JsonParserTest {
 
     @Test
     public void Test_json_string1() {
-        String json = "{ \"name\": \"Fred\", \"age\": 20 }";
+        String json =
+                """
+                {
+                    "name": "Fred",
+                    "age": 20
+                }
+                """;
         testJson(json, setupASTOfJsonString1());
     }
 
     @Test
     public void Test_json_string2() {
         String json =
-                "{ " +
-                    "\"name\": \"inline-parser\", " +
-                    "\"num_lines\": 1183.1234e-10, " +
-                    "\"on_github\": true, " +
-                    "\"test\": null," +
-                    "\"something\": [\"name\", \"num_lines\", \"on_github\"]\n " +
-                "}";
+                """
+                {
+                    "name": "inline-parser",
+                    "num_lines": 1183.1234e-10,
+                    "on_github": true,
+                    "test": null,
+                    "something": ["name", "num_lines", "on_github"]
+                }
+                """;
         testJson(json, setupASTOfJsonString2());
     }
 
     @Test
     public void Test_json_string3() {
         String json =
-                "{ " +
-                    "\"good_movies\": " +
-                        "[ " +
-                        "{\"name\": \"The dark knight\", \"release\": 2008}, " +
-                        "{\"name\": \"The Shawshank Redemption\", \"release\": 1994}" +
-                        "]," +
-                    "\"best_movie\":\n {\"name\": \"The Godfather\", \"release\": 1972}" +
-                "}";
+                """
+                {
+                    "good_movies":
+                        [
+                            {"name": "The dark knight", "release": 2008},
+                            {"name": "The Shawshank Redemption", "release": 1994}
+                        ],
+                        "best_movie":
+                            {"name": "The Godfather", "release": 1972}
+                }
+                """;
         testJson(json, setupASTOfJsonString3());
     }
 }

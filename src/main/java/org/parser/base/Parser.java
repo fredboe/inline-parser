@@ -178,7 +178,7 @@ public interface Parser<TYPE> {
      * @return Returns a function that turns an AST A into an AST B with the passed type and A as child.
      */
     static <TYPE> Function<AST<TYPE>, AST<TYPE>> basicOrWithNodeAtSuccess(TYPE type) {
-        return ast -> new AST<>(type, null).addChild(ast);
+        return ast -> new AST<>(type).addChild(ast);
     }
 
     /**
@@ -220,6 +220,6 @@ public interface Parser<TYPE> {
      * but the match of the AST is null.
      */
     static <TYPE> Function<Consumable.Match, AST<TYPE>> basicKeywordAtSuccess(TYPE type) {
-        return match -> new AST<>(type, null);
+        return match -> new AST<>(type);
     }
 }

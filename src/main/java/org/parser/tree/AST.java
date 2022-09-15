@@ -38,6 +38,16 @@ public class AST<TYPE> {
         this.match = match;
     }
 
+    public AST(TYPE type, String match) {
+        this(type);
+        this.match = new Consumable.Match(match);
+    }
+
+    public AST(TYPE type, List<AST<TYPE>> children) {
+        this(type, (Consumable.Match) null);
+        this.children = children;
+    }
+
     public AST(TYPE type, Consumable.Match match, List<AST<TYPE>> children) {
         this(type, match);
         this.children = children;

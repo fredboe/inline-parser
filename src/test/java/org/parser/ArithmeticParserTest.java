@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ArithmeticParserTest {
 
-    private final Parser<TYPE> exprParser = new ArithmeticParser();
+    private static final Parser<TYPE> exprParser = new ArithmeticParser();
 
     private AST<TYPE> setupASTofExpr1() {
         // 42 + 11 - 1*20/10-14
@@ -27,11 +27,11 @@ public class ArithmeticParserTest {
         var num10 = new AST<>(TYPE.NUMBER, new Consumable.Match("10"));
         var num14 = new AST<>(TYPE.NUMBER, new Consumable.Match("14"));
 
-        var divAST = new AST<>(TYPE.DIV, null, List.of(num20, num10));
-        var mulAST = new AST<>(TYPE.MUL, null, List.of(num1, divAST));
-        var subAST = new AST<>(TYPE.SUB, null, List.of(num11, mulAST, num14));
+        var divAST = new AST<>(TYPE.DIV, List.of(num20, num10));
+        var mulAST = new AST<>(TYPE.MUL, List.of(num1, divAST));
+        var subAST = new AST<>(TYPE.SUB, List.of(num11, mulAST, num14));
 
-        return new AST<>(TYPE.ADD, null, List.of(num42, subAST));
+        return new AST<>(TYPE.ADD, List.of(num42, subAST));
     }
 
     private AST<TYPE> setupASTofExpr2() {
@@ -42,13 +42,13 @@ public class ArithmeticParserTest {
         var num3  = new AST<>(TYPE.NUMBER, new Consumable.Match("3"));
         var num9  = new AST<>(TYPE.NUMBER, new Consumable.Match("9"));
 
-        var divAST = new AST<>(TYPE.DIV, null, List.of(num24, num2));
-        var mulAST1 = new AST<>(TYPE.MUL, null, List.of(divAST, num3));
-        var mulAST2 = new AST<>(TYPE.MUL, null, List.of(num9, num2));
-        var subAST = new AST<>(TYPE.SUB, null, List.of(mulAST1, mulAST2));
-        var mulAST3 = new AST<>(TYPE.MUL, null, List.of(num11, num2));
+        var divAST = new AST<>(TYPE.DIV, List.of(num24, num2));
+        var mulAST1 = new AST<>(TYPE.MUL, List.of(divAST, num3));
+        var mulAST2 = new AST<>(TYPE.MUL, List.of(num9, num2));
+        var subAST = new AST<>(TYPE.SUB, List.of(mulAST1, mulAST2));
+        var mulAST3 = new AST<>(TYPE.MUL, List.of(num11, num2));
 
-        return new AST<>(TYPE.ADD, null, List.of(mulAST3, subAST));
+        return new AST<>(TYPE.ADD, List.of(mulAST3, subAST));
     }
 
     private AST<TYPE> setupASTofExpr3() {
@@ -59,12 +59,12 @@ public class ArithmeticParserTest {
         var num2  = new AST<>(TYPE.NUMBER, new Consumable.Match("2"));
         var num1  = new AST<>(TYPE.NUMBER, new Consumable.Match("1"));
 
-        var addAST = new AST<>(TYPE.ADD, null, List.of(num14, num3));
-        var sinAST = new AST<>(TYPE.FUNC, null, List.of(sin, addAST));
-        var potAST = new AST<>(TYPE.POT, null, List.of(num3, num2));
-        var mulAST = new AST<>(TYPE.MUL, null, List.of(sinAST, potAST));
+        var addAST = new AST<>(TYPE.ADD, List.of(num14, num3));
+        var sinAST = new AST<>(TYPE.FUNC, List.of(sin, addAST));
+        var potAST = new AST<>(TYPE.POT, List.of(num3, num2));
+        var mulAST = new AST<>(TYPE.MUL, List.of(sinAST, potAST));
 
-        return new AST<>(TYPE.SUB, null, List.of(mulAST, num1));
+        return new AST<>(TYPE.SUB, List.of(mulAST, num1));
     }
 
     private AST<TYPE> setupASTofExpr4() {
@@ -75,11 +75,11 @@ public class ArithmeticParserTest {
         var num1  = new AST<>(TYPE.NUMBER, new Consumable.Match("1"));
         var pi = new AST<>(TYPE.PI, new Consumable.Match("pi"));
 
-        var potAST = new AST<>(TYPE.POT, null, List.of(num2, num1));
-        var mulAST = new AST<>(TYPE.MUL, null, List.of(potAST, num2));
-        var subAST = new AST<>(TYPE.SUB, null, List.of(pi, mulAST));
+        var potAST = new AST<>(TYPE.POT, List.of(num2, num1));
+        var mulAST = new AST<>(TYPE.MUL, List.of(potAST, num2));
+        var subAST = new AST<>(TYPE.SUB, List.of(pi, mulAST));
 
-        return new AST<>(TYPE.SUB, null, List.of(num12, num11, subAST));
+        return new AST<>(TYPE.SUB, List.of(num12, num11, subAST));
     }
 
     private AST<TYPE> setupASTofExpr5() {
@@ -89,16 +89,16 @@ public class ArithmeticParserTest {
         var num1  = new AST<>(TYPE.NUMBER, new Consumable.Match("1"));
         var num6  = new AST<>(TYPE.NUMBER, new Consumable.Match("6"));
 
-        var subASTl = new AST<>(TYPE.SUB, null, List.of(num9, num5, num1));
-        var subASTr = new AST<>(TYPE.SUB, null, List.of(num6, num5, num1));
+        var subASTl = new AST<>(TYPE.SUB, List.of(num9, num5, num1));
+        var subASTr = new AST<>(TYPE.SUB, List.of(num6, num5, num1));
 
-        return new AST<>(TYPE.ADD, null, List.of(subASTl, subASTr));
+        return new AST<>(TYPE.ADD, List.of(subASTl, subASTr));
     }
 
     private AST<TYPE> setupASTofExpr6() {
         // 1 + 1--
         var num1 = new AST<>(TYPE.NUMBER, new Consumable.Match("1"));
-        return new AST<>(TYPE.ADD, null, List.of(num1, num1));
+        return new AST<>(TYPE.ADD, List.of(num1, num1));
     }
 
     private void testExpr(String expr, AST<TYPE> result) {

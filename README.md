@@ -1,7 +1,7 @@
 # inline-parser
 Library for creating parsers in Java code.
 
-### Basics
+## Basics
 inline-parser is a library for creating parsers without using a parser generator.
 without using a parser generator. So the grammar is specified directly in the code and then
 a recursive parser is created from it.
@@ -10,7 +10,7 @@ less in the foreground is the possibility to create high-performance parsers.
 
 For a detailed explanation of the parsers see the README in `src/main/java/org/parser/base`.
 
-### Example
+## Example
 In this section, I would like to very briefly introduce the functionality of this
 library. If you want to see detailed examples, just have a look at the
 `org.parser.examples` package.
@@ -54,12 +54,10 @@ Also, the backslashes in the match methods are due to the fact that a Regular Ex
 - If a child of many parser has a type of null, this AST will not be
   taken over, but the children of the AST are added to the resulting AST at the correct position.
 - As I am not a professional programmer, this library might contain a some bugs.
----
 
 ## Alpha notation interpreter
 For details have a look at the README in `src/main/java/org/parser/examples/alpha`.
 
----
 ### Author
 Frederik Böcker
 
