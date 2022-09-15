@@ -177,12 +177,14 @@ public class AlphaNotationTest {
         testProgram(initiateWorld(programLines), resultOfProgram3());
     }
 
+    @Test
     public void Test_program_4() throws AlphaError {
         List<String> programLines = List.of(
                 "a_0 := 1",
                 "a_1 := 4",
                 "push a_0",
                 "push a_1 // hello",
+                "push 6",
                 "stack +",
                 "push 7",
                 "stack *",

@@ -10,6 +10,10 @@ public class Value {
         this.value = value;
     }
 
+    public Value(Value other) {
+        this.value = other.value;
+    }
+
     public int value() {
         return value;
     }
