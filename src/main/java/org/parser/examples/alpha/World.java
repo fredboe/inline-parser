@@ -13,6 +13,7 @@ public class World {
     private Map<Register, Value> registers;
     private Map<Address, Value> memory;
     private Stack<Value> stack;
+    private Stack<Value> returnStack;
     private final Program program;
     private int pc;
 
@@ -20,6 +21,7 @@ public class World {
         this.memory = new HashMap<>();
         this.registers = new HashMap<>();
         this.stack = new Stack<>();
+        this.returnStack = new Stack<>();
         this.program = program;
         this.pc = 0;
     }
@@ -34,6 +36,7 @@ public class World {
         this.registers = registers;
         this.memory = memory;
         this.stack = stack;
+        this.returnStack = new Stack<>();
         this.program = new Program();
         this.pc = -1;
     }
@@ -57,6 +60,7 @@ public class World {
         memory = new HashMap<>();
         registers = new HashMap<>();
         stack = new Stack<>();
+        returnStack = new Stack<>();
         program.clear();
         pc = 0;
     }
@@ -129,6 +133,24 @@ public class World {
     public Value pop() throws AlphaError {
         if (stack.isEmpty()) throw new AlphaError.EmptyStackException(pc);
         return stack.pop();
+    }
+
+    /**
+     * Pushes a value onto the return address stack.
+     * @param value Value to push
+     */
+    public void pushReturn(Value value) {
+        returnStack.push(value);
+    }
+
+    /**
+     * Pops from the return address stack.
+     * @return Returns the top of the return address stack.
+     * @throws AlphaError EmptyStackException is thrown when the stack is empty.
+     */
+    public Value popReturn() throws AlphaError {
+        if (returnStack.isEmpty()) throw new AlphaError.EmptyStackException(pc);
+        return returnStack.pop();
     }
 
     /**
@@ -234,7 +256,7 @@ public class World {
 
         if (obj instanceof World other) {
             return Objects.equals(registers, other.registers) && Objects.equals(memory, other.memory)
-                    && Objects.equals(stack, other.stack);
+                    && Objects.equals(stack, other.stack) && Objects.equals(returnStack, other.returnStack);
         }
         return false;
     }

@@ -33,11 +33,14 @@ public enum Type {
         world.evalAST(ast.getChild(1)); // stack op (comparison)
     }),
     CALL((ast, world) -> {
-        world.push(new Value(world.getPc())); // push return address (pc has already been incremented)
+        world.pushReturn(new Value(world.getPc())); // push return address (pc has already been incremented)
         world.evalAST(ast.getChild(0)); // push first line of subroutine
         world.goto_(); // goto top of stack
     }),
-    RETURN((ast, world) -> world.goto_()), // goto top of stack (return address)
+    RETURN((ast, world) -> {
+        world.push(world.popReturn()); // push return address
+        world.goto_(); // goto return address
+    }),
     ACCUMULATOR((ast, world) -> world.load(new Register(Integer.parseInt(matchOf(ast))))), // push value of accumulator onto the stack
     ADDRESS((ast, world) -> {
         world.evalAST(ast.getChild(0)); // push address
