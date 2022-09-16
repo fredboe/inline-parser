@@ -46,11 +46,11 @@ public class CLI implements Runnable {
     @Override
     public void run() {
         description();
-        String input = enterLine();
-        while (shouldRun(input)) {
+        do {
+            String input = enterLine();
+            if (input.equalsIgnoreCase("end")) break;
             processLine(input);
-            input = enterLine();
-        }
+        } while(world.getPc() >= 0);
     }
 
     private void processLine(String input) {
@@ -73,10 +73,6 @@ public class CLI implements Runnable {
                 This command line can be stopped with 'end'.
                 To create a new subroutine you need to go into subroutine-mode (enter code without executing it).
                 To go into subroutine-mode enter 'subroutine' and to leave subroutine-mode just enter a blank line.""");
-    }
-
-    private boolean shouldRun(String input) {
-        return !input.equalsIgnoreCase("end") && world.getPc() >= 0;
     }
 
     private String enterLine() {
