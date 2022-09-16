@@ -88,16 +88,6 @@ public class ParserBuilder<TYPE> {
         return new Rule<>(name, this);
     }
 
-    /**
-     *
-     * @param regex RegEx
-     * @return Returns a pattern based on the given regex.
-     * (modifies it if flags are set).
-     */
-    Pattern getPattern(String regex) {
-        return Pattern.compile(regex);
-    }
-
     public void unite(ParserBuilder<TYPE> other) {
         rules.putAll(other.rules);
         other.placeholders.forEach((name, placeholder) -> {

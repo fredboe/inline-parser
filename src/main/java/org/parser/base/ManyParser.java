@@ -14,18 +14,13 @@ import java.util.Optional;
  */
 public class ManyParser<TYPE> implements Parser<TYPE> {
     /**
-     * Type of an AST created with Many
+     * Type of AST created with Many
      */
     private final TYPE type;
     /**
      * Parser to be executed repeatedly
      */
-    private Parser<TYPE> parser;
-
-    public ManyParser(TYPE type) {
-        this.type = type;
-        this.parser = null;
-    }
+    private final Parser<TYPE> parser;
 
     public ManyParser(TYPE type, Parser<TYPE> parser) {
         this.type = type;
@@ -57,9 +52,5 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
             }
         }
         return Optional.of(new AST<>(type, null, ASTs));
-    }
-
-    public void setParserIfNull(Parser<TYPE> parser) {
-        if (this.parser == null) this.parser = parser;
     }
 }

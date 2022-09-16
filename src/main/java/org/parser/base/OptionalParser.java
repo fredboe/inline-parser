@@ -9,11 +9,7 @@ public class OptionalParser<TYPE> implements Parser<TYPE> {
     /**
      * Parser to be executed repeatedly
      */
-    private Parser<TYPE> parser;
-
-    public OptionalParser() {
-        this.parser = null;
-    }
+    private final Parser<TYPE> parser;
 
     public OptionalParser(Parser<TYPE> parser) {
         this.parser = parser;
@@ -32,9 +28,5 @@ public class OptionalParser<TYPE> implements Parser<TYPE> {
        return Optional.of(
                optionalAST.orElse(new AST<TYPE>(null).setIgnore(true))
        );
-    }
-
-    public void setParserIfNull(Parser<TYPE> parser) {
-        if (this.parser == null) this.parser = parser;
     }
 }

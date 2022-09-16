@@ -4,7 +4,6 @@ import org.parser.Consumable;
 import org.parser.base.build.Mode;
 import org.parser.tree.AST;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -188,11 +187,7 @@ public interface Parser<TYPE> {
      * ASTs as children.
      */
     static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> basicConcatAtSuccess(TYPE type) {
-        return trees -> {
-            var children = trees.stream().map(tree -> tree.getType() == null ? tree.getChildren() : List.of(tree))
-                    .flatMap(Collection::stream).toList();
-            return new AST<>(type, null, children);
-        };
+        return trees -> new AST<>(type, trees);
     }
 
     /**

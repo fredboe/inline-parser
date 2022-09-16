@@ -119,6 +119,29 @@ public class AlphaNotationTest {
         return new World(registers, memory, stack);
     }
 
+    private World resultOfProgram5() throws AlphaError {
+        /*
+        // test
+        push 7
+        p(12) := 42
+        push p(12)
+        pop p(11)
+        p(11) := 1
+        // end
+         */
+
+        Map<Register, Value> registers = new HashMap<>();
+        Map<Address, Value> memory = new HashMap<>();
+        Stack<Value> stack = new Stack<>();
+
+        memory.put(new Address(11), new Value(1));
+        memory.put(new Address(12), new Value(42));
+
+        stack.push(new Value(7));
+
+        return new World(registers, memory, stack);
+    }
+
     private void testProgram(World worldToTest, World result) throws AlphaError {
         worldToTest.executeProgram();
         assertEquals(worldToTest, result);
@@ -191,6 +214,20 @@ public class AlphaNotationTest {
                 "pop p(42)"
         );
         testProgram(initiateWorld(programLines), resultOfProgram4());
+    }
+
+    @Test
+    public void Test_program_5() throws AlphaError {
+        List<String> programLines = List.of(
+                "// test",
+                "push 7",
+                "p(12) := 42",
+                "push p(12)",
+                "pop p(11)",
+                "p(11) := 1",
+                "// end"
+        );
+        testProgram(initiateWorld(programLines), resultOfProgram5());
     }
     
     private static World initiateWorld(List<String> programLines) throws AlphaError {

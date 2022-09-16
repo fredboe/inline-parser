@@ -35,15 +35,6 @@ public class AlphaError extends Exception {
         }
     }
 
-    public static class WrongFilenameException extends AlphaError {
-        private static final String errorMsg = "The system was given a wrong filename " +
-                "(the file must exist and the filename must end with 'alph').";
-
-        public WrongFilenameException(String filename) {
-            super(errorMsg, filename);
-        }
-    }
-
     public static class NullOccurredException extends AlphaError {
         private static final String errorMsg = "The system tried to process 'null' (fatal error).";
 
