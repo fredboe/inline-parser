@@ -261,10 +261,13 @@ public class AlphaNotationParserTest {
         /*
         p(1) := 42
         p(p(1)) := 7
+        p(1) := 9
+        p(p(1)) := p(1)
          */
 
         var num1 = new AST<>(Type.NUMBER, "1");
         var num7 = new AST<>(Type.NUMBER, "7");
+        var num9 = new AST<>(Type.NUMBER, "9");
         var num42 = new AST<>(Type.NUMBER, "42");
 
         var p_1 = new AST<>(Type.ADDRESS, List.of(num1));
@@ -274,8 +277,13 @@ public class AlphaNotationParserTest {
            new AST<>(Type.ADDRESS, List.of(p_1)),
            num7
         ));
+        var line3 = new AST<>(Type.ASSIGN, List.of(p_1, num9));
+        var line4 = new AST<>(Type.ASSIGN, List.of(
+                new AST<>(Type.ADDRESS, List.of(p_1)),
+                p_1
+        ));
 
-        return new AST<>(Type.PROGRAM, List.of(line1, line2));
+        return new AST<>(Type.PROGRAM, List.of(line1, line2, line3, line4));
     }
 
     private void testProgram(String expr, AST<Type> result) {
@@ -366,6 +374,8 @@ public class AlphaNotationParserTest {
                 """
                 p(1) := 42
                 p(p(1)) := 7
+                p(1) := 9
+                p(p(1)) := p(1)
                 """;
         testProgram(program, setupOfProgram5());
     }

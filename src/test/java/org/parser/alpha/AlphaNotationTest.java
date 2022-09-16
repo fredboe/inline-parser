@@ -123,14 +123,17 @@ public class AlphaNotationTest {
         /*
         p(1) := 42
         p(p(1)) := 7
+        p(1) := 9
+        p(p(1)) := p(1)
          */
 
         Map<Register, Value> registers = new HashMap<>();
         Map<Address, Value> memory = new HashMap<>();
         Stack<Value> stack = new Stack<>();
 
-        memory.put(new Address(1), new Value(42));
+        memory.put(new Address(1), new Value(9));
         memory.put(new Address(42), new Value(7));
+        memory.put(new Address(9), new Value(9));
 
         return new World(registers, memory, stack);
     }
@@ -258,7 +261,9 @@ public class AlphaNotationTest {
     public void Test_program_5() throws AlphaError {
         List<String> programLines = List.of(
                 "p(1) := 42",
-                "p(p(1)) := 7"
+                "p(p(1)) := 7",
+                "p(1) := 9",
+                "p(p(1)) := p(1)"
         );
         testProgram(initiateWorld(programLines), resultOfProgram5());
     }
