@@ -121,6 +121,22 @@ public class AlphaNotationTest {
 
     private World resultOfProgram5() throws AlphaError {
         /*
+        p(1) := 42
+        p(p(1)) := 7
+         */
+
+        Map<Register, Value> registers = new HashMap<>();
+        Map<Address, Value> memory = new HashMap<>();
+        Stack<Value> stack = new Stack<>();
+
+        memory.put(new Address(1), new Value(42));
+        memory.put(new Address(42), new Value(7));
+
+        return new World(registers, memory, stack);
+    }
+
+    private World resultOfProgram6() throws AlphaError {
+        /*
         // test
         push 7
         p(12) := 42
@@ -142,7 +158,7 @@ public class AlphaNotationTest {
         return new World(registers, memory, stack);
     }
 
-    private World resultOfProgram6() throws AlphaError {
+    private World resultOfProgram7() throws AlphaError {
         /*
         p(1) := 42
         call test
@@ -241,6 +257,15 @@ public class AlphaNotationTest {
     @Test
     public void Test_program_5() throws AlphaError {
         List<String> programLines = List.of(
+                "p(1) := 42",
+                "p(p(1)) := 7"
+        );
+        testProgram(initiateWorld(programLines), resultOfProgram5());
+    }
+
+    @Test
+    public void Test_program_6() throws AlphaError {
+        List<String> programLines = List.of(
                 "// test",
                 "push 7",
                 "p(12) := 42",
@@ -249,11 +274,11 @@ public class AlphaNotationTest {
                 "p(11) := 1",
                 "// end"
         );
-        testProgram(initiateWorld(programLines), resultOfProgram5());
+        testProgram(initiateWorld(programLines), resultOfProgram6());
     }
 
     @Test
-    public void Test_program_6() throws AlphaError {
+    public void Test_program_7() throws AlphaError {
         List<String> programLines = List.of(
                 "p(1) := 42",
                 "call test",
@@ -264,7 +289,7 @@ public class AlphaNotationTest {
                 "push p(1) : test",
                 "return"
         );
-        testProgram(initiateWorld(programLines), resultOfProgram6());
+        testProgram(initiateWorld(programLines), resultOfProgram7());
     }
     
     private static World initiateWorld(List<String> programLines) throws AlphaError {

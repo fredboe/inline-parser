@@ -257,6 +257,27 @@ public class AlphaNotationParserTest {
         ));
     }
 
+    private AST<Type> setupOfProgram5() {
+        /*
+        p(1) := 42
+        p(p(1)) := 7
+         */
+
+        var num1 = new AST<>(Type.NUMBER, "1");
+        var num7 = new AST<>(Type.NUMBER, "7");
+        var num42 = new AST<>(Type.NUMBER, "42");
+
+        var p_1 = new AST<>(Type.ADDRESS, List.of(num1));
+
+        var line1 = new AST<>(Type.ASSIGN, List.of(p_1, num42));
+        var line2 = new AST<>(Type.ASSIGN, List.of(
+           new AST<>(Type.ADDRESS, List.of(p_1)),
+           num7
+        ));
+
+        return new AST<>(Type.PROGRAM, List.of(line1, line2));
+    }
+
     private void testProgram(String expr, AST<Type> result) {
         var optionalAST = alphaParser.applyTo(expr);
         assertTrue(optionalAST.isPresent());
@@ -337,5 +358,15 @@ public class AlphaNotationParserTest {
                 pop p(42)
                 """;
         testProgram(program, setupProgram4());
+    }
+
+    @Test
+    public void Test_program_5() {
+        String program =
+                """
+                p(1) := 42
+                p(p(1)) := 7
+                """;
+        testProgram(program, setupOfProgram5());
     }
 }
