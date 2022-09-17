@@ -90,7 +90,7 @@ public class JsonParser implements Parser<JsonParser.TYPE> {
                 .keyword(TYPE.TRUE, "true").or().keyword(TYPE.FALSE, "false")
                 .end();
 
-        builder.newRule("json").rule("object").end();
+        builder.newRule("json").rule("object").or().rule("array").end();
 
         return builder.build();
     }
