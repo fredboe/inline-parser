@@ -56,17 +56,18 @@ public class AlphaNotationParser implements Parser<Type> {
     public static ParserPool<Type> alphaPool() {
         ParserBuilder<Type> builder = new ParserBuilder<>();
 
+        // \R must be here since the "LINE"-rule should be usable when trying to parse a list of lines
         builder.newRule("PROGRAM")
-                .many(Type.PROGRAM, new Simplerule<Type>().rule("UNIT").hide("\\R"))
-                .end();
-
-        builder.newRule("UNIT")
-                .type(Type.LABELED).rule("LINE").hide(":").rule("LABEL")
-                .or()
-                .optional("LINE") // optional for blank lines
+                .many(Type.PROGRAM, new Simplerule<Type>().rule("LINE").hide("\\R"))
                 .end();
 
         builder.newRule("LINE")
+                .type(Type.LABELED).rule("UNIT").hide(":").rule("LABEL")
+                .or()
+                .optional("UNIT") // optional for blank lines
+                .end();
+
+        builder.newRule("UNIT")
                 .rule("BRANCH").or().rule("GOTO").or()
                 .rule("ASSIGN").or().rule("FUNC").or()
                 .rule("STACK").or().rule("OUTPUT").end();
@@ -148,10 +149,10 @@ public class AlphaNotationParser implements Parser<Type> {
                 .rule("PRINT").end(); // print must be the last since it consumes clear, mem and exe as labels.
 
         builder.newRule("EXE")
-                .type(Mode.justFst()).hide("exe").match(Type.EXE, ".+").end(); // no line terminators
-
-        builder.newRule("LOAD")
-                .type(Mode.justFst()).hide("load").match(Type.LOAD, ".+").end(); // no line terminators
+                .type(Mode.justFst()).hide("exe").match(Type.EXE_LBL, ".*\\.alpha").hide("-lbl|-LineByLine")
+                .or()
+                .type(Mode.justFst()).hide("exe").match(Type.EXE, ".*\\.alpha") // no line terminators
+                .end();
 
         builder.newRule("PRINT")
                 .type(Type.PRINT).rule("VALUE").end(); // maybe add .hide("print")

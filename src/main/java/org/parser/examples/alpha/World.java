@@ -210,6 +210,18 @@ public class World {
     }
 
     /**
+     * Executes the program and waits after each line to enter a new line.
+     * @throws AlphaError at evaluation failure.
+     */
+    public void executeProgramLineByLine() throws AlphaError {
+        IO.info("Press enter to execute the next line!");
+        while (pcInBounds()) {
+            IO.enterLineWithoutPrefix(getCurrentLine());
+            executeNextLine();
+        }
+    }
+
+    /**
      * Executes the line the pc points to (and increments the pc).
      * @throws AlphaError at evaluation failure.
      */

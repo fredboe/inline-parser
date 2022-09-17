@@ -7,7 +7,8 @@ In addition to the normal alpha notation instruction we have provided the follow
 (these are mainly for outputting results):
 - 'mem' to have a view on the whole memory
 - 'clear' to delete the whole memory
-- exe FILE to execute a file. The resulting memory is then merged with the current memory.
+- exe FILENAME (file extension must be .alpha) to execute a file. The resulting memory is then merged with the current memory.
+  If one wants to execute the program line by line, then one just needs to add '-lbl' or '-LineByLine' after the filename.
 - Just enter a VALUE (memory, register, constant or label) to let it print on the console.
 
 ## Grammar

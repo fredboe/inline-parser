@@ -24,8 +24,23 @@ public class IO {
         return enterLine("");
     }
 
+    /**
+     *
+     * @param printBefore What to print before
+     * @return Prints a line prefix (">>> "), then printBefore and then waits for the user to enter a new line and returns the input.
+     */
     public static String enterLine(String printBefore) {
-        System.out.print(startOfInputLine + printBefore);
+        System.out.print(startOfInputLine);
+        return enterLineWithoutPrefix(printBefore);
+    }
+
+    /**
+     *
+     * @param printBefore What to print before
+     * @return Prints printBefore and then waits for the user to enter a new line and returns the input.
+     */
+    public static String enterLineWithoutPrefix(String printBefore) {
+        System.out.print(printBefore);
         return input.nextLine();
     }
 

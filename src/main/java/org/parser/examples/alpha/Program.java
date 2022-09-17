@@ -17,7 +17,7 @@ public class Program {
 
     private static final ParserPool<Type> alphaPool = AlphaNotationParser.alphaPool();
 
-    public static final Parser<Type> alphaLineParser = alphaPool.getParser("UNIT");
+    public static final Parser<Type> alphaLineParser = alphaPool.getParser("LINE");
 
     public Program() throws AlphaError {
         this(new ArrayList<>());
@@ -110,7 +110,7 @@ public class Program {
             throw new AlphaError.ParsingException(consLine);
 
         return optionalParsedLine.map(ast ->
-                ast.isType(null) ? new AST<>(Type.PROGRAM) : ast).get(); // empty program (does nothing)
+                ast.isType(null) ? new AST<>(Type.NOP) : ast).get(); // empty program (does nothing)
     }
 
     /**

@@ -81,11 +81,17 @@ public enum Type {
         IO.info(world.pop());
     }),
     EXE((ast, world) -> {
-        World programWorld = IO.loadProgram(matchOf(ast));
-        programWorld.executeProgram();
-        world.unite(programWorld); // store the memory of the executed program in the current world
+        World worldOfProgram = IO.loadProgram(matchOf(ast));
+        worldOfProgram.executeProgram();
+        world.unite(worldOfProgram); // store the memory of the executed program in the current world
     }),
-    LOAD((ast, world) -> {});
+    EXE_LBL((ast, world) -> {
+        // pack exe in one function
+        World worldOfProgram = IO.loadProgram(matchOf(ast));
+        worldOfProgram.executeProgramLineByLine();
+        world.unite(worldOfProgram);
+    }),
+    NOP((ast, world) -> {});
 
     private final ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer;
 
