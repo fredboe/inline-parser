@@ -50,7 +50,6 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
             if (!ast.shouldIgnore()) ASTs.add(ast);
         }
         return Optional.ofNullable(atSuccess.apply(ASTs));
-        //return Optional.of(Mode.childrenIfNoType(type).apply(ASTs));
     }
 
     public boolean equals(Object other) {
