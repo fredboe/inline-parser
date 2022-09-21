@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * A many-parser holds a parser and executes it until it fails.
@@ -16,16 +17,17 @@ import java.util.Optional;
  */
 public class ManyParser<TYPE> implements Parser<TYPE> {
     /**
-     * Type of AST created with Many
-     */
-    private final TYPE type;
-    /**
      * Parser to be executed repeatedly
      */
     private final Parser<TYPE> subparser;
 
+    /**
+     * Delivers the resulting AST (at the moment always Mode.childrenIfNoType)
+     */
+    private final Function<List<AST<TYPE>>, AST<TYPE>> atSuccess;
+
     public ManyParser(TYPE type, Parser<TYPE> subparser) {
-        this.type = type;
+        this.atSuccess = Mode.childrenIfNoType(type);
         this.subparser = subparser;
     }
 
@@ -47,7 +49,8 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
             var ast = optionalAST.get();
             if (!ast.shouldIgnore()) ASTs.add(ast);
         }
-        return Optional.of(Mode.childrenIfNoType(type).apply(ASTs));
+        return Optional.ofNullable(atSuccess.apply(ASTs));
+        //return Optional.of(Mode.childrenIfNoType(type).apply(ASTs));
     }
 
     public boolean equals(Object other) {
@@ -55,12 +58,12 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
         if (other == null) return false;
 
         if (other instanceof ManyParser<?> parser) {
-            return type.equals(parser.type) && this.subparser.equals(parser.subparser);
+            return atSuccess.equals(parser.atSuccess) && this.subparser.equals(parser.subparser);
         }
         return false;
     }
 
     public int hashCode() {
-        return Objects.hash(type, subparser);
+        return Objects.hash(atSuccess, subparser);
     }
 }
