@@ -5,6 +5,7 @@ import org.parser.tree.AST;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -17,7 +18,7 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
     /**
      * set of parsers to be added one after the other (order is important)
      */
-    private List<Parser<TYPE>> parsers;
+    private List<Parser<TYPE>> subparsers;
     /**
      * This function is called when all parsers in the parser list have returned a successful AST
      * have been delivered. The list of supplied ASTs (without the ignored ASTs) is then passed to this method.
@@ -27,13 +28,13 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
 
     public ConcatParser(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
         this.atSuccess = atSuccess != null ? atSuccess : Parser.basicConcatAtSuccess(null);
-        this.parsers = new ArrayList<>();
+        this.subparsers = new ArrayList<>();
     }
 
     public ConcatParser(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess,
-                        List<Parser<TYPE>> parsers) {
+                        List<Parser<TYPE>> subparsers) {
         this(atSuccess);
-        if (parsers != null) this.parsers = parsers;
+        if (subparsers != null) this.subparsers = subparsers;
     }
 
     public void setAtSuccess(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
@@ -49,8 +50,8 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
     @Override
     public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Consumable copy = new Consumable(consumable); // in case of failure nothing should be consumed
-        List<AST<TYPE>> ASTrees = new ArrayList<>(parsers.size());
-        for (Parser<TYPE> parser : parsers) {
+        List<AST<TYPE>> ASTrees = new ArrayList<>(subparsers.size());
+        for (Parser<TYPE> parser : subparsers) {
             Optional<AST<TYPE>> tree = parser.applyTo(consumable);
             if (tree.isEmpty()) {
                 consumable.resetTo(copy);
@@ -63,16 +64,30 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
 
     @Override
     public void addSubparser(Parser<TYPE> subparser) {
-        if (subparser != null) parsers.add(subparser);
+        if (subparser != null) subparsers.add(subparser);
     }
 
     @Override
     public boolean isEmpty() {
-        return parsers.isEmpty();
+        return subparsers.isEmpty();
     }
 
     @Override
     public int size() {
-        return parsers.size();
+        return subparsers.size();
+    }
+
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+
+        if (other instanceof ConcatParser<?> parser) {
+            return atSuccess.equals(parser.atSuccess) && subparsers.equals(parser.subparsers);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return Objects.hash(subparsers, atSuccess);
     }
 }

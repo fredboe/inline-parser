@@ -1,10 +1,12 @@
 package org.parser.base;
 
 import org.parser.Consumable;
+import org.parser.base.build.Mode;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -20,11 +22,11 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
     /**
      * Parser to be executed repeatedly
      */
-    private final Parser<TYPE> parser;
+    private final Parser<TYPE> subparser;
 
-    public ManyParser(TYPE type, Parser<TYPE> parser) {
+    public ManyParser(TYPE type, Parser<TYPE> subparser) {
         this.type = type;
-        this.parser = parser;
+        this.subparser = subparser;
     }
 
     /**
@@ -41,16 +43,24 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
         Optional<AST<TYPE>> optionalAST;
         List<AST<TYPE>> ASTs = new ArrayList<>();
 
-        while ((optionalAST = parser.applyTo(consumable)).isPresent()) {
+        while ((optionalAST = subparser.applyTo(consumable)).isPresent()) {
             var ast = optionalAST.get();
-            if (!ast.shouldIgnore()) {
-                if (ast.getType() != null) {
-                    ASTs.add(optionalAST.get());
-                } else {
-                    ASTs.addAll(ast.getChildren());
-                }
-            }
+            if (!ast.shouldIgnore()) ASTs.add(ast);
         }
-        return Optional.of(new AST<>(type, null, ASTs));
+        return Optional.of(Mode.childrenIfNoType(type).apply(ASTs));
+    }
+
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+
+        if (other instanceof ManyParser<?> parser) {
+            return type.equals(parser.type) && this.subparser.equals(parser.subparser);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return Objects.hash(type, subparser);
     }
 }

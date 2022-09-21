@@ -3,6 +3,7 @@ package org.parser.base;
 import org.parser.Consumable;
 import org.parser.tree.AST;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -36,5 +37,19 @@ public class RegExParser<TYPE> implements Parser<TYPE> {
     public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Optional<Consumable.Match> match = consumable.lookingAt(pattern);
         return match.map(atSuccess);
+    }
+
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+
+        if (other instanceof RegExParser<?> parser) {
+            return this.pattern.equals(parser.pattern) && this.atSuccess.equals(parser.atSuccess);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return Objects.hash(pattern, atSuccess);
     }
 }
