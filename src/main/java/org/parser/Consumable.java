@@ -171,7 +171,7 @@ public class Consumable {
      */
     private Optional<Match> genMatch(boolean success, Matcher matcher) {
         if (success) {
-            startIndex += matcher.end() - matcher.start();
+            consume(matcher.end() - matcher.start());
             return Optional.of(new Match(matcher.group()));
         }
         return Optional.empty();
@@ -193,6 +193,14 @@ public class Consumable {
     public CharSequence getSequenceLeft() {
         if (isEmptyWithoutIgnore()) return "";
         return sequence.subSequence(startIndex, sequence.length());
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public void consume(int length) {
+        startIndex += length;
     }
 
     /**

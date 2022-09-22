@@ -16,7 +16,23 @@ public class PlaceholderParser<TYPE> implements Parser<TYPE> {
 
     @Override
     public Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization) {
-        return Optional.ofNullable(parser).flatMap(parser -> parser.applyTo(consumable, memoization));
+        if (parser == null) return Optional.empty();
+
+        // memoization
+        int startIndex = consumable.getStartIndex();
+        if (memoization.isMemoized(startIndex, name)) {
+            var result = memoization.get(startIndex, name);
+            consumable.consume(result.y());
+            return Optional.of(result.x());
+        }
+
+        // actual parsing
+        var optionalAST = parser.applyTo(consumable, memoization);
+        if (optionalAST.isPresent()) {
+            int newStartIndex = consumable.getStartIndex();
+            memoization.memoize(startIndex, name, optionalAST.get(), newStartIndex - startIndex);
+        }
+        return optionalAST;
     }
 
     public String getName() {
