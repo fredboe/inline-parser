@@ -3,7 +3,6 @@ package org.parser.base.build;
 import org.parser.base.*;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Used to create a ParserPool.
@@ -74,7 +73,7 @@ public class ParserBuilder<TYPE> {
         if (name == null) return null;
         if (placeholders.containsKey(name)) return placeholders.get(name);
 
-        PlaceholderParser<TYPE> placeholder = new PlaceholderParser<>();
+        PlaceholderParser<TYPE> placeholder = new PlaceholderParser<>(name);
         placeholders.put(name, placeholder);
         return placeholder;
     }

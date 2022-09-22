@@ -15,7 +15,7 @@ import java.util.function.Function;
  * A many-parser is always successful, so it always returns an AST.
  * @param <TYPE> Type class of the AST.
  */
-public class ManyParser<TYPE> implements Parser<TYPE> {
+public class ManyParser<TYPE> implements SingleParser<TYPE> {
     /**
      * Parser to be executed repeatedly
      */

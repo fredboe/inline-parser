@@ -3,18 +3,25 @@ package org.parser.base;
 import org.parser.Consumable;
 import org.parser.tree.AST;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public class PlaceholderParser<TYPE> implements Parser<TYPE> {
+public class PlaceholderParser<TYPE> implements SingleParser<TYPE> {
+    private final String ruleName;
     private Parser<TYPE> subparser;
 
-    public PlaceholderParser() {
+    public PlaceholderParser(String ruleName) {
         this.subparser = null;
+        this.ruleName = ruleName;
     }
 
     @Override
     public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         return Optional.ofNullable(subparser).flatMap(parser -> parser.applyTo(consumable));
+    }
+
+    public String getName() {
+        return ruleName;
     }
 
     public void setParserIfNull(Parser<TYPE> parser) {
@@ -32,6 +39,6 @@ public class PlaceholderParser<TYPE> implements Parser<TYPE> {
     }
 
     public int hashCode() {
-        return subparser.hashCode();
+        return Objects.hash(ruleName, subparser);
     }
 }
