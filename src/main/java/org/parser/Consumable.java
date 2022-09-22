@@ -46,8 +46,9 @@ public class Consumable {
     private final CharSequence sequence;
     /**
      * The current index at which the consumed sequence should start (increases when consumed).
+     * Stores how much of the underlying sequence has been consumed.
      */
-    private int startIndex;
+    private int consumed;
 
     /**
      * Stores a pattern that contains all regexes that should be ignored.
@@ -60,7 +61,7 @@ public class Consumable {
      */
     public Consumable(CharSequence sequence) {
         this.sequence = sequence != null ? sequence : "";
-        this.startIndex = 0;
+        this.consumed = 0;
         this.whatToIgnore = new WhatToIgnore();
         this.whatToIgnore.build();
     }
@@ -92,7 +93,7 @@ public class Consumable {
 
     public Consumable(Consumable other) {
         this.sequence = other.sequence;
-        this.startIndex = other.startIndex;
+        this.consumed = other.consumed;
         this.whatToIgnore = other.whatToIgnore;
     }
 
@@ -171,7 +172,7 @@ public class Consumable {
      */
     private Optional<Match> genMatch(boolean success, Matcher matcher) {
         if (success) {
-            startIndex += matcher.end() - matcher.start();
+            consume(matcher.end() - matcher.start());
             return Optional.of(new Match(matcher.group()));
         }
         return Optional.empty();
@@ -187,12 +188,28 @@ public class Consumable {
     }
 
     /**
+     * Consumes some part of the underlying CharSequence.
+     * @param length how much to consume
+     */
+    public void consume(int length) {
+        consumed += length;
+    }
+
+    /**
      *
      * @return Returns the current sequence (with consumption)
      */
     public CharSequence getSequenceLeft() {
         if (isEmptyWithoutIgnore()) return "";
-        return sequence.subSequence(startIndex, sequence.length());
+        return sequence.subSequence(consumed, sequence.length());
+    }
+
+    /**
+     *
+     * @return Returns how much of the underlying sequence has been consumed.
+     */
+    public int getConsumed() {
+        return consumed;
     }
 
     /**
@@ -201,7 +218,7 @@ public class Consumable {
      * @param other Consumable object
      */
     public void resetTo(Consumable other) {
-        if (other.sequence == this.sequence) this.startIndex = other.startIndex;
+        if (other.sequence == this.sequence) this.consumed = other.consumed;
     }
 
     /**
@@ -214,7 +231,7 @@ public class Consumable {
     }
 
     public boolean isEmptyWithoutIgnore() {
-        return sequence == null || startIndex >= sequence.length();
+        return sequence == null || consumed >= sequence.length();
     }
 
     /**
