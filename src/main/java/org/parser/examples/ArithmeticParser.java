@@ -2,9 +2,11 @@ package org.parser.examples;
 
 import org.parser.Consumable;
 import org.parser.base.Parser;
+import org.parser.base.Session;
 import org.parser.base.build.*;
 import org.parser.tree.AST;
 
+import javax.crypto.SealedObject;
 import java.util.Optional;
 
 public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
@@ -19,8 +21,8 @@ public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return aritParser.applyTo(consumable);
+    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+        return aritParser.behave(consumable, session);
     }
 
     @Override

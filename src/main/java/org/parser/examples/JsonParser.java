@@ -2,6 +2,7 @@ package org.parser.examples;
 
 import org.parser.Consumable;
 import org.parser.base.Parser;
+import org.parser.base.Session;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
 import org.parser.base.build.Simplerule;
@@ -21,8 +22,8 @@ public class JsonParser implements Parser<JsonParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return jsonParser.applyTo(consumable);
+    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+        return jsonParser.behave(consumable, session);
     }
 
     @Override

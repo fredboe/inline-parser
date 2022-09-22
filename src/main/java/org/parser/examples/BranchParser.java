@@ -2,6 +2,7 @@ package org.parser.examples;
 
 import org.parser.Consumable;
 import org.parser.base.Parser;
+import org.parser.base.Session;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
 import org.parser.base.build.Simplerule;
@@ -23,8 +24,8 @@ public class BranchParser implements Parser<BranchParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return branchParser.applyTo(consumable);
+    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+        return branchParser.behave(consumable, session);
     }
 
     @Override
