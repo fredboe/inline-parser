@@ -37,11 +37,11 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
      * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization) {
         Optional<AST<TYPE>> optionalAST;
         List<AST<TYPE>> ASTs = new ArrayList<>();
 
-        while ((optionalAST = parser.applyTo(consumable)).isPresent()) {
+        while ((optionalAST = parser.applyTo(consumable, memoization)).isPresent()) {
             var ast = optionalAST.get();
             if (!ast.shouldIgnore()) {
                 if (ast.getType() != null) {

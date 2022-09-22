@@ -18,12 +18,16 @@ import java.util.regex.Pattern;
  * @param <TYPE> type
  */
 public interface Parser<TYPE> {
+    Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization);
+
     /**
      * Obtains a CharSequence and creates an AST from it.
      * @param consumable Consumable
      * @return An AST wrapped with Optional (empty if parsing error)
      */
-    Optional<AST<TYPE>> applyTo(Consumable consumable);
+    default Optional<AST<TYPE>> applyTo(Consumable consumable) {
+        return applyTo(consumable, new Memoization<>());
+    }
 
     /**
      * Receives a CharSequence and creates an AST from it.

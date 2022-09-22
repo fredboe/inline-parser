@@ -23,8 +23,8 @@ public class OptionalParser<TYPE> implements Parser<TYPE> {
      * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-       var optionalAST = parser.applyTo(consumable);
+    public Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization) {
+       var optionalAST = parser.applyTo(consumable, memoization);
        return Optional.of(
                optionalAST.orElse(new AST<TYPE>(null).setIgnore(true))
        );

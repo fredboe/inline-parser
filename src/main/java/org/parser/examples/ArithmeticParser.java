@@ -1,6 +1,7 @@
 package org.parser.examples;
 
 import org.parser.Consumable;
+import org.parser.base.Memoization;
 import org.parser.base.Parser;
 import org.parser.base.build.*;
 import org.parser.tree.AST;
@@ -19,8 +20,8 @@ public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return aritParser.applyTo(consumable);
+    public Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization) {
+        return aritParser.applyTo(consumable, memoization);
     }
 
     @Override

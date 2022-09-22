@@ -1,6 +1,7 @@
 package org.parser.examples.alpha;
 
 import org.parser.Consumable;
+import org.parser.base.Memoization;
 import org.parser.base.Parser;
 import org.parser.base.build.Mode;
 import org.parser.base.build.ParserBuilder;
@@ -18,8 +19,8 @@ public class AlphaNotationParser implements Parser<Type> {
     }
 
     @Override
-    public Optional<AST<Type>> applyTo(Consumable consumable) {
-        return alphaParser.applyTo(consumable);
+    public Optional<AST<Type>> applyTo(Consumable consumable, Memoization<Type> memoization) {
+        return alphaParser.applyTo(consumable, memoization);
     }
 
     @Override

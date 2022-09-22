@@ -1,6 +1,7 @@
 package org.parser.examples;
 
 import org.parser.Consumable;
+import org.parser.base.Memoization;
 import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
@@ -21,8 +22,8 @@ public class JsonParser implements Parser<JsonParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return jsonParser.applyTo(consumable);
+    public Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization) {
+        return jsonParser.applyTo(consumable, memoization);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class RegExParser<TYPE> implements Parser<TYPE> {
      * @return An AST wrapped with Optional (empty if the regex is not matched).
      */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable, Memoization<TYPE> memoization) {
         Optional<Consumable.Match> match = consumable.lookingAt(pattern);
         return match.map(atSuccess);
     }

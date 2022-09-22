@@ -74,7 +74,7 @@ public class ParserBuilder<TYPE> {
         if (name == null) return null;
         if (placeholders.containsKey(name)) return placeholders.get(name);
 
-        PlaceholderParser<TYPE> placeholder = new PlaceholderParser<>();
+        PlaceholderParser<TYPE> placeholder = new PlaceholderParser<>(name);
         placeholders.put(name, placeholder);
         return placeholder;
     }
