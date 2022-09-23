@@ -1,11 +1,13 @@
 package org.parser.base;
 
 import org.parser.Consumable;
+import org.parser.base.build.Mode;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * A many-parser holds a parser and executes it until it fails.
@@ -14,16 +16,16 @@ import java.util.Optional;
  */
 public class ManyParser<TYPE> implements Parser<TYPE> {
     /**
-     * Type of AST created with Many
-     */
-    private final TYPE type;
-    /**
      * Parser to be executed repeatedly
      */
     private final Parser<TYPE> parser;
+    /**
+     * Delivers the resulting AST (at the moment always Mode.childrenIfNoType)
+     */
+    private final Function<List<AST<TYPE>>, AST<TYPE>> atSuccess;
 
     public ManyParser(TYPE type, Parser<TYPE> parser) {
-        this.type = type;
+        this.atSuccess = Mode.childrenIfNoType(type);
         this.parser = parser;
     }
 
@@ -43,14 +45,8 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
 
         while ((optionalAST = parser.applyTo(consumable)).isPresent()) {
             var ast = optionalAST.get();
-            if (!ast.shouldIgnore()) {
-                if (ast.getType() != null) {
-                    ASTs.add(optionalAST.get());
-                } else {
-                    ASTs.addAll(ast.getChildren());
-                }
-            }
+            if (!ast.shouldIgnore()) ASTs.add(ast);
         }
-        return Optional.of(new AST<>(type, null, ASTs));
+        return Optional.ofNullable(atSuccess.apply(ASTs));
     }
 }
