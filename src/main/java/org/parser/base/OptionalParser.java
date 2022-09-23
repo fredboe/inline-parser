@@ -5,7 +5,7 @@ import org.parser.tree.AST;
 
 import java.util.Optional;
 
-public class OptionalParser<TYPE> implements SingleParser<TYPE> {
+public class OptionalParser<TYPE> implements Parser<TYPE> {
     /**
      * Parser to be executed repeatedly
      */

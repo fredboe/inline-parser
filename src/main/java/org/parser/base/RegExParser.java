@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Regular-Expression Parser
  */
-public class RegExParser<TYPE> implements SingleParser<TYPE> {
+public class RegExParser<TYPE> implements Parser<TYPE> {
     /**
      * RegEx-Pattern
      */
