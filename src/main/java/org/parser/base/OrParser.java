@@ -13,7 +13,7 @@ import java.util.function.Function;
  * Or-Parser
  */
 public class OrParser<TYPE> implements DepthParser<TYPE> {
-    private final List<Parser<TYPE>> subparsers;
+    private List<Parser<TYPE>> subparsers;
     /**
      * This method is called as soon as the first parser was successful. It is then passed the supplied
      * AST is passed to it. This method should then eventually return the resulting AST.
@@ -28,7 +28,7 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
     public OrParser(Function<AST<TYPE>, AST<TYPE>> atSuccess,
                     List<Parser<TYPE>> subparsers) {
         this(atSuccess);
-        if (subparsers != null) this.subparsers.addAll(subparsers);
+        if (subparsers != null) this.subparsers = subparsers;
     }
 
     /**

@@ -18,7 +18,7 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
     /**
      * set of parsers to be added one after the other (order is important)
      */
-    private final List<Parser<TYPE>> subparsers;
+    private List<Parser<TYPE>> subparsers;
     /**
      * This function is called when all parsers in the parser list have returned a successful AST
      * have been delivered. The list of supplied ASTs (without the ignored ASTs) is then passed to this method.
@@ -34,7 +34,7 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
     public ConcatParser(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess,
                         List<Parser<TYPE>> subparsers) {
         this(atSuccess);
-        if (subparsers != null) this.subparsers.addAll(subparsers);
+        if (subparsers != null) this.subparsers = subparsers;
     }
 
     public void setAtSuccess(Function<List<AST<TYPE>>, AST<TYPE>> atSuccess) {
