@@ -34,7 +34,7 @@ public class RegExParser<TYPE> implements SingleParser<TYPE> {
      * @return An AST wrapped with Optional (empty if the regex is not matched).
      */
     @Override
-    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Optional<Consumable.Match> match = consumable.lookingAt(pattern);
         return match.map(atSuccess);
     }

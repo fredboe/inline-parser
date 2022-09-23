@@ -23,9 +23,7 @@ public interface Parser<TYPE> {
      * @param consumable Consumable
      * @return An AST wrapped with Optional (empty if parsing error)
      */
-    default Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return applyTo(consumable, new Session<>());
-    }
+    Optional<AST<TYPE>> applyTo(Consumable consumable);
 
     /**
      * Receives a CharSequence and creates an AST from it.
@@ -39,13 +37,6 @@ public interface Parser<TYPE> {
     default Consumable consumableOf(CharSequence sequence) {
         return new Consumable(sequence);
     }
-
-    default Optional<AST<TYPE>> applyTo(Consumable consumable, Session<TYPE> session) {
-        // if memoized return result
-        return behave(consumable, session);
-    }
-
-    Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session);
 
     /**
      * Basic Or parser with the passed parsers as subparsers and atSuccess is Parser.basicOrAtSuccess().

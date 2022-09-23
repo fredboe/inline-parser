@@ -16,8 +16,8 @@ public class PlaceholderParser<TYPE> implements SingleParser<TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
-        return Optional.ofNullable(subparser).flatMap(parser -> parser.applyTo(consumable, session));
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
+        return Optional.ofNullable(subparser).flatMap(parser -> parser.applyTo(consumable));
     }
 
     public String getName() {

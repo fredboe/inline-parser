@@ -39,9 +39,9 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
      * @return An AST wrapped with Optional (empty if all the parsers return an error)
      */
     @Override
-    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Optional<AST<TYPE>> optionalAST = subparsers.stream()
-                .map(parser -> parser.applyTo(consumable, session))
+                .map(parser -> parser.applyTo(consumable))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst();

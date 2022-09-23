@@ -23,8 +23,8 @@ public class OptionalParser<TYPE> implements SingleParser<TYPE> {
      * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
-       var optionalAST = subparser.applyTo(consumable, session);
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
+       var optionalAST = subparser.applyTo(consumable);
        return Optional.of(
                optionalAST.orElse(new AST<TYPE>(null).setIgnore(true))
        );

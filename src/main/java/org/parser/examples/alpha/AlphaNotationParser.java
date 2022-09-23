@@ -2,7 +2,6 @@ package org.parser.examples.alpha;
 
 import org.parser.Consumable;
 import org.parser.base.Parser;
-import org.parser.base.Session;
 import org.parser.base.build.Mode;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
@@ -19,8 +18,8 @@ public class AlphaNotationParser implements Parser<Type> {
     }
 
     @Override
-    public Optional<AST<Type>> behave(Consumable consumable, Session<Type> session) {
-        return alphaParser.behave(consumable, session);
+    public Optional<AST<Type>> applyTo(Consumable consumable) {
+        return alphaParser.applyTo(consumable);
     }
 
     @Override

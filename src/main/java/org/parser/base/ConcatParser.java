@@ -48,11 +48,11 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
      * @return An AST wrapped with Optional (empty if one of the parsers returns an error).
      */
     @Override
-    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Consumable copy = new Consumable(consumable); // in case of failure nothing should be consumed
         List<AST<TYPE>> ASTrees = new ArrayList<>(subparsers.size());
         for (Parser<TYPE> parser : subparsers) {
-            Optional<AST<TYPE>> tree = parser.applyTo(consumable, session);
+            Optional<AST<TYPE>> tree = parser.applyTo(consumable);
             if (tree.isEmpty()) {
                 consumable.resetTo(copy);
                 return Optional.empty();

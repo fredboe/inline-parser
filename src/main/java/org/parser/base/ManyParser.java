@@ -41,11 +41,11 @@ public class ManyParser<TYPE> implements SingleParser<TYPE> {
      * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE>> behave(Consumable consumable, Session<TYPE> session) {
+    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
         Optional<AST<TYPE>> optionalAST;
         List<AST<TYPE>> ASTs = new ArrayList<>();
 
-        while ((optionalAST = subparser.applyTo(consumable, session)).isPresent()) {
+        while ((optionalAST = subparser.applyTo(consumable)).isPresent()) {
             var ast = optionalAST.get();
             if (!ast.shouldIgnore()) ASTs.add(ast);
         }
