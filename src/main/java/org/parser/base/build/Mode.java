@@ -20,6 +20,7 @@ public class Mode {
     public static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> childrenIfNoType(TYPE type) {
         return trees -> {
             List<AST<TYPE>> children = trees.stream()
+                    .filter(tree -> !tree.shouldIgnore())
                     .map(tree -> tree.getType() == null ? tree.getChildren() : List.of(tree))
                     .flatMap(Collection::stream).toList();
             return new AST<>(type, null, children);

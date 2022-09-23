@@ -32,7 +32,7 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
 
     /**
      * The method goes through all parsers and as soon as the first parser was successful on the consumable
-     * was successful, the method atSuccess is called. Finally, the ignore bit is then set to the ignore bit * of the successful AST.
+     * was successful, the method atSuccess is called. Finally, the ignore-bit is then set to the ignore-bit * of the successful AST.
      * of the successful AST.
      * @param consumable Consumable
      * @return An AST wrapped with Optional (empty if all the parsers return an error)
