@@ -5,7 +5,6 @@ import org.parser.tree.AST;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -13,7 +12,7 @@ import java.util.function.Function;
  * Or-Parser
  */
 public class OrParser<TYPE> implements DepthParser<TYPE> {
-    private List<Parser<TYPE>> subparsers;
+    private List<Parser<TYPE>> parsers;
     /**
      * This method is called as soon as the first parser was successful. It is then passed the supplied
      * AST is passed to it. This method should then eventually return the resulting AST.
@@ -22,13 +21,13 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
 
     public OrParser(Function<AST<TYPE>, AST<TYPE>> atSuccess) {
         this.atSuccess = atSuccess != null ? atSuccess : Parser.basicOrAtSuccess();
-        this.subparsers = new ArrayList<>();
+        this.parsers = new ArrayList<>();
     }
 
     public OrParser(Function<AST<TYPE>, AST<TYPE>> atSuccess,
-                    List<Parser<TYPE>> subparsers) {
+                    List<Parser<TYPE>> parsers) {
         this(atSuccess);
-        if (subparsers != null) this.subparsers = subparsers;
+        if (parsers != null) this.parsers = parsers;
     }
 
     /**
@@ -40,7 +39,7 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
      */
     @Override
     public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        Optional<AST<TYPE>> optionalAST = subparsers.stream()
+        Optional<AST<TYPE>> optionalAST = parsers.stream()
                 .map(parser -> parser.applyTo(consumable))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -50,30 +49,16 @@ public class OrParser<TYPE> implements DepthParser<TYPE> {
 
     @Override
     public void addSubparser(Parser<TYPE> subparser) {
-        if (subparser != null) subparsers.add(subparser);
+        if (subparser != null) parsers.add(subparser);
     }
 
     @Override
     public boolean isEmpty() {
-        return subparsers.isEmpty();
+        return parsers.isEmpty();
     }
 
     @Override
     public int size() {
-        return subparsers.size();
-    }
-
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null) return false;
-
-        if (other instanceof OrParser<?> parser) {
-            return atSuccess.equals(parser.atSuccess) && subparsers.equals(parser.subparsers);
-        }
-        return false;
-    }
-
-    public int hashCode() {
-        return Objects.hash(subparsers, atSuccess);
+        return parsers.size();
     }
 }

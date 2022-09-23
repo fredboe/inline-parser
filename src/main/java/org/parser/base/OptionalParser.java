@@ -9,10 +9,10 @@ public class OptionalParser<TYPE> implements Parser<TYPE> {
     /**
      * Parser to be executed repeatedly
      */
-    private final Parser<TYPE> subparser;
+    private final Parser<TYPE> parser;
 
-    public OptionalParser(Parser<TYPE> subparser) {
-        this.subparser = subparser;
+    public OptionalParser(Parser<TYPE> parser) {
+        this.parser = parser;
     }
 
     /**
@@ -24,23 +24,9 @@ public class OptionalParser<TYPE> implements Parser<TYPE> {
      */
     @Override
     public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-       var optionalAST = subparser.applyTo(consumable);
+       var optionalAST = parser.applyTo(consumable);
        return Optional.of(
                optionalAST.orElse(new AST<TYPE>(null).setIgnore(true))
        );
-    }
-
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null) return false;
-
-        if (other instanceof OptionalParser<?> parser) {
-            return  this.subparser.equals(parser.subparser);
-        }
-        return false;
-    }
-
-    public int hashCode() {
-        return subparser.hashCode();
     }
 }
