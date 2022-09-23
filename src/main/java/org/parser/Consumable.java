@@ -1,5 +1,6 @@
 package org.parser;
 
+import java.nio.CharBuffer;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -43,7 +44,7 @@ public class Consumable {
     /**
      * CharSequence to be consumable
      */
-    private final CharSequence sequence;
+    private final CharSequence buffer;
     /**
      * The current index at which the consumed sequence should start (increases when consumed).
      */
@@ -56,12 +57,31 @@ public class Consumable {
 
     /**
      * Creates a Consumable object with the passed CharSequence, where no strings are ignored.
+     * @param buffer CharBuffer
+     */
+    public Consumable(CharBuffer buffer) {
+        this.buffer = buffer;
+        this.startIndex = 0;
+        this.whatToIgnore = new WhatToIgnore();
+        this.whatToIgnore.build();
+    }
+
+    /**
+     * Creates a Consumable object with the passed CharSequence, where no strings are ignored.
      * @param sequence CharSequence
      */
     public Consumable(CharSequence sequence) {
-        this.sequence = sequence != null ? sequence : "";
-        this.startIndex = 0;
-        this.whatToIgnore = new WhatToIgnore();
+        this(CharBuffer.wrap(sequence));
+    }
+
+    /**
+     * Creates a Consumable object with the passed CharSequence and the toIgnores as strings to be ignored.
+     * @param buffer CharBuffer
+     * @param toIgnores strings to be ignored
+     */
+    public Consumable(CharBuffer buffer, Ignore ... toIgnores) {
+        this(buffer);
+        this.whatToIgnore = new WhatToIgnore(toIgnores);
         this.whatToIgnore.build();
     }
 
@@ -71,9 +91,7 @@ public class Consumable {
      * @param toIgnores strings to be ignored
      */
     public Consumable(CharSequence sequence, Ignore ... toIgnores) {
-        this(sequence);
-        this.whatToIgnore = new WhatToIgnore(toIgnores);
-        this.whatToIgnore.build();
+        this(CharBuffer.wrap(sequence), toIgnores);
     }
 
     /**
@@ -91,7 +109,7 @@ public class Consumable {
     }
 
     public Consumable(Consumable other) {
-        this.sequence = other.sequence;
+        this.buffer = other.buffer;
         this.startIndex = other.startIndex;
         this.whatToIgnore = other.whatToIgnore;
     }
@@ -192,7 +210,7 @@ public class Consumable {
      */
     public CharSequence getSequenceLeft() {
         if (isEmptyWithoutIgnore()) return "";
-        return sequence.subSequence(startIndex, sequence.length());
+        return buffer.subSequence(startIndex, buffer.length());
     }
 
     /**
@@ -201,7 +219,7 @@ public class Consumable {
      * @param other Consumable object
      */
     public void resetTo(Consumable other) {
-        if (other.sequence == this.sequence) this.startIndex = other.startIndex;
+        if (other.buffer == this.buffer) this.startIndex = other.startIndex;
     }
 
     /**
@@ -209,12 +227,12 @@ public class Consumable {
      * @return Returns whether the consumable object still has a (non-consumed) character.
      */
     public boolean isEmpty() {
-        if (sequence != null) ignore();
+        if (buffer != null) ignore();
         return isEmptyWithoutIgnore();
     }
 
     public boolean isEmptyWithoutIgnore() {
-        return sequence == null || startIndex >= sequence.length();
+        return buffer == null || startIndex >= buffer.length();
     }
 
     /**
