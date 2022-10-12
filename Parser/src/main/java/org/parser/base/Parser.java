@@ -47,6 +47,10 @@ public interface Parser<TYPE> {
         return new OrParser<>(basicOrAtSuccess(), parsers);
     }
 
+    default Parser<TYPE> simplify() {
+        return this;
+    }
+
     /**
      *
      * @param type Type of the created AST.

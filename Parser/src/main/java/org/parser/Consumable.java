@@ -68,6 +68,7 @@ public class Consumable {
 
     /**
      * Creates a Consumable object with the passed CharSequence, where no strings are ignored.
+     * The CharSequence is converted to a CharBuffer so that an invocation of subsequence does not allocate new memory.
      * @param sequence CharSequence
      */
     public Consumable(CharSequence sequence) {
@@ -87,6 +88,7 @@ public class Consumable {
 
     /**
      * Creates a Consumable object with the passed CharSequence and the toIgnores as strings to be ignored.
+     * The CharSequence is converted to a CharBuffer so that an invocation of subsequence does not allocate new memory.
      * @param sequence CharSequence
      * @param toIgnores strings to be ignored
      */
@@ -96,7 +98,8 @@ public class Consumable {
 
     /**
      * Creates a Consumable object with the passed CharSequence, the toIgnores as strings to be ignored and
-     * the comment string as a regular expression for a comment that should also be ignored
+     * the comment string as a regular expression for a comment that should also be ignored.
+     * The CharSequence is converted to a CharBuffer so that an invocation of subsequence does not allocate new memory.
      * @param sequence CharSequence
      * @param commentRegEx Regular Expression, which represents a Comment
      * @param toIgnores strings to be ignored
