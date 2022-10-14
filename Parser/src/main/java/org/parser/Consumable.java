@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class Consumable {
     /**
-     * Represents a successful RegEx match in the CharSequence.
+     * Represents a successful RegEx matchResult in the CharSequence.
      * @param matched string that matches the RegEx
      */
     public record Match(String matched) {}
@@ -119,9 +119,9 @@ public class Consumable {
 
     /**
      * Calls lookingAt with the pattern and if the regex is found, the sequence is consumed until the
-     * end of the match found is consumed.
+     * end of the matchResult found is consumed.
      * @param pattern RegEx pattern
-     * @return Returns the match object of the string matching the RegEx, if the RegEx failed,
+     * @return Returns the matchResult object of the string matching the RegEx, if the RegEx failed,
      * optional.empty() is returned
      */
     public Optional<Match> lookingAt(Pattern pattern) {
@@ -136,9 +136,9 @@ public class Consumable {
 
     /**
      * Calls lookingAt with the pattern and if the regex is found, the sequence is consumed until the
-     * end of the match found is consumed.
+     * end of the matchResult found is consumed.
      * @param regex RegEx string
-     * @return Returns the match object of the string matching the regex if the regex failed,
+     * @return Returns the matchResult object of the string matching the regex if the regex failed,
      * optional.empty() is returned
      */
     public Optional<Match> lookingAt(String regex) {
@@ -164,9 +164,9 @@ public class Consumable {
 
     /**
      * Calls find with the pattern and if the regex is found, the sequence is consumed to the
-     * end of the match found is consumed.
+     * end of the matchResult found is consumed.
      * @param regex RegEx string
-     * @return Returns the match object of the string matching the regex if the regex failed,
+     * @return Returns the matchResult object of the string matching the regex if the regex failed,
      * optional.empty() is returned
      */
     public Optional<Match> find(String regex) {
@@ -174,7 +174,7 @@ public class Consumable {
     }
 
     /**
-     * Attempts to match the toIgnore pattern and ignores the result.
+     * Attempts to matchResult the toIgnore pattern and ignores the matchResult.
      */
     private void ignore() {
         Pattern pattern = whatToIgnore.toIgnore();
@@ -185,7 +185,7 @@ public class Consumable {
     }
 
     /**
-     * Generates a match object based on the passed matcher.
+     * Generates a matchResult object based on the passed matcher.
      * @param success success bit
      * @param matcher Matcher
      * @return Returns an Optional<Match> object.
@@ -218,7 +218,7 @@ public class Consumable {
 
     /**
      * Resets the current consumable object to the passed consumable object if
-     * the Sequence objects of both match
+     * the Sequence objects of both matchResult
      * @param other Consumable object
      */
     public void resetTo(Consumable other) {

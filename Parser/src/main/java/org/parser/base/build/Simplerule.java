@@ -29,7 +29,7 @@ public class Simplerule<TYPE> {
     }
 
     /**
-     * Adds a new match-parser to the simplerule.
+     * Adds a new matchResult-parser to the simplerule.
      * @param type Type
      * @param pattern Pattern to look for
      * @return Returns the underlying simplerule.
@@ -39,7 +39,7 @@ public class Simplerule<TYPE> {
     }
 
     /**
-     * Adds a new match-parser to the simplerule.
+     * Adds a new matchResult-parser to the simplerule.
      * @param type Type
      * @param regex RegEx to look for
      * @return Returns the underlying simplerule.

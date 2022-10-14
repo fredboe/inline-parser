@@ -14,7 +14,7 @@ public class AST<TYPE> {
      */
     private final TYPE type;
     /**
-     * The match object in the CharSequence (can be null).
+     * The matchResult object in the CharSequence (can be null).
      */
     private Consumable.Match match;
     /**
@@ -100,7 +100,7 @@ public class AST<TYPE> {
 
     /**
      *
-     * @return Returns the match as optional (empty if match is null)
+     * @return Returns the matchResult as optional (empty if matchResult is null)
      */
     public Consumable.Match getMatch() {
         return match;

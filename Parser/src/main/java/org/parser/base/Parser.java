@@ -123,7 +123,7 @@ public interface Parser<TYPE> {
 
     /**
      * A basic keyword parser. This calls the success method if the pattern passed in was successfully matched.
-     * could be matched. The success method returns an AST with type type where the match object is set to null.
+     * could be matched. The success method returns an AST with type type where the matchResult object is set to null.
      * @param type type
      * @param pattern Pattern
      * @return A basic keyword parser
@@ -134,7 +134,7 @@ public interface Parser<TYPE> {
 
     /**
      * A basic keyword parser. This calls the success method if the pattern passed in was successfully matched.
-     * could be matched. The success method returns an AST with type type where the match object is set to null.
+     * could be matched. The success method returns an AST with type type where the matchResult object is set to null.
      * @param type type
      * @param regex Regular-Expression
      * @return A basic keyword parser
@@ -144,22 +144,22 @@ public interface Parser<TYPE> {
     }
 
     /**
-     * A basic match parser. This calls the success method if the pattern passed in was successfully matched.
-     * could be matched. The success method returns an AST with type type and the matched match.
+     * A basic matchResult parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be matched. The success method returns an AST with type type and the matched matchResult.
      * @param type Type
      * @param pattern Pattern
-     * @return A basic match parser
+     * @return A basic matchResult parser
      */
     static <TYPE> RegExParser<TYPE> match(TYPE type, Pattern pattern) {
         return new RegExParser<>(pattern, basicMatchAtSuccess(type));
     }
 
     /**
-     * A basic match parser. This calls the success method if the pattern passed in was successfully matched.
-     * could be matched. The success method returns an AST with type type and the matched match.
+     * A basic matchResult parser. This calls the success method if the pattern passed in was successfully matched.
+     * could be matched. The success method returns an AST with type type and the matched matchResult.
      * @param type Type
      * @param regex regular expression
-     * @return A basic match parser
+     * @return A basic matchResult parser
      */
     static <TYPE> RegExParser<TYPE> match(TYPE type, String regex) {
         return match(type, Pattern.compile(regex));
@@ -197,8 +197,8 @@ public interface Parser<TYPE> {
     /**
      *
      * @param type Type of the resulting AST.
-     * @return Returns a function that creates an AST from a match that has the passed type, and
-     * the match as "match".
+     * @return Returns a function that creates an AST from a matchResult that has the passed type, and
+     * the matchResult as "matchResult".
      */
     static <TYPE> Function<Consumable.Match, AST<TYPE>> basicMatchAtSuccess(TYPE type) {
         return match -> new AST<>(type, match);
@@ -206,7 +206,7 @@ public interface Parser<TYPE> {
 
     /**
      *
-     * @return Returns a function that creates an AST from a match with the ignore bit set.
+     * @return Returns a function that creates an AST from a matchResult with the ignore bit set.
      */
     static <TYPE> Function<Consumable.Match, AST<TYPE>> basicHideAtSuccess() {
         return match -> new AST<TYPE>(null).setIgnore(true);
@@ -215,8 +215,8 @@ public interface Parser<TYPE> {
     /**
      *
      * @param type Type of the resulting AST.
-     * @return Returns a function which creates an AST from a match which has the passed type
-     * but the match of the AST is null.
+     * @return Returns a function which creates an AST from a matchResult which has the passed type
+     * but the matchResult of the AST is null.
      */
     static <TYPE> Function<Consumable.Match, AST<TYPE>> basicKeywordAtSuccess(TYPE type) {
         return match -> new AST<>(type);
