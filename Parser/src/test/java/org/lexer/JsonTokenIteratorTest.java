@@ -3,7 +3,8 @@ package org.lexer;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.parser.examples.JsonParser.TYPE;
+import org.lexer.examples.JsonTokenIterator;
+import org.lexer.examples.JsonTokenIterator.TYPE;
 
 import java.util.List;
 
@@ -12,30 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class TokenIteratorTest {
-    private static final TokenDef<TYPE> tokenDef = setupDef();
-
-    private static TokenDef<TYPE> setupDef() {
-        var tokenDef = new TokenDef<TYPE>();
-        tokenDef.addToken(TYPE.STRING, "\"[^\"]*\"")
-                .addToken(TYPE.NUMBER, "(\\-)?\\d+(\\.\\d*)?((e|E)(\\+|\\-)?\\d+)?")
-                .addToken(TYPE.COLON, ":")
-                .addToken(TYPE.COMMA, ",")
-                .addToken(TYPE.NULL, "null")
-                .addToken(TYPE.CURLY_BRAC_O, "\\{")
-                .addToken(TYPE.CURLY_BRAC_C, "\\}")
-                .addToken(TYPE.FALSE, "false")
-                .addToken(TYPE.TRUE, "true")
-                .addToken(TYPE.SQ_BRAC_O, "\\[")
-                .addToken(TYPE.SQ_BRAC_C, "\\]");
-
-        tokenDef.addIgnore("\\s")
-                .addIgnore("//.*");
-        return tokenDef;
-    }
-
+public class JsonTokenIteratorTest {
     private void verify(String text, List<Match<TYPE>> tokenList) {
-        var tokenIterator = new TokenIterator<>(tokenDef, text);
+        var tokenIterator = new JsonTokenIterator(text);
         var listIterator = tokenList.iterator();
         while (tokenIterator.hasNext() && listIterator.hasNext()) {
             assertEquals(tokenIterator.next(), listIterator.next());
@@ -44,7 +24,7 @@ public class TokenIteratorTest {
     }
 
     @Test
-    public void Test_TokenIterator1() {
+    public void Test_JsonTokenIterator1() {
         String json =
                 """
                 {
@@ -67,7 +47,7 @@ public class TokenIteratorTest {
     }
 
     @Test
-    public void Test_TokenIterator2() {
+    public void Test_JsonTokenIterator2() {
         String json =
                 """
                 {
@@ -111,7 +91,7 @@ public class TokenIteratorTest {
     }
 
     @Test
-    public void Test_TokenIterator3() {
+    public void Test_JsonTokenIterator3() {
         String json =
                 """
                 {

@@ -145,7 +145,6 @@ public class AlphaNotationParser implements Parser<Type> {
                 .keyword(Type.MEM, "mem").or()
                 .keyword(Type.CLEAR, "clear").or()
                 .rule("EXE").or()
-                .rule("LOAD").or()
                 .rule("PRINT").end(); // print must be the last since it consumes clear, mem and exe as labels.
 
         builder.newRule("EXE")

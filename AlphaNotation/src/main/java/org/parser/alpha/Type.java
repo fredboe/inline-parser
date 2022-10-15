@@ -91,9 +91,17 @@ public enum Type {
         worldOfProgram.executeProgramLineByLine();
         world.unite(worldOfProgram);
     }),
-    NOP((ast, world) -> {});
+    NOP((ast, world) -> {}),
+
+    ALPHA_TOKEN, RHO_TOKEN, IF_TOKEN, THEN_TOKEN,
+    BRAC_O, BRAC_C, COLON, LINEBREAK;
 
     private final ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer;
+
+
+    Type() {
+        this.transformer = (ast, world) -> {};
+    }
 
     Type(ThrowableBiConsumer<AST<Type>, World, AlphaError> transformer) {
         this.transformer = transformer;

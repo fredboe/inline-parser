@@ -1,9 +1,6 @@
 package org.lexer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,19 +8,23 @@ public class TokenDef<Token> {
     /**
      * Tokens with their patterns
      */
-    private final Map<Token, Pattern> tokens;
+    private final List<Pair<Token, Pattern>> tokens;
     /**
      * Patterns to ignore
      */
     private final Set<Pattern> toIgnore;
 
     public TokenDef() {
-        this(new HashMap<>(), new HashSet<>());
+        this(new ArrayList<>(), new HashSet<>());
     }
 
-    public TokenDef(Map<Token, Pattern> tokens, Set<Pattern> ignore) {
+    public TokenDef(List<Pair<Token, Pattern>> tokens, Set<Pattern> ignore) {
         this.tokens = tokens;
         this.toIgnore = ignore;
+    }
+
+    public TokenIterator<Token> tokenIterator(CharSequence sequence) {
+        return new TokenIterator<>(this, sequence);
     }
 
     /**
@@ -33,7 +34,7 @@ public class TokenDef<Token> {
      * @return this
      */
     public TokenDef<Token> addToken(Token token, Pattern pattern) {
-        this.tokens.put(token, pattern);
+        this.tokens.add(new Pair<>(token, pattern));
         return this;
     }
 
@@ -78,7 +79,7 @@ public class TokenDef<Token> {
     }
 
     private Match<Token> checkIgnore(CharSequence sequence) {
-        for (var ignore : toIgnore) {
+        for (Pattern ignore : toIgnore) {
             var posResult = tryToMatch(sequence, null, ignore);
             if (posResult != null) return posResult;
         }
@@ -86,8 +87,8 @@ public class TokenDef<Token> {
     }
 
     private Match<Token> checkToken(CharSequence sequence) {
-        for (var entry : tokens.entrySet()) {
-            var posResult = tryToMatch(sequence, entry.getKey(), entry.getValue());
+        for (Pair<Token, Pattern> pair : tokens) {
+            var posResult = tryToMatch(sequence, pair.x(), pair.y());
             if (posResult != null) return posResult;
         }
         return null;
