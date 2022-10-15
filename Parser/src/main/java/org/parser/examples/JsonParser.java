@@ -11,7 +11,10 @@ import java.util.Optional;
 
 public class JsonParser implements Parser<JsonParser.TYPE> {
     public enum TYPE {
-        ARRAY, OBJECT, PROPERTY, NUMBER, STRING, TRUE, FALSE, NULL
+        ARRAY, OBJECT, PROPERTY,
+        NUMBER, STRING, TRUE, FALSE, NULL,
+        SQ_BRAC_O, SQ_BRAC_C, CURLY_BRAC_O, CURLY_BRAC_C,
+        COMMA, COLON
     }
 
     private final Parser<TYPE> jsonParser;
