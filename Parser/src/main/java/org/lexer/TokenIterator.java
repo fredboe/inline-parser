@@ -1,6 +1,5 @@
 package org.lexer;
 
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,13 +9,9 @@ public class TokenIterator<Token> implements Iterator<Match<Token>> {
     private final List<Match<Token>> tokenList;
     private int position;
 
-    public TokenIterator(TokenDef<Token> tokenDef, CharBuffer buffer) {
-        this.tokenList = generateTokenList(tokenDef, buffer);
-        this.position = 0;
-    }
-
     public TokenIterator(TokenDef<Token> tokenDef, CharSequence sequence) {
-        this(tokenDef, CharBuffer.wrap(sequence));
+        this.tokenList = generateTokenList(tokenDef, sequence);
+        this.position = 0;
     }
 
     public TokenIterator(TokenIterator<Token> other) {
