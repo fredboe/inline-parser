@@ -38,10 +38,6 @@ public interface Parser<TYPE> {
         return new Consumable(sequence);
     }
 
-    default Parser<TYPE> simplify() {
-        return this;
-    }
-
     /**
      * Basic Or parser with the passed parsers as subparsers and atSuccess is Parser.basicOrAtSuccess().
      * @param parsers Subparser.
@@ -49,6 +45,10 @@ public interface Parser<TYPE> {
      */
     static <TYPE> OrParser<TYPE> or(List<Parser<TYPE>> parsers) {
         return new OrParser<>(basicOrAtSuccess(), parsers);
+    }
+
+    default Parser<TYPE> simplify() {
+        return this;
     }
 
     /**
