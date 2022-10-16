@@ -54,8 +54,4 @@ public class TokenIterator<Token> implements Iterator<Match<Token>> {
         position++;
         return result;
     }
-
-    public String toString() {
-        return tokenList.toString();
-    }
 }
