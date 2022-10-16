@@ -111,8 +111,8 @@ public enum Type {
     /**
      *
      * @param ast AST
-     * @return Returns the matchResult-string of the AST.
-     * @throws AlphaError Throws NullOccurredException if the matchResult-string is null.
+     * @return Returns the match-string of the AST.
+     * @throws AlphaError Throws NullOccurredException if the match-string is null.
      */
     private static String matchOf(AST<Type> ast) throws AlphaError {
         var match = ast.getMatch();

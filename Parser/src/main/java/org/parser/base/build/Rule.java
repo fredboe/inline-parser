@@ -71,7 +71,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds a new matchResult-parser to the current subrule.
+     * Adds a new match-parser to the current subrule.
      * @param type Type
      * @param pattern Pattern to look for
      * @return Returns the underlying rule.
@@ -81,7 +81,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds a new matchResult-parser to the current subrule.
+     * Adds a new match-parser to the current subrule.
      * @param type Type
      * @param regex RegEx to look for
      * @return Returns the underlying rule.
@@ -160,7 +160,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds a many-parser of the given simplerule (just a concat of matchResult, hide, keyword and rule) to the
+     * Adds a many-parser of the given simplerule (just a concat of match, hide, keyword and rule) to the
      * current subrule.
      * @param type Type of the resulting AST
      * @param simplerule simplerule
@@ -171,7 +171,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds a many-parser of the given simplerule (just a concat of matchResult, hide, keyword and rule) to the
+     * Adds a many-parser of the given simplerule (just a concat of match, hide, keyword and rule) to the
      * current subrule.
      * If the type of the current subrule is childrenIfNoType then the list of ASTs from the
      * many-parser are added to the AST of the current subrule as many children, otherwise the list of ASTs is
@@ -206,7 +206,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds a some-parser of the given simplerule (just a concat of matchResult, hide, keyword and rule) to the
+     * Adds a some-parser of the given simplerule (just a concat of match, hide, keyword and rule) to the
      * current subrule.
      * @param type Type of the resulting AST
      * @param simplerule simplerule
@@ -217,7 +217,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds a some-parser of the given simplerule (just a concat of matchResult, hide, keyword and rule) to the
+     * Adds a some-parser of the given simplerule (just a concat of match, hide, keyword and rule) to the
      * current subrule.
      * If the type of the current subrule is childrenIfNoType then the list of ASTs from the
      * some-parser are added to the AST of the current subrule as many children, otherwise the list of ASTs is
@@ -239,7 +239,7 @@ public class Rule<TYPE> {
     }
 
     /**
-     * Adds an optional-parser of the given simplerule (just a concat of matchResult, hide, keyword and rule) to the
+     * Adds an optional-parser of the given simplerule (just a concat of match, hide, keyword and rule) to the
      * current subrule.
      * @param simplerule simplerule
      * @return Returns the underlying rule.
