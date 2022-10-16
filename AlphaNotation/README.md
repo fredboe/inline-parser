@@ -85,3 +85,13 @@ goto loop
 p(2) := a_0 : end_digit_sum
 return
 ```
+
+### Square subroutine
+```
+a_0 := 5
+call square
+goto end
+
+a_0 := a_0 * a_0 : square
+return
+```

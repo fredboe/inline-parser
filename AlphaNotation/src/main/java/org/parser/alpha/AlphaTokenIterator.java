@@ -14,11 +14,7 @@ public class AlphaTokenIterator extends TokenIterator<Type> {
     private static TokenDef<Type> alphaTokenDef() {
         TokenDef<Type> tokenDef = new TokenDef<>();
 
-        tokenDef.addToken(Type.BRAC_O, "\\(")
-                .addToken(Type.BRAC_C, "\\)")
-                .addToken(Type.COLON, ":")
-                .addToken(Type.LINEBREAK, "\\R")
-                .addToken(Type.ADD, "\\+")
+        tokenDef.addToken(Type.ADD, "\\+")
                 .addToken(Type.SUB, "\\-")
                 .addToken(Type.MUL, "\\*")
                 .addToken(Type.DIV, "/")
@@ -44,6 +40,10 @@ public class AlphaTokenIterator extends TokenIterator<Type> {
                 .addToken(Type.PUSH, "push")
                 .addToken(Type.POP, "pop")
                 .addToken(Type.STACK_OP, "stack")
+                .addToken(Type.BRAC_O, "\\(")
+                .addToken(Type.BRAC_C, "\\)")
+                .addToken(Type.COLON, ":")
+                .addToken(Type.LINEBREAK, "\\R")
                 .addToken(Type.NUMBER, "(\\-)?\\d+")
                 .addToken(Type.LABEL, "[a-zA-Z]\\w*");
 
