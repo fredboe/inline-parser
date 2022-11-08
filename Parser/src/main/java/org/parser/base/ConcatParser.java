@@ -75,14 +75,4 @@ public class ConcatParser<TYPE> implements DepthParser<TYPE> {
     public int size() {
         return parsers.size();
     }
-
-    @Override
-    public Parser<TYPE> get(int i) {
-        return parsers.get(i);
-    }
-
-    @Override
-    public void set(int i, Parser<TYPE> parser) {
-        parsers.set(i, parser);
-    }
 }

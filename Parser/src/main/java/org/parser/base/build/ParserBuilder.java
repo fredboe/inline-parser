@@ -62,7 +62,7 @@ public class ParserBuilder<TYPE> {
      * @param parser parser
      */
     void addParser(String name, Parser<TYPE> parser) {
-        if (name != null && parser != null) rules.put(name, parser.simplify());
+        if (name != null && parser != null) rules.put(name, parser);
     }
 
     /**
