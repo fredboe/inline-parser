@@ -11,7 +11,7 @@ import java.util.function.Function;
 /**
  * Or-Parser
  */
-public class OrParser<TYPE> implements DepthParser<TYPE> {
+public class OrParser<TYPE> implements WithSubparsers<TYPE> {
     private final List<Parser<TYPE>> parsers;
     /**
      * This method is called as soon as the first parser was successful. It is then passed the supplied

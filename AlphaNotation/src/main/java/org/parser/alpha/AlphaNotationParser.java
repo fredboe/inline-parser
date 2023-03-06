@@ -27,30 +27,34 @@ public class AlphaNotationParser implements Parser<Type> {
         return new Consumable(sequence, Consumable.Ignore.IGNORE_COMMENT, Consumable.Ignore.IGNORE_H_SPACE);
     }
 
+    public static String grammar = """
+            Grammar:
+            PROGRAM ::= (UNIT ENDL)*
+            UNIT ::= LINE ":" LABEL | LINE?
+            LINE ::= BRANCH | GOTO | ASSIGN | FUNC | STACK | OUTPUT
+            BRANCH ::= "if" "(" CONDITION ")" GOTO
+            CONDITION ::= VALUE COMP_OPERATOR VALUE
+            GOTO ::= "goto" VALUE
+            VALUE ::= NUMBER | ACCUMULATOR | ADDRESS
+            ASSIGNABLE ::= ACCUMULATOR | ADDRESS
+            ASSIGN ::= ASSIGNABLE ":=" EXPR
+            EXPR ::= VALUE OPERATOR VALUE
+            FUNC ::= "call" VALUE | "return"
+            STACK ::= "push" VALUE | "pop" VALUE | "stack_op" OPERATOR
+            ACCUMULATOR ::= (alpha(_)?)|(a(_)?)\\d+
+            ADDRESS ::= "p|rho" "(" VALUE ")"
+            NUMBER ::= (\\-)?\\d+
+            LABEL ::= [a-zA-Z]\\w*
+            OPERATOR ::= "+" | "-" | "*" | "/" | "%"
+            COMP_OPERATOR ::= "<=" | ">=" | "<" | ">" | "="
+            OUTPUT ::= "mem" | "clear" | "help" | EXE | PRINT
+            EXE ::= ("exe" ".*\\.alpha") | ("exe" ".*\\.alpha" "-lbl|LineByLine")
+            PRINT ::= VALUE
+            ENDL ::= "\\R"
+            """;
+
+
     /**
-     * Grammar: <br>
-     * PROGRAM ::= (UNIT ENDL)* <br>
-     * UNIT ::= LINE ":" LABEL | LINE? <br>
-     * LINE ::= BRANCH | GOTO | ASSIGN | FUNC | STACK | OUTPUT <br>
-     * BRANCH ::= "if" "(" CONDITION ")" GOTO <br>
-     * CONDITION ::= VALUE COMP_OPERATOR VALUE <br>
-     * GOTO ::= "goto" VALUE <br>
-     * VALUE ::= NUMBER | ACCUMULATOR | ADDRESS <br>
-     * ASSIGNABLE ::= ACCUMULATOR | ADDRESS <br>
-     * ASSIGN ::= ASSIGNABLE ":=" EXPR <br>
-     * EXPR ::= VALUE OPERATOR VALUE <br>
-     * FUNC ::= "call" VALUE | "return" <br>
-     * STACK ::= "push" VALUE | "pop" VALUE | "stack_op" OPERATOR <br>
-     * ACCUMULATOR ::= (alpha(_)?)|(a(_)?)\d+ <br>
-     * ADDRESS ::= "p|rho" "(" VALUE ")" <br>
-     * NUMBER ::= (\-)?\d+ <br>
-     * LABEL ::= [a-zA-Z]\w* <br>
-     * OPERATOR ::= "+" | "-" | "*" | "/" | "%" <br>
-     * COMP_OPERATOR ::= "<=" | ">=" | "<" | ">" | "=" <br>
-     * OUTPUT ::= "mem" | "clear" | EXE | PRINT <br>
-     * EXE ::= "exe" filename <br>
-     * PRINT ::= VALUE <br>
-     * ENDL ::= "\R" <br>
      * @return Returns a ParserPool for the alpha notation.
      */
     public static ParserPool<Type> alphaPool() {
@@ -144,6 +148,7 @@ public class AlphaNotationParser implements Parser<Type> {
         builder.newRule("OUTPUT")
                 .keyword(Type.MEM, "mem").or()
                 .keyword(Type.CLEAR, "clear").or()
+                .keyword(Type.HELP, "help").or()
                 .rule("EXE").or()
                 .rule("LOAD").or()
                 .rule("PRINT").end(); // print must be the last since it consumes clear, mem and exe as labels.

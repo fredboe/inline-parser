@@ -76,6 +76,7 @@ public enum Type {
         world.clear();
         IO.info("Memory has been cleared!");
     }),
+    HELP((ast, world) -> IO.info(AlphaNotationParser.grammar)),
     PRINT((ast, world) -> {
         world.evalAST(ast.getChild(0)); // push what_to_print
         IO.info(world.pop());

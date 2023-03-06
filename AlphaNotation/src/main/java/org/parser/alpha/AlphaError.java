@@ -46,4 +46,12 @@ public class AlphaError extends Exception {
             super(errorMsg, where);
         }
     }
+
+    public static class InvalidPC extends AlphaError {
+        private static final String errorMsg = "The PC was set to an invalid number (either negative or to high).";
+
+        public InvalidPC(int val) {
+            super(errorMsg, String.valueOf(val));
+        }
+    }
 }

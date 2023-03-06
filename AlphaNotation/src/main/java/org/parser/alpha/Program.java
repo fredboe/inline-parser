@@ -56,7 +56,8 @@ public class Program {
         return lines.get(lineNum);
     }
 
-    public AST<Type> getParsedLine(int lineNum) {
+    public AST<Type> getParsedLine(int lineNum) throws AlphaError.InvalidPC {
+        if (lineNum < 0 || lineNum >= parsedLines.size()) throw new AlphaError.InvalidPC(lineNum);
         return parsedLines.get(lineNum);
     }
 

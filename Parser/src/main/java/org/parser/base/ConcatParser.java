@@ -13,7 +13,7 @@ import java.util.function.Function;
  * Rules:
  * - The atSuccess function must in any case also consider the case when the passed list is empty.
  */
-public class ConcatParser<TYPE> implements DepthParser<TYPE> {
+public class ConcatParser<TYPE> implements WithSubparsers<TYPE> {
     /**
      * set of parsers to be added one after the other (order is important)
      */

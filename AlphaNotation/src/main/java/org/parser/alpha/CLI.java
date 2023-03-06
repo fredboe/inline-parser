@@ -72,7 +72,9 @@ public class CLI implements Runnable {
                 Keywords:
                 This command line can be stopped with 'end'.
                 To create a new subroutine you need to go into subroutine-mode (enter code without executing it).
-                To go into subroutine-mode enter 'subroutine' and to leave subroutine-mode just enter a blank line.""");
+                To go into subroutine-mode enter 'subroutine' and to leave subroutine-mode just enter a blank line.
+                To get some help press "help".
+                """);
     }
 
     private String enterLine() {
