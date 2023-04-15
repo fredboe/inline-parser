@@ -1,6 +1,7 @@
 package org.parser.alpha;
 
 import org.parser.Consumable;
+import org.parser.base.Environment;
 import org.parser.base.Parser;
 import org.parser.base.build.Mode;
 import org.parser.base.build.ParserBuilder;
@@ -18,8 +19,8 @@ public class AlphaNotationParser implements Parser<Type> {
     }
 
     @Override
-    public Optional<AST<Type>> applyTo(Consumable consumable) {
-        return alphaParser.applyTo(consumable);
+    public void processWith(Environment<Type> environment) {
+        alphaParser.processWith(environment);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class AlphaNotationParser implements Parser<Type> {
                 .end();
 
         builder.newRule("ACCUMULATOR")
-                .type(Mode.justFst()).hide("(alpha(_)?)|(a(_)?)").match(Type.ACCUMULATOR,"\\d+").end();
+                .type(Mode.takeFirstChild()).hide("(alpha(_)?)|(a(_)?)").match(Type.ACCUMULATOR,"\\d+").end();
 
         builder.newRule("ADDRESS")
                 .type(Type.ADDRESS).hide("p|rho").hide("\\(").rule("VALUE").hide("\\)")
@@ -150,13 +151,12 @@ public class AlphaNotationParser implements Parser<Type> {
                 .keyword(Type.CLEAR, "clear").or()
                 .keyword(Type.HELP, "help").or()
                 .rule("EXE").or()
-                .rule("LOAD").or()
                 .rule("PRINT").end(); // print must be the last since it consumes clear, mem and exe as labels.
 
         builder.newRule("EXE")
-                .type(Mode.justFst()).hide("exe").match(Type.EXE_LBL, ".*\\.alpha").hide("-lbl|-LineByLine")
+                .type(Mode.takeFirstChild()).hide("exe").match(Type.EXE_LBL, ".*\\.alpha").hide("-lbl|-LineByLine")
                 .or()
-                .type(Mode.justFst()).hide("exe").match(Type.EXE, ".*\\.alpha") // no line terminators
+                .type(Mode.takeFirstChild()).hide("exe").match(Type.EXE, ".*\\.alpha") // no line terminators
                 .end();
 
         builder.newRule("PRINT")

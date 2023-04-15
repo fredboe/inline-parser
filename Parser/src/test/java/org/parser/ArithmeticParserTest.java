@@ -102,9 +102,14 @@ public class ArithmeticParserTest {
     }
 
     private void testExpr(String expr, AST<TYPE> result) {
-        var optionalAST = exprParser.applyTo(expr);
+        var optionalAST = exprParser.parse(expr);
         assertTrue(optionalAST.isPresent());
         assertEquals(optionalAST.get(), result);
+    }
+
+    public static void main(String[] args) {
+        var optionalAST = exprParser.parse("1 + 1");
+        System.out.println(optionalAST);
     }
 
     @Test

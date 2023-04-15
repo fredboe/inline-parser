@@ -1,6 +1,7 @@
 package org.parser.examples;
 
 import org.parser.Consumable;
+import org.parser.base.Environment;
 import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
@@ -21,8 +22,13 @@ public class JsonParser implements Parser<JsonParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return jsonParser.applyTo(consumable);
+    public void processWith(Environment<TYPE> environment) {
+        jsonParser.processWith(environment);
+    }
+
+    @Override
+    public Optional<AST<TYPE>> parse(Consumable consumable) {
+        return jsonParser.parse(consumable);
     }
 
     @Override

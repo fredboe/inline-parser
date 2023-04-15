@@ -18,20 +18,25 @@ import java.util.regex.Pattern;
  * @param <TYPE> type
  */
 public interface Parser<TYPE> {
+    void processWith(Environment<TYPE> environment);
+
     /**
      * Obtains a CharSequence and creates an AST from it.
      * @param consumable Consumable
      * @return An AST wrapped with Optional (empty if parsing error)
      */
-    Optional<AST<TYPE>> applyTo(Consumable consumable);
+    default Optional<AST<TYPE>> parse(Consumable consumable) {
+        Environment<TYPE> environment = new Environment<>(consumable);
+        return environment.startWith(this);
+    }
 
     /**
      * Receives a CharSequence and creates an AST from it.
      * @param sequence CharSequence
      * @return An AST wrapped with optional (empty if parsing error)
      */
-    default Optional<AST<TYPE>> applyTo(CharSequence sequence) {
-        return applyTo(consumableOf(sequence));
+    default Optional<AST<TYPE>> parse(CharSequence sequence) {
+        return parse(consumableOf(sequence));
     }
 
     default Consumable consumableOf(CharSequence sequence) {
@@ -84,7 +89,7 @@ public interface Parser<TYPE> {
      * @return Returns a some-parser with the passed type and the passed parser as subparser
      */
     static <TYPE> Parser<TYPE> some(TYPE type, Parser<TYPE> parser) {
-        return new ConcatParser<>(Mode.childrenIfNoType(type), List.of(parser, Parser.many(null, parser)));
+        return new ConcatParser<>(Mode.takeChildrenIfTypeNull(type), List.of(parser, Parser.many(null, parser)));
     }
 
     /**

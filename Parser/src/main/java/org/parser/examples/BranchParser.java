@@ -1,6 +1,7 @@
 package org.parser.examples;
 
 import org.parser.Consumable;
+import org.parser.base.Environment;
 import org.parser.base.Parser;
 import org.parser.base.build.ParserBuilder;
 import org.parser.base.build.ParserPool;
@@ -23,8 +24,13 @@ public class BranchParser implements Parser<BranchParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return branchParser.applyTo(consumable);
+    public void processWith(Environment<TYPE> environment) {
+        branchParser.processWith(environment);
+    }
+
+    @Override
+    public Optional<AST<TYPE>> parse(Consumable consumable) {
+        return branchParser.parse(consumable);
     }
 
     @Override

@@ -113,7 +113,7 @@ public class JsonParserTest {
 
 
     private void testJson(String json, AST<TYPE> result) {
-        var optionalAST = jsonParser.applyTo(json);
+        var optionalAST = jsonParser.parse(json);
         assertTrue(optionalAST.isPresent());
         assertEquals(optionalAST.get(), result);
     }

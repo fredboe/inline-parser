@@ -16,6 +16,8 @@ public class Consumable {
      */
     public record Match(String matched) {}
 
+    public record Mark(int index) {}
+
     /**
      * Flags that specify which strings to ignore.
      */
@@ -214,6 +216,14 @@ public class Consumable {
     public CharSequence getSequenceLeft() {
         if (isEmptyWithoutIgnore()) return "";
         return buffer.subSequence(startIndex, buffer.length());
+    }
+
+    public Mark mark() {
+        return new Mark(startIndex);
+    }
+
+    public void goBackToMark(Mark mark) {
+        this.startIndex = mark.index;
     }
 
     /**

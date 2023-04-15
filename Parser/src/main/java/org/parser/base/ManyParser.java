@@ -1,6 +1,5 @@
 package org.parser.base;
 
-import org.parser.Consumable;
 import org.parser.base.build.Mode;
 import org.parser.tree.AST;
 
@@ -25,7 +24,7 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
     private final Function<List<AST<TYPE>>, AST<TYPE>> atSuccess;
 
     public ManyParser(TYPE type, Parser<TYPE> parser) {
-        this.atSuccess = Mode.childrenIfNoType(type);
+        this.atSuccess = Mode.takeChildrenIfTypeNull(type);
         this.parser = parser;
     }
 
@@ -35,18 +34,28 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
      * children (so the children list can also be empty) and the stored type. If the type of the
      * AST is null, the AST is not taken as a child, but the children of the AST are taken as children.
      * are taken over.
-     * @param consumable Consumable
-     * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        Optional<AST<TYPE>> optionalAST;
-        List<AST<TYPE>> ASTs = new ArrayList<>();
+    public void processWith(Environment<TYPE> environment) {
+        executeParserRec(environment, 0);
+    }
 
-        while ((optionalAST = parser.applyTo(consumable)).isPresent()) {
-            var ast = optionalAST.get();
-            if (!ast.shouldIgnore()) ASTs.add(ast);
-        }
-        return Optional.ofNullable(atSuccess.apply(ASTs));
+    private void executeParserRec(Environment<TYPE> environment, int n) {
+        environment.executeAndThenCall(parser, (v) -> {
+            assert !environment.resultStack().isEmpty() : "Fail at Many: parser should have pushed a result.";
+
+            if (environment.resultStack().peek().isPresent()) {
+                executeParserRec(environment, n + 1);
+            } else {
+                environment.resultStack().pop();
+                ArrayList<AST<TYPE>> ASTs = new ArrayList<>(n);
+                for (int i = 0; i < n; i++) {
+                    var optionalAST = environment.resultStack().pop();
+                    // push fail if get fails
+                    ASTs.add(0, environment.resultStack().pop().get());
+                }
+                environment.resultStack().push(Optional.ofNullable(atSuccess.apply(ASTs)));
+            }
+        });
     }
 }

@@ -285,9 +285,26 @@ public class AlphaNotationParserTest {
     }
 
     private void testProgram(String expr, AST<Type> result) {
-        var optionalAST = alphaParser.applyTo(expr);
+        var optionalAST = alphaParser.parse(expr);
         assertTrue(optionalAST.isPresent());
         assertEquals(optionalAST.get(), result);
+    }
+
+    public static void main(String[] args) {
+        String program =
+                """
+                a_1 := 6
+                call fac
+                goto end
+                
+                a_0 := 1 : fac
+                if a_1 = 0 then goto end_fac : loop
+                a_0 := a_0 * a_1
+                a_1 := a_1 - 1
+                goto loop
+                return : end_fac
+                """;
+        var optionalAST = alphaParser.parse(program);
     }
 
     @Test

@@ -1,6 +1,5 @@
 package org.parser.base;
 
-import org.parser.Consumable;
 import org.parser.tree.AST;
 
 import java.util.ArrayList;
@@ -30,21 +29,28 @@ public class OrParser<TYPE> implements WithSubparsers<TYPE> {
         if (parsers != null) this.parsers.addAll(parsers);
     }
 
-    /**
-     * The method goes through all parsers and as soon as the first parser was successful on the consumable
-     * was successful, the method atSuccess is called. Finally, the ignore-bit is then set to the ignore-bit * of the successful AST.
-     * of the successful AST.
-     * @param consumable Consumable
-     * @return An AST wrapped with Optional (empty if all the parsers return an error)
-     */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        Optional<AST<TYPE>> optionalAST = parsers.stream()
-                .map(parser -> parser.applyTo(consumable))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst();
-        return optionalAST.map(ast -> atSuccess.apply(ast).setIgnore(ast.shouldIgnore()));
+    public void processWith(Environment<TYPE> environment) {
+        processParsersJustAtFailureRec(environment, 0);
+    }
+
+    private void processParsersJustAtFailureRec(Environment<TYPE> environment, int index) {
+        if (index < parsers.size()) {
+            var parser = parsers.get(index);
+            environment.executeAndThenCall(parser, (v) -> {
+                assert !environment.resultStack().isEmpty() : "Fail at Or: parser should have pushed a result.";
+
+                var optionalAST = environment.resultStack().pop();
+                if (optionalAST.isEmpty()) {
+                    processParsersJustAtFailureRec(environment, index + 1);
+                } else {
+                    var ast = optionalAST.get();
+                    environment.resultStack().push(Optional.of(atSuccess.apply(ast).setIgnore(ast.shouldIgnore())));
+                }
+            });
+        } else {
+            environment.resultStack().push(Optional.empty());
+        }
     }
 
     @Override
@@ -61,4 +67,6 @@ public class OrParser<TYPE> implements WithSubparsers<TYPE> {
     public int size() {
         return parsers.size();
     }
+
+
 }

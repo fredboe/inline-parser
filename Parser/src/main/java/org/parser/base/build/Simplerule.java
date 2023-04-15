@@ -12,7 +12,7 @@ public class Simplerule<TYPE> {
 
     public Simplerule(TYPE type) {
         this.parserBuilder = new ParserBuilder<>();
-        this.simplerule = new ConcatParser<>(Mode.childrenIfNoType(type));
+        this.simplerule = new ConcatParser<>(Mode.takeChildrenIfTypeNull(type));
         this.frozen = false;
     }
 

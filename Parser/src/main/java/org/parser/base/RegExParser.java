@@ -29,12 +29,12 @@ public class RegExParser<TYPE> implements Parser<TYPE> {
     /**
      * Checks if the regular expression is successfully matched. If so, atSuccess is called on the returned
      * Match object atSuccess is called, otherwise Optional.empty() is returned.
-     * @param consumable Consumable
-     * @return An AST wrapped with Optional (empty if the regex is not matched).
      */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        Optional<Consumable.Match> match = consumable.lookingAt(pattern);
-        return match.map(atSuccess);
+    public void processWith(Environment<TYPE> environment) {
+        environment.executeAndThenCall(null, (consumable) -> {
+            Optional<Consumable.Match> match = consumable.lookingAt(pattern);
+            environment.resultStack().push(match.map(atSuccess));
+        });
     }
 }

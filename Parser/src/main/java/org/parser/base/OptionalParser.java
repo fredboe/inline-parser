@@ -1,6 +1,5 @@
 package org.parser.base;
 
-import org.parser.Consumable;
 import org.parser.tree.AST;
 
 import java.util.Optional;
@@ -19,14 +18,14 @@ public class OptionalParser<TYPE> implements Parser<TYPE> {
      * With an optional-parser, the stored parser is executed once.
      * If the execution fails a shouldIgnore AST is returned, otherwise the ast of the execution is
      * returned. That means an optional-parser is always successful.
-     * @param consumable Consumable
-     * @return An AST wrapped with Optional (for Many this is always present).
      */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-       var optionalAST = parser.applyTo(consumable);
-       return Optional.of(
-               optionalAST.orElse(new AST<TYPE>(null).setIgnore(true))
-       );
+    public void processWith(Environment<TYPE> environment) {
+        environment.executeAndThenCall(parser, (v) -> {
+            var optionalAST = environment.resultStack().pop();
+            environment.resultStack().push(
+                    Optional.of(optionalAST.orElse(new AST<TYPE>(null).setIgnore(true)))
+            );
+        });
     }
 }

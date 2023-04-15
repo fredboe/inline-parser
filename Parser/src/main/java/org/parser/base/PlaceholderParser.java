@@ -1,8 +1,5 @@
 package org.parser.base;
 
-import org.parser.Consumable;
-import org.parser.tree.AST;
-
 import java.util.Optional;
 
 public class PlaceholderParser<TYPE> implements Parser<TYPE> {
@@ -13,8 +10,10 @@ public class PlaceholderParser<TYPE> implements Parser<TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return Optional.ofNullable(parser).flatMap(parser -> parser.applyTo(consumable));
+    public void processWith(Environment<TYPE> environment) {
+        environment.executeAndThenCall(parser, (v) -> {
+            if (parser == null) environment.resultStack().push(Optional.empty());
+        });
     }
 
     public void setParserIfNull(Parser<TYPE> parser) {

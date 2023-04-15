@@ -67,7 +67,7 @@ public class Rule<TYPE> {
      * @return Returns the underlying rule.
      */
     public Rule<TYPE> type(TYPE type) {
-        return type(Mode.childrenIfNoType(type));
+        return type(Mode.takeChildrenIfTypeNull(type));
     }
 
     /**
@@ -326,7 +326,7 @@ public class Rule<TYPE> {
      */
     private void newSubruleIfNotExists() {
         if (currentSubrule == null) {
-            currentSubrule = new ConcatParser<>(Mode.justFst());
+            currentSubrule = new ConcatParser<>(Mode.takeFirstChild());
         }
     }
 }

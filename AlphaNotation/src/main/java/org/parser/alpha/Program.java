@@ -109,7 +109,7 @@ public class Program {
      */
     private static AST<Type> parseLine(String line) throws AlphaError {
         Consumable consLine = consumableOf(line);
-        var optionalParsedLine = alphaLineParser.applyTo(consLine);
+        var optionalParsedLine = alphaLineParser.parse(consLine);
         if (optionalParsedLine.isEmpty() || !consLine.isEmpty())
             throw new AlphaError.ParsingException(consLine);
 

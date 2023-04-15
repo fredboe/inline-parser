@@ -1,6 +1,7 @@
 package org.parser.examples;
 
 import org.parser.Consumable;
+import org.parser.base.Environment;
 import org.parser.base.Parser;
 import org.parser.base.build.Mode;
 import org.parser.base.build.ParserBuilder;
@@ -22,8 +23,13 @@ public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
     }
 
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        return aritParser.applyTo(consumable);
+    public void processWith(Environment<TYPE> environment) {
+        aritParser.processWith(environment);
+    }
+
+    @Override
+    public Optional<AST<TYPE>> parse(Consumable consumable) {
+        return aritParser.parse(consumable);
     }
 
     @Override
@@ -92,7 +98,7 @@ public class ArithmeticParser implements Parser<ArithmeticParser.TYPE> {
                 .end();
 
         builder.newRule("BRAC")
-                .type(Mode.justFst()).hide("\\(").rule("EXPR").hide("\\)")
+                .type(Mode.takeFirstChild()).hide("\\(").rule("EXPR").hide("\\)")
                 .end();
 
         builder.newRule("NUMBER")

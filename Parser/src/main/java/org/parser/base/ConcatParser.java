@@ -40,25 +40,44 @@ public class ConcatParser<TYPE> implements WithSubparsers<TYPE> {
         this.atSuccess = atSuccess;
     }
 
-    /**
-     * Applies all parsers to the consumable object in sequence. The method returns only a successful
-     * AST if all parsers were successful. AtSuccess is then called for the resulting AST.
-     * @param consumable Consumable
-     * @return An AST wrapped with Optional (empty if one of the parsers returns an error).
-     */
     @Override
-    public Optional<AST<TYPE>> applyTo(Consumable consumable) {
-        Consumable copy = new Consumable(consumable); // in case of failure nothing should be consumed
-        List<AST<TYPE>> ASTs = new ArrayList<>(parsers.size());
-        for (Parser<TYPE> parser : parsers) {
-            Optional<AST<TYPE>> tree = parser.applyTo(consumable);
-            if (tree.isEmpty()) {
-                consumable.resetTo(copy);
-                return Optional.empty();
-            }
-            if (!tree.get().shouldIgnore()) ASTs.add(tree.get());
+    public void processWith(Environment<TYPE> environment) {
+        processParsersRec(environment, 0, environment.createConsumableMark());
+    }
+
+    private void processParsersRec(Environment<TYPE> environment, int index, Consumable.Mark mark) {
+        if (index == parsers.size()) {
+            aggregateResults(environment);
+        } else {
+            var parser = parsers.get(index);
+            environment.executeAndThenCall(parser, (consumable) -> {
+                assert !environment.resultStack().isEmpty() : "Fail at Concat: parser should have pushed a result.";
+
+                if (environment.resultStack().peek().isPresent()) {
+                    processParsersRec(environment, index + 1, mark);
+                } else {
+                    clearWhenFailed(environment, index, consumable, mark);
+                    environment.resultStack().push(Optional.empty());
+                }
+            });
         }
-        return Optional.ofNullable(atSuccess.apply(ASTs));
+    }
+
+    private void aggregateResults(Environment<TYPE> environment) {
+        ArrayList<AST<TYPE>> ASTs = new ArrayList<>(parsers.size());
+        for (int i = 0; i < parsers.size(); i++) {
+            // push fail if get fails
+            var ast = environment.resultStack().pop().get();
+            if (!ast.shouldIgnore()) ASTs.add(0, ast);
+        }
+        environment.resultStack().push(Optional.of(atSuccess.apply(ASTs)));
+    }
+
+    private void clearWhenFailed(Environment<TYPE> environment, int failIndex, Consumable consumable, Consumable.Mark mark) {
+        for (int i = 0; i < failIndex + 1; i++) {
+            environment.resultStack().pop();
+        }
+        consumable.goBackToMark(mark);
     }
 
     @Override

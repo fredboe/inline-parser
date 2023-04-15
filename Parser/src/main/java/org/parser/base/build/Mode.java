@@ -17,7 +17,7 @@ public class Mode {
      *         of the AST are formed as follows: If a given AST has a type other than null then this AST
      *         is just taken over as a child, otherwise the children of the given AST are added to the children-list.
      */
-    public static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> childrenIfNoType(TYPE type) {
+    public static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> takeChildrenIfTypeNull(TYPE type) {
         return trees -> {
             List<AST<TYPE>> children = trees.stream()
                     .filter(tree -> !tree.shouldIgnore())
@@ -32,7 +32,7 @@ public class Mode {
      * @return Returns the atSuccess-Method that just returns the first given AST. If there are no children
      *         then a "to ignore" AST is returned.
      */
-    public static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> justFst() {
+    public static <TYPE> Function<List<AST<TYPE>>, AST<TYPE>> takeFirstChild() {
         return trees -> trees.size() >= 1
                 ? trees.get(0)
                 : new AST<TYPE>(null).setIgnore(true);
