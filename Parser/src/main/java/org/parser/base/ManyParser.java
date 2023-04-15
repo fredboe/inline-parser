@@ -50,7 +50,6 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
                 environment.resultStack().pop();
                 ArrayList<AST<TYPE>> ASTs = new ArrayList<>(n);
                 for (int i = 0; i < n; i++) {
-                    var optionalAST = environment.resultStack().pop();
                     // push fail if get fails
                     ASTs.add(0, environment.resultStack().pop().get());
                 }
