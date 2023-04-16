@@ -14,6 +14,7 @@ import java.util.function.Function;
  * @param <TYPE> Type class of the AST.
  */
 public class ManyParser<TYPE> implements Parser<TYPE> {
+    private static final String errorMsg = "Fail at Many: Internal error. Should not happen.";
     /**
      * Parser to be executed repeatedly
      */
@@ -42,19 +43,25 @@ public class ManyParser<TYPE> implements Parser<TYPE> {
 
     private void executeParserRec(Environment<TYPE> environment, int n) {
         environment.executeAndThenCall(parser, (v) -> {
-            assert !environment.resultStack().isEmpty() : "Fail at Many: parser should have pushed a result.";
+            assert !environment.resultStack().isEmpty() : errorMsg;
 
             if (environment.resultStack().peek().isPresent()) {
                 executeParserRec(environment, n + 1);
             } else {
                 environment.resultStack().pop();
-                ArrayList<AST<TYPE>> ASTs = new ArrayList<>(n);
-                for (int i = 0; i < n; i++) {
-                    // push fail if get fails
-                    ASTs.add(0, environment.resultStack().pop().get());
-                }
-                environment.resultStack().push(Optional.ofNullable(atSuccess.apply(ASTs)));
+                aggregateResults(environment, n);
             }
         });
+    }
+
+    private void aggregateResults(Environment<TYPE> environment, int n) {
+        ArrayList<AST<TYPE>> ASTs = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            var optionalAST = environment.resultStack().pop();
+            assert optionalAST.isPresent() : errorMsg;
+
+            ASTs.add(0, optionalAST.get());
+        }
+        environment.resultStack().push(Optional.ofNullable(atSuccess.apply(ASTs)));
     }
 }

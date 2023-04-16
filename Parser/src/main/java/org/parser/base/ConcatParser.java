@@ -14,6 +14,7 @@ import java.util.function.Function;
  * - The atSuccess function must in any case also consider the case when the passed list is empty.
  */
 public class ConcatParser<TYPE> implements WithSubparsers<TYPE> {
+    private static final String errorMsg = "Fail at Concat: Internal error. Should not happen.";
     /**
      * set of parsers to be added one after the other (order is important)
      */
@@ -51,7 +52,7 @@ public class ConcatParser<TYPE> implements WithSubparsers<TYPE> {
         } else {
             var parser = parsers.get(index);
             environment.executeAndThenCall(parser, (consumable) -> {
-                assert !environment.resultStack().isEmpty() : "Fail at Concat: parser should have pushed a result.";
+                assert !environment.resultStack().isEmpty() : errorMsg;
 
                 if (environment.resultStack().peek().isPresent()) {
                     processParsersRec(environment, index + 1, mark);
@@ -66,8 +67,10 @@ public class ConcatParser<TYPE> implements WithSubparsers<TYPE> {
     private void aggregateResults(Environment<TYPE> environment) {
         ArrayList<AST<TYPE>> ASTs = new ArrayList<>(parsers.size());
         for (int i = 0; i < parsers.size(); i++) {
-            // push fail if get fails
-            var ast = environment.resultStack().pop().get();
+            var optionalAST = environment.resultStack().pop();
+            assert optionalAST.isPresent() : errorMsg;
+
+            var ast = optionalAST.get();
             if (!ast.shouldIgnore()) ASTs.add(0, ast);
         }
         environment.resultStack().push(Optional.of(atSuccess.apply(ASTs)));

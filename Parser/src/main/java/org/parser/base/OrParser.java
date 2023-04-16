@@ -11,6 +11,7 @@ import java.util.function.Function;
  * Or-Parser
  */
 public class OrParser<TYPE> implements WithSubparsers<TYPE> {
+    private static final String errorMsg = "Fail at Or: Internal error. Should not happen.";
     private final List<Parser<TYPE>> parsers;
     /**
      * This method is called as soon as the first parser was successful. It is then passed the supplied
@@ -38,7 +39,7 @@ public class OrParser<TYPE> implements WithSubparsers<TYPE> {
         if (index < parsers.size()) {
             var parser = parsers.get(index);
             environment.executeAndThenCall(parser, (v) -> {
-                assert !environment.resultStack().isEmpty() : "Fail at Or: parser should have pushed a result.";
+                assert !environment.resultStack().isEmpty() : errorMsg;
 
                 var optionalAST = environment.resultStack().pop();
                 if (optionalAST.isEmpty()) {
