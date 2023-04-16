@@ -222,7 +222,7 @@ public class Consumable {
         return new Mark(startIndex);
     }
 
-    public void goBackToMark(Mark mark) {
+    public void gotoMark(Mark mark) {
         this.startIndex = mark.index;
     }
 

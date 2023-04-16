@@ -44,7 +44,7 @@ public class ParserBuilder<TYPE> {
     private void buildPlaceholders() {
         placeholders.forEach((name, placeholder) -> {
             var parser = rules.get(name);
-            placeholder.setParserIfNull(parser);
+            placeholder.setParserIfNull(name, parser);
         });
     }
 
@@ -93,7 +93,7 @@ public class ParserBuilder<TYPE> {
         rules.putAll(other.rules);
         other.placeholders.forEach((name, placeholder) -> {
             if (this.placeholders.containsKey(name)) {
-                placeholder.setParserIfNull(this.placeholders.get(name));
+                placeholder.setParserIfNull(name, this.placeholders.get(name));
             } else {
                 this.placeholders.put(name, placeholder);
             }

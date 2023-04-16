@@ -77,7 +77,7 @@ public class ConcatParser<TYPE> implements WithSubparsers<TYPE> {
         for (int i = 0; i < failIndex + 1; i++) {
             environment.resultStack().pop();
         }
-        consumable.goBackToMark(mark);
+        consumable.gotoMark(mark);
     }
 
     @Override

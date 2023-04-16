@@ -107,11 +107,6 @@ public class ArithmeticParserTest {
         assertEquals(optionalAST.get(), result);
     }
 
-    public static void main(String[] args) {
-        var optionalAST = exprParser.parse("1 + 1");
-        System.out.println(optionalAST);
-    }
-
     @Test
     public void Test_expr1_string() {
         String expr = "42 + 11 - 1*20/10-14";
